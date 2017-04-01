@@ -75,14 +75,27 @@ namespace TelegramBotTry1
                         ProcessTextMessage(message);
                         break;
                     case MessageType.DocumentMessage:
-                        ContentSaver.SaveDocument(Bot, message.Document.FileId, messageDataSet.Message);
+                        messageDataSet.Message =
+                            ContentSaver.SaveDocument(Bot, message.Document.FileId, message.Document.FileName).Result;
                         break;
                     case MessageType.VoiceMessage:
-                        ContentSaver.SaveDocument(Bot, message.Voice.FileId, messageDataSet.Message);
+                        messageDataSet.Message =
+                            ContentSaver.SaveDocument(Bot, message.Voice.FileId, message.Voice.FileId + ".ogg").Result;
                         break;
                     case MessageType.PhotoMessage:
-                        if (messageDataSet.Message != null)
-                            ContentSaver.SaveDocument(Bot, message.Photo[0].FileId, messageDataSet.Message);
+                        var filePathExists = message.Photo.Any(x => x.FilePath != null);
+
+                        var idAndFileName = filePathExists
+                            ? message.Photo
+                                .Where(x => x.FilePath != null)
+                                .Select(x => new Tuple<string, string>(x.FileId, x.FilePath.Replace("/", "")))
+                                .First()
+                            : message.Photo
+                                .Select(x => new Tuple<string, string>(x.FileId, x.FileId))
+                                .First();
+
+                        messageDataSet.Message =
+                            ContentSaver.SaveDocument(Bot, idAndFileName.Item1, idAndFileName.Item2).Result;
                         break;
                     case MessageType.AudioMessage:
                     case MessageType.UnknownMessage:

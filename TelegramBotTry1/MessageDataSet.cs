@@ -60,18 +60,6 @@ namespace TelegramBotTry1
                               message.Contact.UserId + "): " +
                               message.Contact.PhoneNumber;
                     break;
-                case MessageType.VoiceMessage:
-                    Message = ContentSaver.GetPath(message.Voice.FileId, message.Voice.FileId + ".ogg");
-                    break;
-                case MessageType.DocumentMessage:
-                    Message = ContentSaver.GetPath(message.Document.FileId, message.Document.FileName);
-                    break;
-                case MessageType.PhotoMessage:
-                    foreach (var photo in message.Photo.Where(x => x.FilePath != null))
-                    {
-                        Message = ContentSaver.GetPath(photo.FileId, photo.FilePath.Replace("/",""));
-                    }
-                    break;
                 case MessageType.UnknownMessage:
                 case MessageType.AudioMessage:
                 case MessageType.VideoMessage:

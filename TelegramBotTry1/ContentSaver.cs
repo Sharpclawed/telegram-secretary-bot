@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 using Telegram.Bot;
 
 namespace TelegramBotTry1
@@ -7,7 +8,7 @@ namespace TelegramBotTry1
     public static class ContentSaver
     {
         private static readonly string BaseDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "downloads");
-        public static async void SaveDocument(TelegramBotClient bot, string fileId, string fileName)
+        public static async Task<string> SaveDocument(TelegramBotClient bot, string fileId, string fileName)
         {
             var dirPath = Path.Combine(BaseDirectory, fileId);
             Directory.CreateDirectory(dirPath);
@@ -17,6 +18,7 @@ namespace TelegramBotTry1
             {
                 await bot.GetFileAsync(fileId, file);
             }
+            return filePath;
         }
 
         public static string GetPath(string fileId, string fileName)
