@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Telegram.Bot.Types.Enums; using Telegram.Bot;
+using Telegram.Bot.Types.Enums;
+using Telegram.Bot;
 
 namespace TelegramBotTry1
 {
-    public static class DataSetExtensions     {         public static IQueryable<MessageDataSet> GetActualDates(this IQueryable<MessageDataSet> dataSets,
+    public static class DataSetExtensions
+    {
+        public static IQueryable<MessageDataSet> GetActualDates(this IQueryable<MessageDataSet> dataSets,
                                                                 HistoryCommandConfig commandConfig)
         {
             return dataSets.Where(x => x.Date >= commandConfig.Begin && x.Date < commandConfig.End);
@@ -66,5 +69,6 @@ namespace TelegramBotTry1
         private static bool IsUserDatabaseAbsoluteAdmin(int askerId)
         {
             return askerId == 210604626 || askerId == 160511161; //Вика/я
-        }     }
+        }
+    }
 }

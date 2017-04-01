@@ -4,7 +4,11 @@ using System.Text.RegularExpressions;
 
 namespace TelegramBotTry1
 {
-    public class HistoryCommandConfig     {         public DateTime Begin { get; private set; }         public DateTime End { get; private set; }         public HistoryCommandType Type { get; private set; }
+    public class HistoryCommandConfig
+    {
+        public DateTime Begin { get; private set; }
+        public DateTime End { get; private set; }
+        public HistoryCommandType Type { get; private set; }
         public string Argument { get; private set; }
 
         public HistoryCommandConfig(string messageText)
