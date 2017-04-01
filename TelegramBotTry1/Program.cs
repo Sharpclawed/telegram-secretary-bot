@@ -84,18 +84,20 @@ namespace TelegramBotTry1
                         break;
                     case MessageType.PhotoMessage:
                         var filePathExists = message.Photo.Any(x => x.FilePath != null);
-
-                        var idAndFileName = filePathExists
+                        var photoToSave = filePathExists
                             ? message.Photo
                                 .Where(x => x.FilePath != null)
-                                .Select(x => new Tuple<string, string>(x.FileId, x.FilePath.Replace("/", "")))
+                                .OrderByDescending(x => x.FileSize)
                                 .First()
                             : message.Photo
-                                .Select(x => new Tuple<string, string>(x.FileId, x.FileId))
+                                .OrderByDescending(x => x.FileSize)
                                 .First();
 
                         messageDataSet.Message =
-                            ContentSaver.SaveDocument(Bot, idAndFileName.Item1, idAndFileName.Item2).Result;
+                            ContentSaver.SaveDocument(Bot, 
+                                                      photoToSave.FileId,
+                                                      filePathExists? photoToSave.FilePath.Replace("/", "") : photoToSave.FileId)
+                                        .Result;
                         break;
                     case MessageType.AudioMessage:
                     case MessageType.UnknownMessage:
