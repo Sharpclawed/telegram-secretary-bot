@@ -18,7 +18,7 @@ namespace FunctionalTests
             dataSet = new List<MessageDataSet>
             {
                 GetMessage(1, "Чат^1", new DateTime(2017, 1, 10), 1, 1, "Message 1.1"),
-                GetMessage(1, "Чат^1", new DateTime(2017, 1, 1), 2, 2, "Message 1.2"),
+                GetMessage(1, "Чат^1", new DateTime(2017, 1, 2), 2, 2, "Message 1.2"),
                 GetMessage(1, "Чат^1", new DateTime(2017, 1, 12), 3, 3, "Message 1.3"),
                 GetMessage(2, "Chat2", new DateTime(2017, 1, 3), 1, 4, "Message 2.1"),
                 GetMessage(2, "Chat2", new DateTime(2017, 1, 7), 2, 5, "Message 2.2"),
@@ -39,11 +39,14 @@ namespace FunctionalTests
         [Test]
         public void GetActualChatsTest()
         {
-            var config = new HistoryCommandConfig("/history: Чат^1 01.01.2017 10");
+            dataSet.Add(GetMessage(2, "Чат^1", new DateTime(2017, 1, 1), 1, 4, "Message 2.0"));
+            dataSet.Add(GetMessage(1, "Чат^4", new DateTime(2017, 1, 11), 1, 7, "Message 1.4"));
+
+            var config = new HistoryCommandConfig("/history: Чат^1 01.01.2017 12");
             var sut = dataSet.AsQueryable()
                 .GetActualChats(config)
                 .Select(x => x.Message).ToArray();
-            sut.ShouldBeEquivalentTo(new[] { "Message 1.1", "Message 1.2", "Message 1.3" });
+            sut.ShouldBeEquivalentTo(new[] { "Message 1.1", "Message 1.2", "Message 1.3", "Message 1.4" });
         }
 
         [Test]
