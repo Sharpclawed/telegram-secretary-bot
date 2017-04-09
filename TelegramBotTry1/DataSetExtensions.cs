@@ -57,10 +57,10 @@ namespace TelegramBotTry1
             foreach (var dataSet in dataSetsDct)
             {
                 if (dataSet.Value.Count == 0) continue;
-                var chatMember = bot.GetChatMemberAsync(dataSet.Value[0].ChatId, askerId).Result;
-                var allowSendFeedback = chatMember.Status == ChatMemberStatus.Member ||
-                                        chatMember.Status == ChatMemberStatus.Administrator ||
-                                        chatMember.Status == ChatMemberStatus.Creator;
+                var chatMemberStatus = bot.GetChatMemberAsync(dataSet.Value[0].ChatId, askerId).Result.Status;
+                var allowSendFeedback = chatMemberStatus == ChatMemberStatus.Member ||
+                                        chatMemberStatus == ChatMemberStatus.Administrator ||
+                                        chatMemberStatus == ChatMemberStatus.Creator;
                 if (allowSendFeedback) result.Add(dataSet.Key, dataSet.Value);
             }
             return result;
