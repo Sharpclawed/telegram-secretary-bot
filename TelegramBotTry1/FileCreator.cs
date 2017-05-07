@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -23,7 +24,8 @@ namespace TelegramBotTry1
                     var messageDataSet = messageDataSetList.OrderBy(x => x.Date).ToArray();
 
                     //TODO выводить всю информацию в один лист
-                    var worksheet = xlPackage.Workbook.Worksheets.Add(messageDataSet[messageDataSet.Length - 1].ChatName);
+                    var chatName = GetExcelSheetCorrectName(messageDataSet[messageDataSet.Length - 1].ChatName);
+                    var worksheet = xlPackage.Workbook.Worksheets.Add(chatName);
                     var properties = new[]
                     {
                         " npp ", "  Date  ", " UserFirstName  ", " UserLastName  ", " Message ", "  UserName  ", " UserID "
@@ -64,6 +66,12 @@ namespace TelegramBotTry1
                     xlPackage.Workbook.Worksheets.Delete(1);
                 }
             }
+        }
+
+        private static string GetExcelSheetCorrectName(string value)
+        {
+            var correctValue = value.Replace(new[] { '#', '%', '@', '!', '?', '*', '\'' }, "");
+            return correctValue.Length > 30 ? correctValue.Substring(1, 30) : correctValue;
         }
     }
 }
