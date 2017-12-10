@@ -37,12 +37,10 @@ namespace TelegramBotTry1
             switch (commandConfig.Type)
             {
                 case HistoryCommandType.SingleUser:
-                    var groupedSet = dataSets.Where(x => x.UserId.ToString() == commandConfig.Argument)
-                        .GroupBy(x => x.ChatId)
-                        .Select(grp => grp.FirstOrDefault());
                     return from dataset in dataSets
-                        join set in groupedSet on dataset.ChatId equals set.ChatId
-                        select dataset;
+                           join chatId in dataSets.Where(x => x.UserId.ToString() == commandConfig.Argument)
+                                                  .Select(x => x.ChatId).Distinct() on dataset.ChatId equals chatId
+                           select dataset;
                 default:
                     return dataSets;
             }

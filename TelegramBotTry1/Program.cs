@@ -11,8 +11,8 @@ namespace TelegramBotTry1
     static class Program
     { 
         private static readonly TelegramBotClient Bot =
-            //new TelegramBotClient("361040811:AAGQlsM84JwDIRtcztbMMboKLXWqbPwW4VI"); 
-            new TelegramBotClient("245135166:AAEYEEsWjQmN_wLENwnA84Wb9xkgQJ-TLFE");
+            //new TelegramBotClient("361040811:AAGQlsM84JwDIRtcztbMMboKLXWqbPwW4VI");  //kontur bot
+            new TelegramBotClient("245135166:AAEYEEsWjQmN_wLENwnA84Wb9xkgQJ-TLFE");   //my bot
 
         static void Main()
         {
@@ -185,6 +185,7 @@ namespace TelegramBotTry1
                         }
 
                         var dataSets = messageDataSets
+                            .ToList()
                             .GroupBy(x => x.ChatId)
                             .ToDictionary(gdc => gdc.Key, gdc => gdc.ToList())
                             .CheckAskerRights(Bot, message.From.Id);
