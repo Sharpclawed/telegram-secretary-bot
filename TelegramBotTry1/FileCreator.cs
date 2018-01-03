@@ -16,6 +16,7 @@ namespace TelegramBotTry1
             using (var xlPackage = new ExcelPackage(tempFile))
             {
                 ClearSheets(xlPackage);
+                var sheetNames = new Dictionary<string, int>();
 
                 foreach (var dataSetKeyValuePair in messageDataSets)
                 {
@@ -26,6 +27,15 @@ namespace TelegramBotTry1
 
                     //TODO выводить всю информацию в один лист
                     var chatName = GetExcelSheetCorrectName(messageDataSet[messageDataSet.Length - 1].ChatName);
+
+                    if (sheetNames.ContainsKey(chatName))
+                    {
+                        sheetNames[chatName]++;
+                        chatName = chatName + "(" + sheetNames[chatName] + ")";
+                    }
+                    else
+                        sheetNames.Add(chatName, 1);
+
                     var worksheet = xlPackage.Workbook.Worksheets.Add(chatName);
                     var properties = new[]
                     {
@@ -72,7 +82,7 @@ namespace TelegramBotTry1
         private static string GetExcelSheetCorrectName(string value)
         {
             var correctValue = value.Replace(new[] { '#', '%', '@', '!', '?', '*', '\'' }, "");
-            return correctValue.Length > 30 ? correctValue.Substring(1, 30) : correctValue;
+            return correctValue.Length > 30 ? correctValue.Substring(1, 27) : correctValue; //TODO 27 из-за потенциальных страниц с тем же названием
         }
     }
 }
