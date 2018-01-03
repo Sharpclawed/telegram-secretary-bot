@@ -49,17 +49,20 @@ namespace TelegramBotTry1
         public static Dictionary<long, List<MessageDataSet>> CheckAskerRights(
             this Dictionary<long, List<MessageDataSet>> dataSetsDct, TelegramBotClient bot, int askerId)
         {
-            if (IsUserDatabaseAbsoluteAdmin(askerId)) return dataSetsDct;
+            if (IsUserDatabaseAbsoluteAdmin(askerId))
+                return dataSetsDct;
 
             var result = new Dictionary<long, List<MessageDataSet>>();
             foreach (var dataSet in dataSetsDct)
             {
-                if (dataSet.Value.Count == 0) continue;
+                if (dataSet.Value.Count == 0)
+                    continue;
                 var chatMemberStatus = bot.GetChatMemberAsync(dataSet.Value[0].ChatId, askerId).Result.Status;
                 var allowSendFeedback = chatMemberStatus == ChatMemberStatus.Member ||
                                         chatMemberStatus == ChatMemberStatus.Administrator ||
                                         chatMemberStatus == ChatMemberStatus.Creator;
-                if (allowSendFeedback) result.Add(dataSet.Key, dataSet.Value);
+                if (allowSendFeedback)
+                    result.Add(dataSet.Key, dataSet.Value);
             }
             return result;
         }

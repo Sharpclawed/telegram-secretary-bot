@@ -20,7 +20,8 @@ namespace TelegramBotTry1
                 foreach (var dataSetKeyValuePair in messageDataSets)
                 {
                     var messageDataSetList = dataSetKeyValuePair.Value;
-                    if (messageDataSetList.Count == 0) continue;
+                    if (messageDataSetList.Count == 0)
+                        continue;
                     var messageDataSet = messageDataSetList.OrderBy(x => x.Date).ToArray();
 
                     //TODO выводить всю информацию в один лист

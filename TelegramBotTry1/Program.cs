@@ -136,6 +136,7 @@ namespace TelegramBotTry1
             var helperMsg = "Протоколирую чат. По всем вопросам обращаться к @VictoriaBushueva";
             const string helperMsg2 =
                 "\nПолучить историю:\n" + @"/history: Название_чата Дата(dd.MM.yyyy) Количество_дней";
+
             if (isMessagePersonal)
                 helperMsg += helperMsg2;
 
@@ -149,7 +150,9 @@ namespace TelegramBotTry1
             }
             else if (message.Text.StartsWith("/history"))
             {
-                if (!isMessagePersonal) return;
+                if (!isMessagePersonal)
+                    return;
+
                 try
                 {
                     using (var context = new MsgContext())
