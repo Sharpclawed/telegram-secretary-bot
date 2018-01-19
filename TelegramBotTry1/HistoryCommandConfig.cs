@@ -6,10 +6,10 @@ namespace TelegramBotTry1
 {
     public class HistoryCommandConfig
     {
-        public DateTime Begin { get; private set; }
-        public DateTime End { get; private set; }
-        public HistoryCommandType Type { get; private set; }
-        public string Argument { get; private set; }
+        public DateTime Begin { get; }
+        public DateTime End { get; }
+        public HistoryCommandType Type { get; }
+        public string Argument { get; }
 
         public HistoryCommandConfig(string messageText)
         {

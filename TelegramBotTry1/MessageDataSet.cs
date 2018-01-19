@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 

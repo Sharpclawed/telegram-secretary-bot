@@ -48,15 +48,16 @@ namespace TelegramBotTry1
         private static void BotOnMessageReceived(object sender, MessageEventArgs messageEventArgs)
         {
             var message = messageEventArgs.Message;
-            if (message == null) return;
+            if (message == null)
+                return;
 
             try
             {
-                var messageDataSet = new MessageDataSet(message);
+                var recievedDataSet = new MessageDataSet(message);
 
-                var processStatus = ProcessMessage(message, messageDataSet);
+                MonitorMessage(message, recievedDataSet);
 
-                SaveToDatabase(messageDataSet);
+                SaveToDatabase(recievedDataSet);
             }
             catch (Exception e)
             {
@@ -65,7 +66,7 @@ namespace TelegramBotTry1
 
         }
 
-        private static bool ProcessMessage(Message message, MessageDataSet messageDataSet)
+        private static void MonitorMessage(Message message, MessageDataSet messageDataSet)
         {
             try
             {
@@ -111,13 +112,11 @@ namespace TelegramBotTry1
                         Console.WriteLine(message.Type.ToString());
                         break;
                 }
-                return true;
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
             }
-            return false;
         }
 
         private static void SaveToDatabase(MessageDataSet messageDataSet)
