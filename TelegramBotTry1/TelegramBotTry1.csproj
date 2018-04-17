@@ -106,6 +106,7 @@
     <Compile Include="FileCreator.cs" />
     <Compile Include="HistoryCommandConfig.cs" />
     <Compile Include="HistoryCommandType.cs" />
+    <Compile Include="IMessageDataSet.cs" />
     <Compile Include="MessageDataSet.cs" />
     <Compile Include="MsgContext.cs" />
     <Compile Include="NpgsqlConfiguration.cs" />

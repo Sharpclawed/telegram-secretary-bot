@@ -9,7 +9,7 @@ namespace TelegramBotTry1
 {
     public static class FileCreator
     {
-        public static string SendFeedback(Dictionary<long, List<MessageDataSet>> messageDataSets, long userId)
+        public static string SendFeedback(Dictionary<long, List<IMessageDataSet>> messageDataSets, long userId)
         {
             var tempFile = new FileInfo("temp" + userId + ".xls");
             using (var xlPackage = new ExcelPackage(tempFile))

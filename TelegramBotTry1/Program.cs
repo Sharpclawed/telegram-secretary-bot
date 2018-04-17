@@ -66,7 +66,7 @@ namespace TelegramBotTry1
 
         }
 
-        private static void MonitorMessage(Message message, MessageDataSet messageDataSet)
+        private static void MonitorMessage(Message message, IMessageDataSet messageDataSet)
         {
             try
             {

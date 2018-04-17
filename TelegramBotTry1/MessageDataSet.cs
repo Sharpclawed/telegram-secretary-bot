@@ -5,7 +5,7 @@ using Telegram.Bot.Types.Enums;
 
 namespace TelegramBotTry1
 {
-    public class MessageDataSet
+    public class MessageDataSet : IMessageDataSet
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         //TODO Разбить на разные таблицы

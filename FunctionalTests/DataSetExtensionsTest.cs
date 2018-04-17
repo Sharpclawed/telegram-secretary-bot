@@ -10,12 +10,12 @@ namespace FunctionalTests
     [TestFixture]
     public class DataSetExtensionsTest
     {
-        private List<MessageDataSet> dataSet;
+        private List<IMessageDataSet> dataSet;
 
         [SetUp]
         public void SetUp()
         {
-            dataSet = new List<MessageDataSet>
+            dataSet = new List<IMessageDataSet>
             {
                 GetMessage(1, "Чат^1", new DateTime(2017, 1, 10), 1, 1, "Message 1.1"),
                 GetMessage(1, "Чат^1", new DateTime(2017, 1, 2), 2, 2, "Message 1.2"),
@@ -59,7 +59,7 @@ namespace FunctionalTests
             sut.Count(x => x.ChatId == 2).Should().Be(2);
         }
 
-        private MessageDataSet GetMessage(long chatId, string chatName, DateTime date, long userId, long messageId, string message)
+        private IMessageDataSet GetMessage(long chatId, string chatName, DateTime date, long userId, long messageId, string message)
         {
             return new MessageDataSet
             {

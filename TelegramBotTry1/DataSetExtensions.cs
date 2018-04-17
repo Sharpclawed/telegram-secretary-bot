@@ -8,13 +8,13 @@ namespace TelegramBotTry1
 {
     public static class DataSetExtensions
     {
-        public static IQueryable<MessageDataSet> GetActualDates(this IQueryable<MessageDataSet> dataSets,
+        public static IQueryable<IMessageDataSet> GetActualDates(this IQueryable<IMessageDataSet> dataSets,
                                                                 HistoryCommandConfig commandConfig)
         {
             return dataSets.Where(x => x.Date >= commandConfig.Begin && x.Date < commandConfig.End);
         }
 
-        public static IQueryable<MessageDataSet> GetActualChats(this IQueryable<MessageDataSet> dataSets,
+        public static IQueryable<IMessageDataSet> GetActualChats(this IQueryable<IMessageDataSet> dataSets,
             HistoryCommandConfig commandConfig)
         {
             switch (commandConfig.Type)
@@ -31,7 +31,7 @@ namespace TelegramBotTry1
             }
         }
 
-        public static IQueryable<MessageDataSet> GetActualUser(this IQueryable<MessageDataSet> dataSets,
+        public static IQueryable<IMessageDataSet> GetActualUser(this IQueryable<IMessageDataSet> dataSets,
                                                                 HistoryCommandConfig commandConfig)
         {
             switch (commandConfig.Type)
@@ -46,13 +46,13 @@ namespace TelegramBotTry1
             }
         }
 
-        public static Dictionary<long, List<MessageDataSet>> CheckAskerRights(
-            this Dictionary<long, List<MessageDataSet>> dataSetsDct, TelegramBotClient bot, int askerId)
+        public static Dictionary<long, List<IMessageDataSet>> CheckAskerRights(
+            this Dictionary<long, List<IMessageDataSet>> dataSetsDct, TelegramBotClient bot, int askerId)
         {
             if (IsUserDatabaseAbsoluteAdmin(askerId))
                 return dataSetsDct;
 
-            var result = new Dictionary<long, List<MessageDataSet>>();
+            var result = new Dictionary<long, List<IMessageDataSet>>();
             foreach (var dataSet in dataSetsDct)
             {
                 if (dataSet.Value.Count == 0)
