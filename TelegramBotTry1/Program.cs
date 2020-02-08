@@ -218,6 +218,7 @@ namespace TelegramBotTry1
                 }
                 catch (Exception ex)
                 {
+                    Console.WriteLine(ex.Message);
                     await Bot.SendTextMessageAsync(message.Chat.Id, ex.Message);
                     //await Bot.SendTextMessageAsync(message.Chat.Id, "Неверно введены параметры. Необходимо:\n" + helperMsg2);
                 }
