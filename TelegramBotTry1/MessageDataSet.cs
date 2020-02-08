@@ -47,24 +47,45 @@ namespace TelegramBotTry1
             ChatName = message.Chat.Title;
             switch (message.Type)
             {
-                case MessageType.TextMessage:
+                case MessageType.Text:
                     Message = message.Text;
                     break;
-                case MessageType.StickerMessage:
+                case MessageType.Sticker:
                     Message = message.Sticker.Emoji;
                     break;
-                case MessageType.ContactMessage:
+                case MessageType.Contact:
                     Message = message.Contact.FirstName + " " +
                               message.Contact.LastName + " (" +
                               message.Contact.UserId + "): " +
                               message.Contact.PhoneNumber;
                     break;
-                case MessageType.UnknownMessage:
-                case MessageType.AudioMessage:
-                case MessageType.VideoMessage:
-                case MessageType.LocationMessage:
-                case MessageType.ServiceMessage:
-                case MessageType.VenueMessage:
+                    
+                case MessageType.Document:
+                case MessageType.Voice:
+                case MessageType.Photo:
+                case MessageType.Unknown:
+                case MessageType.Audio:
+                case MessageType.Video:
+                case MessageType.Location:
+                case MessageType.Venue:
+                case MessageType.Game:
+                case MessageType.VideoNote:
+                case MessageType.Invoice:
+                case MessageType.SuccessfulPayment:
+                case MessageType.WebsiteConnected:
+                case MessageType.ChatMembersAdded:
+                case MessageType.ChatMemberLeft:
+                case MessageType.ChatTitleChanged:
+                case MessageType.ChatPhotoChanged:
+                case MessageType.MessagePinned:
+                case MessageType.ChatPhotoDeleted:
+                case MessageType.GroupCreated:
+                case MessageType.SupergroupCreated:
+                case MessageType.ChannelCreated:
+                case MessageType.MigratedToSupergroup:
+                case MessageType.MigratedFromGroup:
+                case MessageType.Animation:
+                case MessageType.Poll:
                 default:
                     break;
             }

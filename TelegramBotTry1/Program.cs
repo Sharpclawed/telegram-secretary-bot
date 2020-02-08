@@ -5,6 +5,7 @@ using Telegram.Bot;
 using Telegram.Bot.Args;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.InputFiles;
 
 namespace TelegramBotTry1
 {
@@ -20,9 +21,9 @@ namespace TelegramBotTry1
             Bot.OnMessageEdited += BotOnMessageReceived;
             Bot.OnReceiveError += BotOnReceiveError;
             Bot.OnUpdate += BotOnUpdate;
-
-            var me = Bot.GetMeAsync().Result;
-            Console.Title = me.Username;
+            
+            var botId = Bot.BotId;
+            Console.Title = "Secretary bot " + botId;
 
             using (var context = new MsgContext())
             {
@@ -72,42 +73,50 @@ namespace TelegramBotTry1
             {
                 switch (message.Type)
                 {
-                    case MessageType.TextMessage:
+                    case MessageType.Text:
                         ProcessTextMessage(message);
                         break;
-                    case MessageType.DocumentMessage:
+                    case MessageType.Document:
                         messageDataSet.Message =
                             ContentSaver.SaveDocument(Bot, message.Document.FileId, message.Document.FileName).Result;
                         break;
-                    case MessageType.VoiceMessage:
+                    case MessageType.Voice:
                         messageDataSet.Message =
                             ContentSaver.SaveDocument(Bot, message.Voice.FileId, message.Voice.FileId + ".ogg").Result;
                         break;
-                    case MessageType.PhotoMessage:
-                        var filePathExists = message.Photo.Any(x => x.FilePath != null);
-                        var photoToSave = filePathExists
-                            ? message.Photo
-                                .Where(x => x.FilePath != null)
-                                .OrderByDescending(x => x.FileSize)
-                                .First()
-                            : message.Photo
+                    case MessageType.Photo:
+                        var photoToSave = message.Photo
                                 .OrderByDescending(x => x.FileSize)
                                 .First();
 
-                        messageDataSet.Message =
-                            ContentSaver.SaveDocument(Bot, 
-                                                      photoToSave.FileId,
-                                                      filePathExists? photoToSave.FilePath.Replace("/", "") : photoToSave.FileId)
-                                        .Result;
+                        messageDataSet.Message = ContentSaver.SaveDocument(Bot, photoToSave.FileId, photoToSave.FileId)
+                            .Result;
                         break;
-                    case MessageType.AudioMessage:
-                    case MessageType.UnknownMessage:
-                    case MessageType.VideoMessage:
-                    case MessageType.StickerMessage:
-                    case MessageType.LocationMessage:
-                    case MessageType.ContactMessage:
-                    case MessageType.ServiceMessage:
-                    case MessageType.VenueMessage:
+                    case MessageType.Unknown:
+                    case MessageType.Audio:
+                    case MessageType.Video:
+                    case MessageType.Sticker:
+                    case MessageType.Location:
+                    case MessageType.Contact:
+                    case MessageType.Venue:
+                    case MessageType.Game:
+                    case MessageType.VideoNote:
+                    case MessageType.Invoice:
+                    case MessageType.SuccessfulPayment:
+                    case MessageType.WebsiteConnected:
+                    case MessageType.ChatMembersAdded:
+                    case MessageType.ChatMemberLeft:
+                    case MessageType.ChatTitleChanged:
+                    case MessageType.ChatPhotoChanged:
+                    case MessageType.MessagePinned:
+                    case MessageType.ChatPhotoDeleted:
+                    case MessageType.GroupCreated:
+                    case MessageType.SupergroupCreated:
+                    case MessageType.ChannelCreated:
+                    case MessageType.MigratedToSupergroup:
+                    case MessageType.MigratedFromGroup:
+                    case MessageType.Animation:
+                    case MessageType.Poll:
                     default:
                         Console.WriteLine(message.Type.ToString());
                         break;
@@ -202,7 +211,7 @@ namespace TelegramBotTry1
 
                         using (var fileStream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read))
                         {
-                            var fts = new FileToSend("History.xls", fileStream);
+                            var fts = new InputOnlineFile(fileStream, "History.xls");
                             await Bot.SendDocumentAsync(message.Chat.Id, fts, "catch");
                         }
                     }

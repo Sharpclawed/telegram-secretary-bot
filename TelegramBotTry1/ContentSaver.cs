@@ -16,14 +16,9 @@ namespace TelegramBotTry1
 
             using (var file = File.OpenWrite(filePath))
             {
-                await bot.GetFileAsync(fileId, file);
+                await bot.DownloadFileAsync(fileId, file);
             }
             return filePath;
-        }
-
-        public static string GetPath(string fileId, string fileName)
-        {
-            return Path.Combine(BaseDirectory, fileId, fileName);
         }
     }
 }
