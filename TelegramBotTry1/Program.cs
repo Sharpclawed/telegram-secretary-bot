@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Timers;
 using Telegram.Bot;
 using Telegram.Bot.Args;
 using Telegram.Bot.Types;
@@ -12,8 +13,10 @@ namespace TelegramBotTry1
     static class Program
     { 
         private static readonly TelegramBotClient Bot =
-            new TelegramBotClient("361040811:AAGQlsM84JwDIRtcztbMMboKLXWqbPwW4VI");  //kontur bot
+            new TelegramBotClient("361040811:AAGQlsM84JwDIRtcztbMMboKLXWqbPwW4VI");  //kontakt bot
             //new TelegramBotClient("245135166:AAEYEEsWjQmN_wLENwnA84Wb9xkgQJ-TLFE");   //my bot
+
+        private static DateTime lastIAmAliveCheckUtc = DateTime.UtcNow.Date;
 
         static void Main()
         {
@@ -31,6 +34,9 @@ namespace TelegramBotTry1
             {
                 context.Database.CreateIfNotExists();
             }
+
+            Console.WriteLine(DateTime.Now + " Start working");
+            ConfigureIAmAliveTimer();
 
             Bot.StartReceiving();
             Console.ReadLine();
@@ -152,6 +158,7 @@ namespace TelegramBotTry1
             }
         }
 
+        //todo вынести в класс, возвращать таску
         private static async void ProcessTextMessage(Message message)
         {
             var isMessagePersonal = message.Chat.Title == null;
@@ -237,6 +244,45 @@ namespace TelegramBotTry1
                     //await Bot.SendTextMessageAsync(message.Chat.Id, "Неверно введены параметры. Необходимо:\n" + helperMsg2);
                 }
             }
+        }
+        
+        private static void ConfigureIAmAliveTimer()
+        {
+            var iAmAliveTimer = new Timer
+            {
+                Interval = 1000 * 60 * 60 * 2 //2 часа
+            };
+            iAmAliveTimer.Elapsed += ShowASignEvent;
+            iAmAliveTimer.AutoReset = true;
+            iAmAliveTimer.Start();
+        }
+
+        private static void ShowASignEvent(object sender, ElapsedEventArgs e)
+        {
+            try
+            {
+                var scheduledRunUtc = DateTime.UtcNow.Date.AddHours(10).AddHours(-5); //10 часов относительно Гринвича, около того
+                if (DateTime.UtcNow > scheduledRunUtc)
+                {
+                    if (scheduledRunUtc.Date > lastIAmAliveCheckUtc.Date)
+                    {
+                        ShowASign();
+                        lastIAmAliveCheckUtc = DateTime.UtcNow;
+                    }
+                }
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception.Message);
+            }
+        }
+
+        private static void ShowASign()
+        {
+            //var chatId = -219324188; //чат 125
+            var chatId = 1100176543; //чат БотВажное
+            Bot.SendTextMessageAsync(new ChatId(chatId), "Работаю в штатном режиме");
+            Console.WriteLine("sm Работаю в штатном режиме");
         }
     }
 }
