@@ -12,15 +12,17 @@ namespace TelegramBotTry1
     static class Program
     { 
         private static readonly TelegramBotClient Bot =
-            //new TelegramBotClient("361040811:AAGQlsM84JwDIRtcztbMMboKLXWqbPwW4VI");  //kontur bot
-            new TelegramBotClient("245135166:AAEYEEsWjQmN_wLENwnA84Wb9xkgQJ-TLFE");   //my bot
+            new TelegramBotClient("361040811:AAGQlsM84JwDIRtcztbMMboKLXWqbPwW4VI");  //kontur bot
+            //new TelegramBotClient("245135166:AAEYEEsWjQmN_wLENwnA84Wb9xkgQJ-TLFE");   //my bot
 
         static void Main()
         {
             Bot.OnMessage += BotOnMessageReceived;
             Bot.OnMessageEdited += BotOnMessageReceived;
             Bot.OnReceiveError += BotOnReceiveError;
+            Bot.OnReceiveGeneralError += BotOnOnReceiveGeneralError;
             Bot.OnUpdate += BotOnUpdate;
+            Bot.OnCallbackQuery += BotOnOnCallbackQuery;
             
             var botId = Bot.BotId;
             Console.Title = "Secretary bot " + botId;
@@ -35,6 +37,16 @@ namespace TelegramBotTry1
             Bot.StopReceiving();
         }
 
+        private static void BotOnOnCallbackQuery(object sender, CallbackQueryEventArgs e)
+        {
+            Console.WriteLine(DateTime.Now + " " + e.CallbackQuery.Message);
+        }
+
+        private static void BotOnOnReceiveGeneralError(object sender, ReceiveGeneralErrorEventArgs e)
+        {
+            Console.WriteLine(DateTime.Now + " " + e.Exception.Message + " \r\n" + e.Exception.InnerException + " \r\n" + e.Exception.StackTrace);
+        }
+
         private static void BotOnUpdate(object sender, UpdateEventArgs updateEventArgs)
         {
             //Console.WriteLine(updateEventArgs.Update.Type.ToString());
@@ -42,13 +54,15 @@ namespace TelegramBotTry1
 
         private static void BotOnReceiveError(object sender, ReceiveErrorEventArgs receiveErrorEventArgs)
         {
-            //Debugger.Break();
             Console.WriteLine(DateTime.Now + " " + receiveErrorEventArgs.ApiRequestException.Message);
         }
 
         private static void BotOnMessageReceived(object sender, MessageEventArgs messageEventArgs)
         {
             var message = messageEventArgs.Message;
+
+            //Console.WriteLine(DateTime.Now + " jstrcv " + messageEventArgs.Message);
+
             if (message == null)
                 return;
 
