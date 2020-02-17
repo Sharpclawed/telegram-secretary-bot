@@ -63,6 +63,7 @@ namespace TelegramBotTry1
                 case MessageType.Document:
                 case MessageType.Voice:
                 case MessageType.Photo:
+                    //Message присвоено ранее
                 case MessageType.Unknown:
                 case MessageType.Audio:
                 case MessageType.Video:

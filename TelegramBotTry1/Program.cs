@@ -98,19 +98,18 @@ namespace TelegramBotTry1
                         break;
                     case MessageType.Document:
                         messageDataSet.Message =
-                            ContentSaver.SaveDocument(Bot, message.Document.FileId, message.Document.FileName).Result;
+                            ContentSaver.SaveDocument(Bot, message.Document.FileId, message.Document.FileName);
                         break;
                     case MessageType.Voice:
                         messageDataSet.Message =
-                            ContentSaver.SaveDocument(Bot, message.Voice.FileId, message.Voice.FileId + ".ogg").Result;
+                            ContentSaver.SaveDocument(Bot, message.Voice.FileId, message.Voice.FileId + ".ogg");
                         break;
                     case MessageType.Photo:
                         var photoToSave = message.Photo
                                 .OrderByDescending(x => x.FileSize)
                                 .First();
 
-                        messageDataSet.Message = ContentSaver.SaveDocument(Bot, photoToSave.FileId, photoToSave.FileId)
-                            .Result;
+                        messageDataSet.Message = ContentSaver.SaveDocument(Bot, photoToSave.FileId, photoToSave.FileId);
                         break;
                     case MessageType.Unknown:
                     case MessageType.Audio:
@@ -145,6 +144,7 @@ namespace TelegramBotTry1
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
+                Console.WriteLine(e.InnerException);
             }
         }
 
@@ -280,7 +280,7 @@ namespace TelegramBotTry1
         private static void ShowASign()
         {
             //var chatId = -219324188; //чат 125
-            var chatId = 1100176543; //чат БотВажное
+            long chatId = -1001100176543; //чат БотВажное
             Bot.SendTextMessageAsync(new ChatId(chatId), "Работаю в штатном режиме");
             Console.WriteLine("sm Работаю в штатном режиме");
         }
