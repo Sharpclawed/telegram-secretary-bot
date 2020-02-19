@@ -250,7 +250,7 @@ namespace TelegramBotTry1
         {
             var iAmAliveTimer = new Timer
             {
-                Interval = 1000 * 60 * 60 * 2 //2 часа
+                Interval = 1000 * 60 * 60 * 0.5 //30 минут
             };
             iAmAliveTimer.Elapsed += ShowASignEvent;
             iAmAliveTimer.AutoReset = true;
@@ -261,7 +261,7 @@ namespace TelegramBotTry1
         {
             try
             {
-                var scheduledRunUtc = DateTime.UtcNow.Date.AddHours(10).AddHours(-5); //10 часов относительно Гринвича, около того
+                var scheduledRunUtc = DateTime.UtcNow.Date.AddHours(10).AddHours(-8); //7 часов относительно Гринвича, около того
                 if (DateTime.UtcNow > scheduledRunUtc)
                 {
                     if (scheduledRunUtc.Date > lastIAmAliveCheckUtc.Date)
