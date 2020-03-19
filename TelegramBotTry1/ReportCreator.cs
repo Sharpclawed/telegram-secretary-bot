@@ -7,9 +7,9 @@ using OfficeOpenXml.Style;
 
 namespace TelegramBotTry1
 {
-    public static class FileCreator
+    public static class ReportCreator
     {
-        public static string SendFeedback(Dictionary<long, List<IMessageDataSet>> messageDataSets, long userId)
+        public static FileInfo Create(Dictionary<long, List<IMessageDataSet>> messageDataSets, long userId)
         {
             var tempFile = new FileInfo("temp" + userId + ".xls");
             using (var xlPackage = new ExcelPackage(tempFile))
@@ -62,7 +62,7 @@ namespace TelegramBotTry1
                     worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
                 }
                 xlPackage.SaveAs(tempFile);
-                return xlPackage.File.Name;
+                return xlPackage.File;
             }
         }
 

@@ -114,7 +114,7 @@
   <ItemGroup>
     <Compile Include="ContentSaver.cs" />
     <Compile Include="DataSetExtensions.cs" />
-    <Compile Include="FileCreator.cs" />
+    <Compile Include="ReportCreator.cs" />
     <Compile Include="HistoryCommandConfig.cs" />
     <Compile Include="HistoryCommandType.cs" />
     <Compile Include="IMessageDataSet.cs" />

@@ -162,18 +162,14 @@ namespace TelegramBotTry1
         private static async void ProcessTextMessage(Message message)
         {
             var isMessagePersonal = message.Chat.Title == null;
-            var helperMsg = "Протоколирую чат. По всем вопросам обращаться к @VictoriaBushueva";
-            const string helperMsg2 =
-                "\nПолучить историю:\n" + @"/history: Название_чата Дата(dd.MM.yyyy) Количество_дней";
+            const string helperMsg =
+                "Получить историю:\r\n"
+                + @"\r\n/history: ""Название чата"" ""Дата начала"" ""Кол-во дней"""
+                + @"\r\n/historyall: ""Дата начала"" ""Кол-во дней"""
+                + @"\r\n/historyof: ""id аккаунта"" ""Дата начала"" ""Кол-во дней"""
+                ;
 
-            if (isMessagePersonal)
-                helperMsg += helperMsg2;
-
-            if (message.Text.StartsWith("/start"))
-            {
-                await Bot.SendTextMessageAsync(message.Chat.Id, helperMsg);
-            }
-            else if (message.Text.StartsWith("/help"))
+            if (message.Text.StartsWith("/help"))
             {
                 await Bot.SendTextMessageAsync(message.Chat.Id, helperMsg);
             }
@@ -228,12 +224,12 @@ namespace TelegramBotTry1
                             return;
                         }
 
-                        var file = FileCreator.SendFeedback(dataSets, message.From.Id);
+                        var report = ReportCreator.Create(dataSets, message.From.Id);
 
-                        using (var fileStream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read))
+                        using (var fileStream = new FileStream(report.Name, FileMode.Open, FileAccess.Read, FileShare.Read))
                         {
-                            var fts = new InputOnlineFile(fileStream, "History.xls");
-                            await Bot.SendDocumentAsync(message.Chat.Id, fts, "catch");
+                            var fileToSend = new InputOnlineFile(fileStream, "History.xls");
+                            await Bot.SendDocumentAsync(message.Chat.Id, fileToSend, "Отчет подготовлен");
                         }
                     }
                 }
