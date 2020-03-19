@@ -76,75 +76,40 @@ namespace TelegramBotTry1
             {
                 var recievedDataSet = new MessageDataSet(message);
 
-                MonitorMessage(message, recievedDataSet);
+                ProcessIfCommand(message);
+                SaveContent(message, recievedDataSet);
 
                 SaveToDatabase(recievedDataSet);
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
+                Console.WriteLine(e.InnerException);
             }
-
         }
 
-        private static void MonitorMessage(Message message, IMessageDataSet messageDataSet)
+        private static void ProcessIfCommand(Message message)
         {
-            try
-            {
-                switch (message.Type)
-                {
-                    case MessageType.Text:
-                        ProcessTextMessage(message);
-                        break;
-                    case MessageType.Document:
-                        messageDataSet.Message =
-                            ContentSaver.SaveDocument(Bot, message.Document.FileId, message.Document.FileName);
-                        break;
-                    case MessageType.Voice:
-                        messageDataSet.Message =
-                            ContentSaver.SaveDocument(Bot, message.Voice.FileId, message.Voice.FileId + ".ogg");
-                        break;
-                    case MessageType.Photo:
-                        var photoToSave = message.Photo
-                                .OrderByDescending(x => x.FileSize)
-                                .First();
+            if (message.Type == MessageType.Text)
+                CommandMessageProcessor.ProcessTextMessage(Bot, message);
+        }
 
-                        messageDataSet.Message = ContentSaver.SaveDocument(Bot, photoToSave.FileId, photoToSave.FileId);
-                        break;
-                    case MessageType.Unknown:
-                    case MessageType.Audio:
-                    case MessageType.Video:
-                    case MessageType.Sticker:
-                    case MessageType.Location:
-                    case MessageType.Contact:
-                    case MessageType.Venue:
-                    case MessageType.Game:
-                    case MessageType.VideoNote:
-                    case MessageType.Invoice:
-                    case MessageType.SuccessfulPayment:
-                    case MessageType.WebsiteConnected:
-                    case MessageType.ChatMembersAdded:
-                    case MessageType.ChatMemberLeft:
-                    case MessageType.ChatTitleChanged:
-                    case MessageType.ChatPhotoChanged:
-                    case MessageType.MessagePinned:
-                    case MessageType.ChatPhotoDeleted:
-                    case MessageType.GroupCreated:
-                    case MessageType.SupergroupCreated:
-                    case MessageType.ChannelCreated:
-                    case MessageType.MigratedToSupergroup:
-                    case MessageType.MigratedFromGroup:
-                    case MessageType.Animation:
-                    case MessageType.Poll:
-                    default:
-                        Console.WriteLine(message.Type.ToString());
-                        break;
-                }
-            }
-            catch (Exception e)
+        private static void SaveContent(Message message, IMessageDataSet messageDataSet)
+        {
+            switch (message.Type)
             {
-                Console.WriteLine(e.Message);
-                Console.WriteLine(e.InnerException);
+                case MessageType.Document:
+                    messageDataSet.Message =
+                        ContentSaver.SaveDocument(Bot, message.Document.FileId, message.Document.FileName);
+                    break;
+                case MessageType.Voice:
+                    messageDataSet.Message =
+                        ContentSaver.SaveDocument(Bot, message.Voice.FileId, message.Voice.FileId + ".ogg");
+                    break;
+                case MessageType.Photo:
+                    var photoToSave = message.Photo.OrderByDescending(x => x.FileSize).First();
+                    messageDataSet.Message = ContentSaver.SaveDocument(Bot, photoToSave.FileId, photoToSave.FileId);
+                    break;
             }
         }
 
