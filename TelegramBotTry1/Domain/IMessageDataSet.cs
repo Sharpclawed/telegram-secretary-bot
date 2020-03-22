@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TelegramBotTry1
+namespace TelegramBotTry1.Domain
 {
     public interface IMessageDataSet
     {

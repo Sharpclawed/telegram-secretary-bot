@@ -115,11 +115,18 @@
     <Compile Include="CommandMessageProcessor.cs" />
     <Compile Include="ContentSaver.cs" />
     <Compile Include="DataSetExtensions.cs" />
+    <Compile Include="Domain\AdminDataSet.cs" />
+    <Compile Include="Domain\BookkeeperDataSet.cs" />
+    <Compile Include="Migrations\202002171859206_InitialCreate.cs" />
+    <Compile Include="Migrations\202002171859206_InitialCreate.designer.cs">
+      <DependentUpon>202002171859206_InitialCreate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ReportCreator.cs" />
     <Compile Include="HistoryCommandConfig.cs" />
     <Compile Include="HistoryCommandType.cs" />
-    <Compile Include="IMessageDataSet.cs" />
-    <Compile Include="MessageDataSet.cs" />
+    <Compile Include="Domain\IMessageDataSet.cs" />
+    <Compile Include="Domain\MessageDataSet.cs" />
     <Compile Include="MsgContext.cs" />
     <Compile Include="NpgsqlConfiguration.cs" />
     <Compile Include="Program.cs" />
@@ -131,6 +138,11 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\202002171859206_InitialCreate.resx">
+      <DependentUpon>202002171859206_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

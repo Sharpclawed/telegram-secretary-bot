@@ -3,12 +3,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
-namespace TelegramBotTry1
+namespace TelegramBotTry1.Domain
 {
     public class MessageDataSet : IMessageDataSet
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        //TODO Разбить на разные таблицы
         public Guid MessageDataSetId { get; set; }
         public long MessageId { get; set; }
         public string Message { get; set; }
@@ -59,11 +58,12 @@ namespace TelegramBotTry1
                               message.Contact.UserId + "): " +
                               message.Contact.PhoneNumber;
                     break;
-                    
+
+                //Message присвоится позднее
                 case MessageType.Document:
                 case MessageType.Voice:
                 case MessageType.Photo:
-                    //Message присвоено ранее
+                //Ничего не присваиваем
                 case MessageType.Unknown:
                 case MessageType.Audio:
                 case MessageType.Video:
@@ -85,7 +85,6 @@ namespace TelegramBotTry1
                 case MessageType.ChannelCreated:
                 case MessageType.MigratedToSupergroup:
                 case MessageType.MigratedFromGroup:
-                case MessageType.Animation:
                 case MessageType.Poll:
                 default:
                     break;

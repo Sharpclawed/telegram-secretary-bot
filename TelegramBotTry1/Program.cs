@@ -7,6 +7,7 @@ using Telegram.Bot.Args;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.InputFiles;
+using TelegramBotTry1.Domain;
 
 namespace TelegramBotTry1
 {

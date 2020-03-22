@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot;
+using TelegramBotTry1.Domain;
 
 namespace TelegramBotTry1
 {

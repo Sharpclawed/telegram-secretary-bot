@@ -1,4 +1,5 @@
 ﻿using System.Data.Entity;
+using TelegramBotTry1.Domain;
 
 namespace TelegramBotTry1
 {

@@ -4,6 +4,7 @@ using System.Linq;
 using NUnit.Framework;
 using TelegramBotTry1;
 using FluentAssertions;
+using TelegramBotTry1.Domain;
 
 namespace FunctionalTests
 {
