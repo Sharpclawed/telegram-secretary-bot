@@ -5,6 +5,8 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.InputFiles;
 using TelegramBotTry1.Domain;
+using TelegramBotTry1.Dto;
+using TelegramBotTry1.Enums;
 
 namespace TelegramBotTry1
 {
@@ -16,15 +18,14 @@ namespace TelegramBotTry1
             if (!isMessagePersonal)
                 return;
 
-            const string helperMsg =
-                "Получить историю:\r\n"
-                + @"\r\n/history: ""Название чата"" ""Дата начала"" ""Кол-во дней"""
-                + @"\r\n/historyall: ""Дата начала"" ""Кол-во дней"""
-                + @"\r\n/historyof: ""id аккаунта"" ""Дата начала"" ""Кол-во дней"""
-                ;
-
             if (message.Text.StartsWith("/help"))
             {
+                const string helperMsg =
+                        "Получить историю:\r\n"
+                        + @"\r\n/history: ""Название чата"" ""Дата начала"" ""Кол-во дней"""
+                        + @"\r\n/historyall: ""Дата начала"" ""Кол-во дней"""
+                        + @"\r\n/historyof: ""id аккаунта"" ""Дата начала"" ""Кол-во дней"""
+                    ;
                 await bot.SendTextMessageAsync(message.Chat.Id, helperMsg);
             }
             else if (message.Text.StartsWith("/history"))
@@ -33,9 +34,10 @@ namespace TelegramBotTry1
                 {
                     using (var context = new MsgContext())
                     {
-                        //TODO записать, не разрывая флуент
-                        var commandConfig = new HistoryCommandConfig(message.Text);
+                        //TODO Вынести в Command Provider
+                        var commandConfig = new HistoryCommand(message.Text);
 
+                        //TODO записать, не разрывая флуент
                         if (commandConfig.Type == HistoryCommandType.Unknown)
                         {
                             await bot.SendTextMessageAsync(message.Chat.Id, "Неизвестная команда");

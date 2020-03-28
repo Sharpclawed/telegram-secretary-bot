@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using TelegramBotTry1.Enums;
 
-namespace TelegramBotTry1
+namespace TelegramBotTry1.Dto
 {
-    public class HistoryCommandConfig
+    public class HistoryCommand
     {
         public DateTime Begin { get; }
         public DateTime End { get; }
         public HistoryCommandType Type { get; }
-        public string Argument { get; }
+        public string NameOrId { get; }
 
-        public HistoryCommandConfig(string messageText)
+        public HistoryCommand(string messageText)
         {
             var regex = new Regex(@"^(/history.*)[:]\s*(.*)\s\b(\d{2}[.]\d{2}[.]\d{4})[ ](\d+)$");
             var match = regex.Match(messageText);
@@ -21,7 +22,7 @@ namespace TelegramBotTry1
                 return;
             }
             Begin = DateTime.ParseExact(match.Groups[3].Value, "dd.MM.yyyy", CultureInfo.InvariantCulture);
-            Argument = match.Groups[2].Value;
+            NameOrId = match.Groups[2].Value;
             End = Begin.AddDays(double.Parse(match.Groups[4].Value));
 
             switch (match.Groups[1].Value)

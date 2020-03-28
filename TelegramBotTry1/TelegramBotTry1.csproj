@@ -117,14 +117,18 @@
     <Compile Include="DataSetExtensions.cs" />
     <Compile Include="Domain\AdminDataSet.cs" />
     <Compile Include="Domain\BookkeeperDataSet.cs" />
+    <Compile Include="Dto\UserManagingCommand.cs" />
+    <Compile Include="Dto\UserViewCommand.cs" />
+    <Compile Include="Enums\ManagingType.cs" />
+    <Compile Include="Enums\UserType.cs" />
     <Compile Include="Migrations\202002171859206_InitialCreate.cs" />
     <Compile Include="Migrations\202002171859206_InitialCreate.designer.cs">
       <DependentUpon>202002171859206_InitialCreate.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ReportCreator.cs" />
-    <Compile Include="HistoryCommandConfig.cs" />
-    <Compile Include="HistoryCommandType.cs" />
+    <Compile Include="Dto\HistoryCommand.cs" />
+    <Compile Include="Enums\HistoryCommandType.cs" />
     <Compile Include="Domain\IMessageDataSet.cs" />
     <Compile Include="Domain\MessageDataSet.cs" />
     <Compile Include="MsgContext.cs" />

@@ -8,6 +8,8 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.InputFiles;
 using TelegramBotTry1.Domain;
+using TelegramBotTry1.Dto;
+using TelegramBotTry1.Enums;
 
 namespace TelegramBotTry1
 {
@@ -121,90 +123,6 @@ namespace TelegramBotTry1
                 context.MessageDataSets.Add(messageDataSet);
                 context.SaveChanges();
                 Console.WriteLine(messageDataSet.ToString());
-            }
-        }
-
-        //todo вынести в класс, возвращать таску
-        private static async void ProcessTextMessage(Message message)
-        {
-            var isMessagePersonal = message.Chat.Title == null;
-            const string helperMsg =
-                "Получить историю:\r\n"
-                + @"\r\n/history: ""Название чата"" ""Дата начала"" ""Кол-во дней"""
-                + @"\r\n/historyall: ""Дата начала"" ""Кол-во дней"""
-                + @"\r\n/historyof: ""id аккаунта"" ""Дата начала"" ""Кол-во дней"""
-                ;
-
-            if (message.Text.StartsWith("/help"))
-            {
-                await Bot.SendTextMessageAsync(message.Chat.Id, helperMsg);
-            }
-            else if (message.Text.StartsWith("/history"))
-            {
-                if (!isMessagePersonal)
-                    return;
-
-                try
-                {
-                    using (var context = new MsgContext())
-                    {
-                        //TODO записать, не разрывая флуент
-                        var commandConfig = new HistoryCommandConfig(message.Text);
-
-                        if (commandConfig.Type == HistoryCommandType.Unknown)
-                        {
-                            await Bot.SendTextMessageAsync(message.Chat.Id, "Неизвестная команда");
-                            return;
-                        }
-
-                        var messageDataSets = context.Set<MessageDataSet>().GetActualDates(commandConfig);
-                        if (!messageDataSets.Any())
-                        {
-                            await Bot.SendTextMessageAsync(message.Chat.Id, "В данном периоде нет сообщений");
-                            return;
-                        }
-
-                        messageDataSets = messageDataSets.GetActualChats(commandConfig);
-                        if (messageDataSets == null || !messageDataSets.Any())
-                        {
-                            await Bot.SendTextMessageAsync(message.Chat.Id, "В выбранных чатах нет сообщений");
-                            return;
-                        }
-
-                        messageDataSets = messageDataSets.GetActualUser(commandConfig);
-                        if (!messageDataSets.Any())
-                        {
-                            await Bot.SendTextMessageAsync(message.Chat.Id, "По данному пользователю нет сообщений");
-                            return;
-                        }
-
-                        var dataSets = messageDataSets
-                            .ToList()
-                            .GroupBy(x => x.ChatId)
-                            .ToDictionary(gdc => gdc.Key, gdc => gdc.ToList())
-                            .CheckAskerRights(Bot, message.From.Id);
-                        
-                        if (!dataSets.Any())
-                        {
-                            await Bot.SendTextMessageAsync(message.Chat.Id, "У вас не хватает прав на получение этой информации");
-                            return;
-                        }
-
-                        var report = ReportCreator.Create(dataSets, message.From.Id);
-
-                        using (var fileStream = new FileStream(report.Name, FileMode.Open, FileAccess.Read, FileShare.Read))
-                        {
-                            var fileToSend = new InputOnlineFile(fileStream, "History.xls");
-                            await Bot.SendDocumentAsync(message.Chat.Id, fileToSend, "Отчет подготовлен");
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                    await Bot.SendTextMessageAsync(message.Chat.Id, ex.Message);
-                    //await Bot.SendTextMessageAsync(message.Chat.Id, "Неверно введены параметры. Необходимо:\n" + helperMsg2);
-                }
             }
         }
         

@@ -4,26 +4,28 @@ using System.Linq;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot;
 using TelegramBotTry1.Domain;
+using TelegramBotTry1.Dto;
+using TelegramBotTry1.Enums;
 
 namespace TelegramBotTry1
 {
     public static class DataSetExtensions
     {
         public static IQueryable<IMessageDataSet> GetActualDates(this IQueryable<IMessageDataSet> dataSets,
-                                                                HistoryCommandConfig commandConfig)
+                                                                HistoryCommand command)
         {
-            return dataSets.Where(x => x.Date >= commandConfig.Begin && x.Date < commandConfig.End);
+            return dataSets.Where(x => x.Date >= command.Begin && x.Date < command.End);
         }
 
         public static IQueryable<IMessageDataSet> GetActualChats(this IQueryable<IMessageDataSet> dataSets,
-            HistoryCommandConfig commandConfig)
+            HistoryCommand command)
         {
-            switch (commandConfig.Type)
+            switch (command.Type)
             {
                 case HistoryCommandType.SingleChat:
                     //TODO по названию могут определяться разные чаты в разные моменты времени. Нам нужен актуальный или все?
                     return dataSets
-                        .Where(x => x.ChatName.Equals(commandConfig.Argument, StringComparison.InvariantCultureIgnoreCase));
+                        .Where(x => x.ChatName.Equals(command.NameOrId, StringComparison.InvariantCultureIgnoreCase));
                 case HistoryCommandType.AllChats:
                 case HistoryCommandType.SingleUser:
                     return dataSets.Where(x => x.ChatName != null);
@@ -33,13 +35,13 @@ namespace TelegramBotTry1
         }
 
         public static IQueryable<IMessageDataSet> GetActualUser(this IQueryable<IMessageDataSet> dataSets,
-                                                                HistoryCommandConfig commandConfig)
+                                                                HistoryCommand command)
         {
-            switch (commandConfig.Type)
+            switch (command.Type)
             {
                 case HistoryCommandType.SingleUser:
                     return from dataset in dataSets
-                           join chatId in dataSets.Where(x => x.UserId.ToString() == commandConfig.Argument)
+                           join chatId in dataSets.Where(x => x.UserId.ToString() == command.NameOrId)
                                                   .Select(x => x.ChatId).Distinct() on dataset.ChatId equals chatId
                            select dataset;
                 default:

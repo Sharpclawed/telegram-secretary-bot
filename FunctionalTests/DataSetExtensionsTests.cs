@@ -5,11 +5,12 @@ using NUnit.Framework;
 using TelegramBotTry1;
 using FluentAssertions;
 using TelegramBotTry1.Domain;
+using TelegramBotTry1.Dto;
 
 namespace FunctionalTests
 {
     [TestFixture]
-    public class DataSetExtensionsTest
+    public class DataSetExtensionsTests
     {
         private List<IMessageDataSet> dataSet;
 
@@ -30,11 +31,21 @@ namespace FunctionalTests
         [Test]
         public void GetActualDatesTest()
         {
-            var config = new HistoryCommandConfig("/historyof: 118274261 03.01.2017 3");
+            var config = new HistoryCommand("/historyof: 118274261 03.01.2017 3");
             var sut = dataSet.AsQueryable()
                 .GetActualDates(config)
                 .Select(x => x.Date).ToArray();
             sut.ShouldBeEquivalentTo(new[] {new DateTime(2017, 1, 3), new DateTime(2017, 1, 5)});
+        }
+
+        [Test]
+        public void GetActualDatesTest2()
+        {
+            var config = new HistoryCommand("/historyall: 03.01.2017 3");
+            var sut = dataSet.AsQueryable()
+                .GetActualDates(config)
+                .Select(x => x.Date).ToArray();
+            sut.ShouldBeEquivalentTo(new[] { new DateTime(2017, 1, 3), new DateTime(2017, 1, 5) });
         }
 
         [Test]
@@ -43,7 +54,7 @@ namespace FunctionalTests
             dataSet.Add(GetMessage(4, "Чат^1", new DateTime(2017, 1, 1), 1, 4, "Message 4.1"));
             dataSet.Add(GetMessage(1, "Чат^4", new DateTime(2017, 1, 11), 1, 7, "Message 1.4"));
 
-            var config = new HistoryCommandConfig("/history: Чат^1 01.01.2017 12");
+            var config = new HistoryCommand("/history: Чат^1 01.01.2017 12");
             var sut = dataSet.AsQueryable()
                 .GetActualChats(config)
                 .Select(x => x.Message).ToArray();
@@ -54,7 +65,7 @@ namespace FunctionalTests
         [Test]
         public void GetActualUserTest()
         {
-            var config = new HistoryCommandConfig("/historyof: 2 01.01.2017 10");
+            var config = new HistoryCommand("/historyof: 2 01.01.2017 10");
             var sut = dataSet.AsQueryable()
                 .GetActualUser(config);
             sut.All(x => new long[] {1, 2}.Contains(x.ChatId)).Should().BeTrue();
