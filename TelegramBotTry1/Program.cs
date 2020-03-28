@@ -157,18 +157,19 @@ namespace TelegramBotTry1
         {
             //var chatId = -219324188; //чат 125
             long chatId = -1001100176543; //чат БотВажное
-            Bot.SendTextMessageAsync(new ChatId(chatId), "Работаю в штатном режиме");
             DateTime lastMessageDate;
             string lastMessageChat;
             
             using (var context = new MsgContext())
             {
                 var lastMessage = context.MessageDataSets.OrderByDescending(message => message.Date).FirstOrDefault();
-                lastMessageDate = lastMessage?.Date ?? DateTime.MinValue;
+                lastMessageDate = lastMessage?.Date.AddHours(10).AddHours(-8) ?? DateTime.MinValue;
                 lastMessageChat = lastMessage?.ChatName;
             }
 
-            Console.WriteLine("sm Работаю в штатном режиме\r\nПоследнее сообщение от " + lastMessageDate.ToString() + " в \"" + lastMessageChat + "\"");
+            var signMessage = "Работаю в штатном режиме\r\nПоследнее сообщение от " + lastMessageDate.ToString() + " в \"" + lastMessageChat + "\"";
+            Bot.SendTextMessageAsync(new ChatId(chatId), signMessage);
+            Console.WriteLine("sm " + signMessage);
         }
     }
 }
