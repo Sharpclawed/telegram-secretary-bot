@@ -1,15 +1,11 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using System.Timers;
 using Telegram.Bot;
 using Telegram.Bot.Args;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Types.InputFiles;
 using TelegramBotTry1.Domain;
-using TelegramBotTry1.Dto;
-using TelegramBotTry1.Enums;
 
 namespace TelegramBotTry1
 {
@@ -162,7 +158,17 @@ namespace TelegramBotTry1
             //var chatId = -219324188; //чат 125
             long chatId = -1001100176543; //чат БотВажное
             Bot.SendTextMessageAsync(new ChatId(chatId), "Работаю в штатном режиме");
-            Console.WriteLine("sm Работаю в штатном режиме");
+            DateTime lastMessageDate;
+            string lastMessageChat;
+            
+            using (var context = new MsgContext())
+            {
+                var lastMessage = context.MessageDataSets.OrderByDescending(message => message.Date).FirstOrDefault();
+                lastMessageDate = lastMessage?.Date ?? DateTime.MinValue;
+                lastMessageChat = lastMessage?.ChatName;
+            }
+
+            Console.WriteLine("sm Работаю в штатном режиме\r\nПоследнее сообщение от " + lastMessageDate.ToString() + " в \"" + lastMessageChat + "\"");
         }
     }
 }
