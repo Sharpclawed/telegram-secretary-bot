@@ -112,9 +112,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdminDataSetExtensions.cs" />
     <Compile Include="CommandMessageProcessor.cs" />
     <Compile Include="ContentSaver.cs" />
-    <Compile Include="DataSetExtensions.cs" />
+    <Compile Include="Dto\User.cs" />
+    <Compile Include="MessageDataSetExtensions.cs" />
     <Compile Include="Domain\AdminDataSet.cs" />
     <Compile Include="Domain\BookkeeperDataSet.cs" />
     <Compile Include="Dto\UserManagingCommand.cs" />

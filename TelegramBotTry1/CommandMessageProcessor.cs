@@ -18,6 +18,8 @@ namespace TelegramBotTry1
             if (!isMessagePersonal)
                 return;
 
+            //TODO парсинг комманд вынести сюда
+
             if (message.Text.StartsWith("/help"))
             {
                 const string helperMsg =
@@ -34,31 +36,30 @@ namespace TelegramBotTry1
                 {
                     using (var context = new MsgContext())
                     {
-                        //TODO Вынести в Command Provider
-                        var commandConfig = new HistoryCommand(message.Text);
+                        var command = new HistoryCommand(message.Text);
 
                         //TODO записать, не разрывая флуент
-                        if (commandConfig.Type == HistoryCommandType.Unknown)
+                        if (command.Type == HistoryCommandType.Unknown)
                         {
                             await bot.SendTextMessageAsync(message.Chat.Id, "Неизвестная команда");
                             return;
                         }
 
-                        var messageDataSets = context.Set<MessageDataSet>().GetActualDates(commandConfig);
+                        var messageDataSets = context.Set<MessageDataSet>().AsNoTracking().GetActualDates(command);
                         if (!messageDataSets.Any())
                         {
                             await bot.SendTextMessageAsync(message.Chat.Id, "В данном периоде нет сообщений");
                             return;
                         }
 
-                        messageDataSets = messageDataSets.GetActualChats(commandConfig);
+                        messageDataSets = messageDataSets.GetActualChats(command);
                         if (messageDataSets == null || !messageDataSets.Any())
                         {
                             await bot.SendTextMessageAsync(message.Chat.Id, "В выбранных чатах нет сообщений");
                             return;
                         }
 
-                        messageDataSets = messageDataSets.GetActualUser(commandConfig);
+                        messageDataSets = messageDataSets.GetActualUser(command);
                         if (!messageDataSets.Any())
                         {
                             await bot.SendTextMessageAsync(message.Chat.Id, "По данному пользователю нет сообщений");
@@ -68,12 +69,14 @@ namespace TelegramBotTry1
                         var dataSets = messageDataSets
                             .ToList()
                             .GroupBy(x => x.ChatId)
-                            .ToDictionary(gdc => gdc.Key, gdc => gdc.ToList())
-                            .CheckAskerRights(bot, message.From.Id);
+                            .ToDictionary(gdc => gdc.Key, gdc => gdc.ToList());
+
+                        if (IsUserDatabaseAbsoluteAdmin(context, message.From.Id))
+                            dataSets = dataSets.CheckAskerRights(bot, message.From.Id);
 
                         if (!dataSets.Any())
                         {
-                            await bot.SendTextMessageAsync(message.Chat.Id, "У вас не хватает прав на получение этой информации");
+                            await bot.SendTextMessageAsync(message.Chat.Id, "Нет данных за указанный период");
                             return;
                         }
 
@@ -88,10 +91,137 @@ namespace TelegramBotTry1
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("/history " + ex.Message);
+                    Console.WriteLine(ex.Message);
+                    Console.WriteLine(ex.InnerException);
                     await bot.SendTextMessageAsync(message.Chat.Id, ex.Message);
                 }
             }
+            else if (message.Text.StartsWith("/add") || message.Text.StartsWith("/remove"))
+            {
+                try
+                {
+                    var command = new UserManagingCommand(message.Text);
+                    //TODO записать, не разрывая флуент
+                    if (command.ManagingType == ManagingType.Unknown || command.UserType == UserType.Unknown)
+                    {
+                        await bot.SendTextMessageAsync(message.Chat.Id, "Неизвестная команда");
+                        return;
+                    }
+
+                    using (var context = new MsgContext())
+                    {
+                        var adminDataSets = context.Set<AdminDataSet>();
+                        var messageDataSets = context.Set<MessageDataSet>();
+                        var bkDataSets = context.Set<BookkeeperDataSet>();
+
+                        var user = messageDataSets.GetUserByUserName(command.UserUserName);
+
+                        if (adminDataSets.IsAdmin(message.From.Id))
+                        {
+                            if (command.UserType == UserType.Admin)
+                            {
+                                if (command.ManagingType == ManagingType.Add && !adminDataSets.IsAdmin(user.UserId))
+                                    adminDataSets.Add(new AdminDataSet
+                                    {
+                                        AddTime = DateTime.UtcNow,
+                                        AddedUserId = message.From.Id,
+                                        AddedUserName = message.From.Username,
+                                        UserId = user.UserId,
+                                        UserName = command.UserUserName
+                                    });
+                                else if (command.ManagingType == ManagingType.Remove && adminDataSets.IsAdmin(user.UserId))
+                                {
+                                    var adminDataSet = adminDataSets.Single(x => x.UserId == user.UserId && x.DeleteTime == null);
+                                    adminDataSet.DeleteTime = DateTime.UtcNow;
+                                    adminDataSet.DeletedUserId = message.From.Id;
+                                    adminDataSet.DeletedUserName = message.From.Username;
+                                }
+                            }
+                            else if (command.UserType == UserType.Bookkeeper)
+                            {
+                                if (command.ManagingType == ManagingType.Add && !bkDataSets.Any(x => x.UserId == user.UserId))
+                                    bkDataSets.Add(new BookkeeperDataSet
+                                    {
+                                        UserId = user.UserId,
+                                        UserName = command.UserUserName,
+                                        UserFirstName = user.Name,
+                                        UserLastName = user.Surname
+                                    });
+                                else if (command.ManagingType == ManagingType.Remove)
+                                {
+                                    bkDataSets.Remove(bkDataSets.First(x => x.UserId == user.UserId));
+                                }
+                            }
+
+                            context.SaveChanges();
+                            await bot.SendTextMessageAsync(message.Chat.Id, "Команда обработана");
+                        }
+                        else
+                        {
+                            await bot.SendTextMessageAsync(message.Chat.Id, "У вас не хватает прав");
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    Console.WriteLine(ex.InnerException);
+                    await bot.SendTextMessageAsync(message.Chat.Id, ex.Message);
+                }
+            }
+            else if (message.Text.StartsWith("/view"))
+            {
+                try
+                {
+                    var command = new UserViewCommand(message.Text);
+                    //TODO записать, не разрывая флуент
+                    if (command.ManagingType == ManagingType.Unknown || command.UserType == UserType.Unknown)
+                    {
+                        await bot.SendTextMessageAsync(message.Chat.Id, "Неизвестная команда");
+                        return;
+                    }
+
+                    using (var context = new MsgContext())
+                    {
+                        var adminDataSets = context.Set<AdminDataSet>().AsNoTracking();
+                        var bkDataSets = context.Set<BookkeeperDataSet>().AsNoTracking();
+
+                        if (adminDataSets.IsAdmin(message.From.Id))
+                        {
+                            switch (command.UserType)
+                            {
+                                case UserType.Admin:
+                                {
+                                    var result = string.Join("\r\n", adminDataSets.Where(x => x.DeleteTime == null).Select(x => x.UserName + " " + x.AddTime.Date).ToList());
+                                    await bot.SendTextMessageAsync(message.Chat.Id, "Список админов:\r\n" + result);
+                                    break;
+                                }
+                                case UserType.Bookkeeper:
+                                {
+                                    var result = string.Join("\r\n", bkDataSets.Select(x => x.UserLastName + " " + x.UserFirstName).ToList());
+                                    await bot.SendTextMessageAsync(message.Chat.Id, "Список бухгалтеров:\r\n" + result);
+                                    break;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            await bot.SendTextMessageAsync(message.Chat.Id, "У вас не хватает прав");
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    Console.WriteLine(ex.InnerException);
+                    await bot.SendTextMessageAsync(message.Chat.Id, ex.Message);
+                }
+            }
+        }
+
+        private static bool IsUserDatabaseAbsoluteAdmin(MsgContext context, int askerId)
+        {
+            return context.Set<AdminDataSet>().AsNoTracking().IsAdmin(askerId);
         }
     }
 }

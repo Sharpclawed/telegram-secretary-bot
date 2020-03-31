@@ -7,10 +7,15 @@ namespace TelegramBotTry1
     public class MsgContext : DbContext
     {
         private static string ConnectionString => "Database=TelegramHistory2;Password=postgres;User ID=postgres;Server=localhost";
+
         public MsgContext() : base(ConnectionString)
         {
         }
+
         public DbSet<MessageDataSet> MessageDataSets { get; set; }
+        public DbSet<AdminDataSet> AdminDataSets { get; set; }
+        public DbSet<BookkeeperDataSet> BookkeeperDataSets { get; set; }
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

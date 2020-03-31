@@ -9,10 +9,10 @@ using TelegramBotTry1.Enums;
 
 namespace TelegramBotTry1
 {
-    public static class DataSetExtensions
+    public static class MessageDataSetExtensions
     {
         public static IQueryable<IMessageDataSet> GetActualDates(this IQueryable<IMessageDataSet> dataSets,
-                                                                HistoryCommand command)
+            HistoryCommand command)
         {
             return dataSets.Where(x => x.Date >= command.Begin && x.Date < command.End);
         }
@@ -35,15 +35,15 @@ namespace TelegramBotTry1
         }
 
         public static IQueryable<IMessageDataSet> GetActualUser(this IQueryable<IMessageDataSet> dataSets,
-                                                                HistoryCommand command)
+            HistoryCommand command)
         {
             switch (command.Type)
             {
                 case HistoryCommandType.SingleUser:
                     return from dataset in dataSets
-                           join chatId in dataSets.Where(x => x.UserId.ToString() == command.NameOrId)
-                                                  .Select(x => x.ChatId).Distinct() on dataset.ChatId equals chatId
-                           select dataset;
+                        join chatId in dataSets.Where(x => x.UserId.ToString() == command.NameOrId)
+                            .Select(x => x.ChatId).Distinct() on dataset.ChatId equals chatId
+                        select dataset;
                 default:
                     return dataSets;
             }
@@ -52,9 +52,6 @@ namespace TelegramBotTry1
         public static Dictionary<long, List<IMessageDataSet>> CheckAskerRights(
             this Dictionary<long, List<IMessageDataSet>> dataSetsDct, TelegramBotClient bot, int askerId)
         {
-            if (IsUserDatabaseAbsoluteAdmin(askerId))
-                return dataSetsDct;
-
             var result = new Dictionary<long, List<IMessageDataSet>>();
             foreach (var dataSet in dataSetsDct)
             {
@@ -67,12 +64,22 @@ namespace TelegramBotTry1
                 if (allowSendFeedback)
                     result.Add(dataSet.Key, dataSet.Value);
             }
+
             return result;
         }
 
-        private static bool IsUserDatabaseAbsoluteAdmin(int askerId)
+        public static User GetUserByUserName(this IQueryable<IMessageDataSet> dataSets, string userName)
         {
-            return askerId == 210604626 || askerId == 160511161; //Вика/я
+            var message = dataSets.Where(x => x.UserName == userName).OrderByDescending(x => x.Date).FirstOrDefault();
+            if (message == null)
+                throw new ArgumentException("Пользователь не найден");
+            return new User
+            {
+                UserId = message.UserId,
+                Username = message.UserName,
+                Name = message.UserFirstName,
+                Surname = message.UserLastName
+            };
         }
     }
 }
