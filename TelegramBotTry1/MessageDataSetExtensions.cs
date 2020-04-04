@@ -70,7 +70,7 @@ namespace TelegramBotTry1
 
         public static User GetUserByUserName(this IQueryable<IMessageDataSet> dataSets, string userName)
         {
-            var message = dataSets.Where(x => x.UserName == userName).OrderByDescending(x => x.Date).FirstOrDefault();
+            var message = dataSets.Where(x => x.UserName.ToLower() == userName.ToLower()).OrderByDescending(x => x.Date).FirstOrDefault();
             if (message == null)
                 throw new ArgumentException("Пользователь не найден");
             return new User

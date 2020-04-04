@@ -23,10 +23,16 @@ namespace TelegramBotTry1
             if (message.Text.StartsWith("/help"))
             {
                 const string helperMsg =
-                        "Получить историю:\r\n"
-                        + @"\r\n/history: ""Название чата"" ""Дата начала"" ""Кол-во дней"""
-                        + @"\r\n/historyall: ""Дата начала"" ""Кол-во дней"""
-                        + @"\r\n/historyof: ""id аккаунта"" ""Дата начала"" ""Кол-во дней"""
+                        "Получить историю:"
+                        + "\r\n/history: \"Название чата\" \"Дата начала\" \"Кол-во дней\""
+                        + "\r\n/historyall: \"Дата начала\" \"Кол-во дней\""
+                        + "\r\n/historyof: \"id аккаунта\" \"Дата начала\" \"Кол-во дней\""
+                        + "\r\n/addadmin: \"username\""
+                        + "\r\n/removeadmin: \"username\""
+                        + "\r\n/viewadmins"
+                        + "\r\n/addbk: \"username\""
+                        + "\r\n/removebk: \"username\""
+                        + "\r\n/viewbk"
                     ;
                 await bot.SendTextMessageAsync(message.Chat.Id, helperMsg);
             }
@@ -113,11 +119,10 @@ namespace TelegramBotTry1
                         var adminDataSets = context.Set<AdminDataSet>();
                         var messageDataSets = context.Set<MessageDataSet>();
                         var bkDataSets = context.Set<BookkeeperDataSet>();
-
-                        var user = messageDataSets.GetUserByUserName(command.UserUserName);
-
+                        
                         if (adminDataSets.IsAdmin(message.From.Id))
                         {
+                            var user = messageDataSets.GetUserByUserName(command.UserUserName);
                             if (command.UserType == UserType.Admin)
                             {
                                 if (command.ManagingType == ManagingType.Add && !adminDataSets.IsAdmin(user.UserId))
@@ -192,13 +197,13 @@ namespace TelegramBotTry1
                             {
                                 case UserType.Admin:
                                 {
-                                    var result = string.Join("\r\n", adminDataSets.Where(x => x.DeleteTime == null).Select(x => x.UserName + " " + x.AddTime.Date).ToList());
+                                    var result = string.Join("\r\n", adminDataSets.Where(x => x.DeleteTime == null).ToList().Select(x => x.UserName + " " + x.AddTime.ToShortDateString()));
                                     await bot.SendTextMessageAsync(message.Chat.Id, "Список админов:\r\n" + result);
                                     break;
                                 }
                                 case UserType.Bookkeeper:
                                 {
-                                    var result = string.Join("\r\n", bkDataSets.Select(x => x.UserLastName + " " + x.UserFirstName).ToList());
+                                    var result = string.Join("\r\n", bkDataSets.ToList().Select(x => x.UserFirstName + " " + x.UserLastName));
                                     await bot.SendTextMessageAsync(message.Chat.Id, "Список бухгалтеров:\r\n" + result);
                                     break;
                                 }
