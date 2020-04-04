@@ -1,5 +1,7 @@
 ﻿using System.Data.Entity;
+using System.Data.Entity.Migrations;
 using TelegramBotTry1.Domain;
+using TelegramBotTry1.Migrations;
 
 namespace TelegramBotTry1
 {
@@ -21,19 +23,7 @@ namespace TelegramBotTry1
             base.OnModelCreating(modelBuilder);
             // PostgreSQL uses the public schema by default - not dbo.
             modelBuilder.HasDefaultSchema("public");
-            //Database.SetInitializer(new MigrateDatabaseToLatestVersion<MsgContext, Configuration>());
+            Database.SetInitializer(new MigrateDatabaseToLatestVersion<MsgContext, Configuration>());
         }
     }
-    //public sealed class Configuration : DbMigrationsConfiguration<MsgContext>
-    //{
-    //    public Configuration()
-    //    {
-    //        AutomaticMigrationsEnabled = true;
-    //    }
-
-    //    protected override void Seed(MsgContext context)
-    //    {
-
-    //    }
-    //}
 }
