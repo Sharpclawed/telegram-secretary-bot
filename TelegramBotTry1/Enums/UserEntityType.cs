@@ -1,9 +1,10 @@
 ﻿namespace TelegramBotTry1.Enums
 {
-    public enum UserType
+    public enum UserEntityType
     {
         Unknown,
         Admin,
-        Bookkeeper
+        Bookkeeper,
+        Waiter
     }
 }

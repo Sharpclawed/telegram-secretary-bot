@@ -11,7 +11,7 @@ namespace TelegramBotTry1.Dto
         //public string UserSurname { get; }
         //public DateTime Date { get; }
         public ManagingType ManagingType { get; }
-        public UserType UserType { get; }
+        public UserEntityType UserType { get; }
         //public string AdminId { get; }
         //public string AdminUsername { get; }
 
@@ -42,13 +42,13 @@ namespace TelegramBotTry1.Dto
             switch (match.Groups[2].Value)
             {
                 case "admin":
-                    UserType = UserType.Admin;
+                    UserType = UserEntityType.Admin;
                     break;
                 case "bk":
-                    UserType = UserType.Bookkeeper;
+                    UserType = UserEntityType.Bookkeeper;
                     break;
                 default:
-                    UserType = UserType.Unknown;
+                    UserType = UserEntityType.Unknown;
                     break;
             }
 

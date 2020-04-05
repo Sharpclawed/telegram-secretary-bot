@@ -33,6 +33,7 @@ namespace TelegramBotTry1
                         + "\r\n/addbk: \"username\""
                         + "\r\n/removebk: \"username\""
                         + "\r\n/viewbk"
+                        + "\r\n/viewwaiters"
                     ;
                 await bot.SendTextMessageAsync(message.Chat.Id, helperMsg);
             }
@@ -108,7 +109,7 @@ namespace TelegramBotTry1
                 {
                     var command = new UserManagingCommand(message.Text);
                     //TODO записать, не разрывая флуент
-                    if (command.ManagingType == ManagingType.Unknown || command.UserType == UserType.Unknown)
+                    if (command.ManagingType == ManagingType.Unknown || command.UserType == UserEntityType.Unknown)
                     {
                         await bot.SendTextMessageAsync(message.Chat.Id, "Неизвестная команда");
                         return;
@@ -123,7 +124,7 @@ namespace TelegramBotTry1
                         if (adminDataSets.IsAdmin(message.From.Id))
                         {
                             var user = messageDataSets.GetUserByUserName(command.UserUserName);
-                            if (command.UserType == UserType.Admin)
+                            if (command.UserType == UserEntityType.Admin)
                             {
                                 if (command.ManagingType == ManagingType.Add && !adminDataSets.IsAdmin(user.UserId))
                                     adminDataSets.Add(new AdminDataSet
@@ -142,7 +143,7 @@ namespace TelegramBotTry1
                                     adminDataSet.DeletedUserName = message.From.Username;
                                 }
                             }
-                            else if (command.UserType == UserType.Bookkeeper)
+                            else if (command.UserType == UserEntityType.Bookkeeper)
                             {
                                 if (command.ManagingType == ManagingType.Add && !bkDataSets.Any(x => x.UserId == user.UserId))
                                     bkDataSets.Add(new BookkeeperDataSet
@@ -180,7 +181,7 @@ namespace TelegramBotTry1
                 {
                     var command = new UserViewCommand(message.Text);
                     //TODO записать, не разрывая флуент
-                    if (command.ManagingType == ManagingType.Unknown || command.UserType == UserType.Unknown)
+                    if (command.ManagingType == ManagingType.Unknown || command.ContentType == UserEntityType.Unknown)
                     {
                         await bot.SendTextMessageAsync(message.Chat.Id, "Неизвестная команда");
                         return;
@@ -190,21 +191,36 @@ namespace TelegramBotTry1
                     {
                         var adminDataSets = context.Set<AdminDataSet>().AsNoTracking();
                         var bkDataSets = context.Set<BookkeeperDataSet>().AsNoTracking();
+                        var messageDataSets = context.Set<MessageDataSet>().AsNoTracking();
 
                         if (adminDataSets.IsAdmin(message.From.Id))
                         {
-                            switch (command.UserType)
+                            switch (command.ContentType)
                             {
-                                case UserType.Admin:
+                                case UserEntityType.Admin:
                                 {
-                                    var result = string.Join("\r\n", adminDataSets.Where(x => x.DeleteTime == null).ToList().Select(x => x.UserName + " " + x.AddTime.ToShortDateString()));
+                                    var values = adminDataSets.Where(x => x.DeleteTime == null).ToList().Select(x => x.UserName + " " + x.AddTime.ToShortDateString());
+                                    var result = string.Join("\r\n", values);
                                     await bot.SendTextMessageAsync(message.Chat.Id, "Список админов:\r\n" + result);
                                     break;
                                 }
-                                case UserType.Bookkeeper:
+                                case UserEntityType.Bookkeeper:
                                 {
-                                    var result = string.Join("\r\n", bkDataSets.ToList().Select(x => x.UserFirstName + " " + x.UserLastName));
+                                    var values = bkDataSets.ToList().Select(x => x.UserFirstName + " " + x.UserLastName);
+                                    var result = string.Join("\r\n", values);
                                     await bot.SendTextMessageAsync(message.Chat.Id, "Список бухгалтеров:\r\n" + result);
+                                    break;
+                                }
+                                case UserEntityType.Waiter:
+                                {
+                                    var values = (
+                                        from msg in messageDataSets
+                                        group msg by msg.ChatId
+                                        into groups
+                                        select groups.OrderByDescending(p => p.Date).FirstOrDefault()
+                                    ).ToList();
+                                    var result = string.Join("\r\n", values.Select(z => z.ChatName));
+                                    await bot.SendTextMessageAsync(message.Chat.Id,"Список чатов с ожиданием:\r\n" + result);
                                     break;
                                 }
                             }

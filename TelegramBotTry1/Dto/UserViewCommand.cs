@@ -6,7 +6,7 @@ namespace TelegramBotTry1.Dto
     public class UserViewCommand
     {
         public ManagingType ManagingType { get; }
-        public UserType UserType { get; }
+        public UserEntityType ContentType { get; }
 
         public UserViewCommand(string messageText)
         {
@@ -32,13 +32,16 @@ namespace TelegramBotTry1.Dto
             {
                 case "admin":
                 case "admins":
-                    UserType = UserType.Admin;
+                    ContentType = UserEntityType.Admin;
                     break;
                 case "bk":
-                    UserType = UserType.Bookkeeper;
+                    ContentType = UserEntityType.Bookkeeper;
+                    break;
+                case "waiters":
+                    ContentType = UserEntityType.Waiter;
                     break;
                 default:
-                    UserType = UserType.Unknown;
+                    ContentType = UserEntityType.Unknown;
                     break;
             }
         }

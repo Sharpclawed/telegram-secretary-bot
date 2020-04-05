@@ -122,7 +122,7 @@
     <Compile Include="Dto\UserManagingCommand.cs" />
     <Compile Include="Dto\UserViewCommand.cs" />
     <Compile Include="Enums\ManagingType.cs" />
-    <Compile Include="Enums\UserType.cs" />
+    <Compile Include="Enums\UserEntityType.cs" />
     <Compile Include="Migrations\202002171859206_InitialCreate.cs" />
     <Compile Include="Migrations\202002171859206_InitialCreate.designer.cs">
       <DependentUpon>202002171859206_InitialCreate.cs</DependentUpon>
