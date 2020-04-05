@@ -6,7 +6,7 @@
     {
         public Configuration()
         {
-            AutomaticMigrationsEnabled = true;
+            AutomaticMigrationsEnabled = false;
             ContextKey = "TelegramBotTry1.MsgContext";
         }
 
