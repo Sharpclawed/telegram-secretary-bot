@@ -239,16 +239,16 @@ namespace TelegramBotTry1
                                             msg.Message
                                         }
                                     ).ToList();
-                                    foreach (var msg in lastMessagesFromDirectors.Take(30))
+                                    var lastMessages30 = lastMessagesFromDirectors.Take(30).ToList();
+                                    foreach (var msg in lastMessages30)
                                     {
                                         var result = string.Format(
                                             @"В чате {0} сообщение от {1} {2}, оставленное в {3}, без ответа ({4}). Текст сообщения: ""{5}"""
                                             , msg.ChatName, msg.UserLastName, msg.UserFirstName,
                                             msg.Date.AddHours(10).AddHours(-8)
-                                            , DateTime.UtcNow.Subtract(msg.Date).ToString(@"dd hh\:mm\:ss"),
+                                            , DateTime.UtcNow.Subtract(msg.Date).ToString(@"dd\.hh\:mm\:ss"),
                                             msg.Message);
-                                        await bot.SendTextMessageAsync(message.Chat.Id,
-                                            "Список чатов с ожиданием:\r\n" + result);
+                                        await bot.SendTextMessageAsync(message.Chat.Id, result);
                                     }
 
                                     if (lastMessagesFromDirectors.Count > 30)
