@@ -27,9 +27,11 @@ namespace TelegramBotTry1
                         + "\r\n/history: \"Название чата\" \"Дата начала\" \"Кол-во дней\""
                         + "\r\n/historyall: \"Дата начала\" \"Кол-во дней\""
                         + "\r\n/historyof: \"id аккаунта\" \"Дата начала\" \"Кол-во дней\""
+                        + "Работа с админами:"
                         + "\r\n/addadmin: \"username\""
                         + "\r\n/removeadmin: \"username\""
                         + "\r\n/viewadmins"
+                        + "Работа с бухгалтерами:"
                         + "\r\n/addbk: \"username\""
                         + "\r\n/removebk: \"username\""
                         + "\r\n/viewbk"
@@ -213,14 +215,38 @@ namespace TelegramBotTry1
                                 }
                                 case UserEntityType.Waiter:
                                 {
-                                    var values = (
-                                        from msg in messageDataSets
-                                        group msg by msg.ChatId
-                                        into groups
-                                        select groups.OrderByDescending(p => p.Date).FirstOrDefault()
+                                    //TODO Может в память выгрузить перед join?
+                                    var allLastMessages =
+                                            from msg in messageDataSets
+                                            group msg by msg.ChatId
+                                            into groups
+                                            select groups.OrderByDescending(p => p.Date).FirstOrDefault()
+                                        ;
+                                    var lastMessagesFromDirectors = (
+                                        from msg in allLastMessages
+                                        from bookkeeper in bkDataSets
+                                            .Where(bk => bk.UserId == msg.UserId).DefaultIfEmpty()
+                                        from admin in adminDataSets.Where(x => x.DeleteTime == null)
+                                            .Where(adm => adm.UserId == msg.UserId).DefaultIfEmpty()
+                                        where bookkeeper == null && admin == null
+                                                                 && msg.ChatName != null
+                                        select new
+                                        {
+                                            msg.ChatName,
+                                            msg.UserFirstName,
+                                            msg.UserLastName,
+                                            msg.Date,
+                                            msg.Message
+                                        }
                                     ).ToList();
-                                    var result = string.Join("\r\n", values.Select(z => z.ChatName));
-                                    await bot.SendTextMessageAsync(message.Chat.Id,"Список чатов с ожиданием:\r\n" + result);
+                                    foreach (var msg in lastMessagesFromDirectors)
+                                    {
+                                        var result = string.Format(
+                                            @"В чате {0} сообщение от {1} {2}, оставленное в {3}, без ответа ({4}). Текст сообщения: ""{5}"""
+                                            , msg.ChatName, msg.UserLastName, msg.UserFirstName, msg.Date.AddHours(10).AddHours(-8)
+                                            , DateTime.UtcNow.Subtract(msg.Date).ToString(), msg.Message);
+                                        await bot.SendTextMessageAsync(message.Chat.Id, "Список чатов с ожиданием:\r\n" + result);
+                                        }
                                     break;
                                 }
                             }

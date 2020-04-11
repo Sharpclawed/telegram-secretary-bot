@@ -5,15 +5,9 @@ namespace TelegramBotTry1.Dto
 {
     public class UserManagingCommand
     {
-        //public string UserId { get; }
         public string UserUserName { get; }
-        //public string UserName { get; }
-        //public string UserSurname { get; }
-        //public DateTime Date { get; }
         public ManagingType ManagingType { get; }
         public UserEntityType UserType { get; }
-        //public string AdminId { get; }
-        //public string AdminUsername { get; }
 
         public UserManagingCommand(string messageText)
         {

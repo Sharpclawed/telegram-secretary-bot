@@ -10,7 +10,7 @@ namespace TelegramBotTry1.Dto
 
         public UserViewCommand(string messageText)
         {
-            var regex = new Regex(@"^[/](view)(admins|bk)$");
+            var regex = new Regex(@"^[/](view)(admins|bk|waiters)$");
             var match = regex.Match(messageText);
             if (match == Match.Empty)
             {
