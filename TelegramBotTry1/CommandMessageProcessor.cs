@@ -189,79 +189,68 @@ namespace TelegramBotTry1
                         return;
                     }
 
+                    bool isAdminAsking;
                     using (var context = new MsgContext())
                     {
                         var adminDataSets = context.Set<AdminDataSet>().AsNoTracking();
-                        var bkDataSets = context.Set<BookkeeperDataSet>().AsNoTracking();
-                        var messageDataSets = context.Set<MessageDataSet>().AsNoTracking();
+                        isAdminAsking = adminDataSets.IsAdmin(message.From.Id);
+                    }
 
-                        if (adminDataSets.IsAdmin(message.From.Id))
+                    if (isAdminAsking)
+                    {
+                        switch (command.ContentType)
                         {
-                            switch (command.ContentType)
+                            case UserEntityType.Admin:
                             {
-                                case UserEntityType.Admin:
+                                string result;
+                                using (var context = new MsgContext())
                                 {
-                                    var values = adminDataSets.Where(x => x.DeleteTime == null).ToList().Select(x => x.UserName + " " + x.AddTime.ToShortDateString());
-                                    var result = string.Join("\r\n", values);
-                                    await bot.SendTextMessageAsync(message.Chat.Id, "Список админов:\r\n" + result);
-                                    break;
+                                    var adminDataSets = context.Set<AdminDataSet>().AsNoTracking();
+                                    var values = adminDataSets.Where(x => x.DeleteTime == null).ToList()
+                                        .Select(x => x.UserName + " " + x.AddTime.ToShortDateString());
+                                    result = string.Join("\r\n", values);
                                 }
-                                case UserEntityType.Bookkeeper:
-                                {
-                                    var values = bkDataSets.ToList().Select(x => x.UserFirstName + " " + x.UserLastName);
-                                    var result = string.Join("\r\n", values);
-                                    await bot.SendTextMessageAsync(message.Chat.Id, "Список бухгалтеров:\r\n" + result);
-                                    break;
-                                }
-                                case UserEntityType.Waiter:
-                                {
-                                    //TODO Может в память выгрузить перед join?
-                                    var allLastMessages =
-                                            from msg in messageDataSets
-                                            group msg by msg.ChatId
-                                            into groups
-                                            select groups.OrderByDescending(p => p.Date).FirstOrDefault()
-                                        ;
-                                    var lastMessagesFromDirectors = (
-                                        from msg in allLastMessages
-                                        from bookkeeper in bkDataSets
-                                            .Where(bk => bk.UserId == msg.UserId).DefaultIfEmpty()
-                                        from admin in adminDataSets.Where(x => x.DeleteTime == null)
-                                            .Where(adm => adm.UserId == msg.UserId).DefaultIfEmpty()
-                                        where bookkeeper == null && admin == null
-                                                                 && msg.ChatName != null
-                                        select new
-                                        {
-                                            msg.ChatName,
-                                            msg.UserFirstName,
-                                            msg.UserLastName,
-                                            msg.Date,
-                                            msg.Message
-                                        }
-                                    ).ToList();
-                                    var lastMessages30 = lastMessagesFromDirectors.Take(30).ToList();
-                                    foreach (var msg in lastMessages30)
-                                    {
-                                        var result = string.Format(
-                                            @"В чате {0} сообщение от {1} {2}, оставленное в {3}, без ответа ({4}). Текст сообщения: ""{5}"""
-                                            , msg.ChatName, msg.UserLastName, msg.UserFirstName,
-                                            msg.Date.AddHours(10).AddHours(-8)
-                                            , DateTime.UtcNow.Subtract(msg.Date).ToString(@"dd\.hh\:mm\:ss"),
-                                            msg.Message);
-                                        await bot.SendTextMessageAsync(message.Chat.Id, result);
-                                    }
 
-                                    if (lastMessagesFromDirectors.Count > 30)
-                                        await bot.SendTextMessageAsync(message.Chat.Id,
-                                            "Всего таких чатов " + lastMessagesFromDirectors.Count + ", показано 30");
-                                    break;
+                                await bot.SendTextMessageAsync(message.Chat.Id, "Список админов:\r\n" + result);
+
+                                break;
+                            }
+                            case UserEntityType.Bookkeeper:
+                            {
+                                string result;
+                                using (var context = new MsgContext())
+                                {
+                                    var bkDataSets = context.Set<BookkeeperDataSet>().AsNoTracking();
+                                    var values = bkDataSets.ToList()
+                                        .Select(x => x.UserFirstName + " " + x.UserLastName);
+                                    result = string.Join("\r\n", values);
                                 }
+
+                                await bot.SendTextMessageAsync(message.Chat.Id, "Список бухгалтеров:\r\n" + result);
+                                break;
+                            }
+                            case UserEntityType.Waiter:
+                            {
+                                var sinceDate = DateTime.UtcNow.Date.AddMonths(-1);
+                                var untilDate = DateTime.UtcNow.Date.AddMinutes(-30);
+                                var waitersMessages = ViewWaitersProvider.GetWaiters(sinceDate, untilDate);
+                                foreach (var msg in waitersMessages)
+                                {
+                                    var result = string.Format(
+                                        @"В чате {0} сообщение от {1} {2}, оставленное в {3}, без ответа ({4}). Текст сообщения: ""{5}"""
+                                        , msg.ChatName, msg.UserLastName, msg.UserFirstName,
+                                        msg.Date.AddHours(10).AddHours(-8)
+                                        , DateTime.UtcNow.Subtract(msg.Date).ToString(@"dd\.hh\:mm\:ss"),
+                                        msg.Message);
+                                    await bot.SendTextMessageAsync(message.Chat.Id, result);
+                                }
+                                break;
                             }
                         }
-                        else
-                        {
-                            await bot.SendTextMessageAsync(message.Chat.Id, "У вас не хватает прав");
-                        }
+                    }
+                    else
+                    {
+                        await bot.SendTextMessageAsync(message.Chat.Id, "У вас не хватает прав");
                     }
                 }
                 catch (Exception ex)
