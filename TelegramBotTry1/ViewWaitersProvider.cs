@@ -17,13 +17,13 @@ namespace TelegramBotTry1
 
                 var allLastMessagesInChats = (
                             from msg in messageDataSets
+                            where msg.ChatName != null
+                                  && msg.Date > sinceDate
+                                  && msg.Date <= untilDate
                             group msg by msg.ChatId
                             into groups
                             select groups.OrderByDescending(p => p.Date).FirstOrDefault()
                         )
-                        .Where(msg => msg.ChatName != null
-                                      && msg.Date > sinceDate
-                                      && msg.Date <= untilDate)
                         .ToList()
                     ;
 

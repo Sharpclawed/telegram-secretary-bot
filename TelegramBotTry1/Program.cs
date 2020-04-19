@@ -41,7 +41,7 @@ namespace TelegramBotTry1
 
             Console.WriteLine(DateTime.Now + " Start working");
             ConfigureIAmAliveTimer();
-            //ConfigureViewWaitersTimer();
+            ConfigureViewWaitersTimer();
 
             Bot.StartReceiving();
             Console.ReadLine();
@@ -191,7 +191,7 @@ namespace TelegramBotTry1
         {
             var viewWaitersTimer = new Timer
             {
-                Interval = 1000 * 60 * 60 * 0.5 //30 минут
+                Interval = 1000 * 60 * 5 //5 минут
             };
             viewWaitersTimer.Elapsed += ViewWaitersEvent;
             viewWaitersTimer.AutoReset = true;
@@ -202,8 +202,8 @@ namespace TelegramBotTry1
         {
             try
             {
-                var sinceDate = DateTime.UtcNow.Date.AddMinutes(-90);
-                var untilDate = DateTime.UtcNow.Date.AddMinutes(-60);
+                var sinceDate = DateTime.UtcNow.AddMinutes(-65);
+                var untilDate = DateTime.UtcNow.AddMinutes(-60);
                 var waitersMessages = ViewWaitersProvider.GetWaiters(sinceDate, untilDate);
                 //TODO обобщить с процессором
                 foreach (var msg in waitersMessages)
