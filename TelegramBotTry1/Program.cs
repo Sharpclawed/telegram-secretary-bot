@@ -41,7 +41,7 @@ namespace TelegramBotTry1
 
             Console.WriteLine(DateTime.Now + " Start working");
             ConfigureIAmAliveTimer();
-            ConfigureViewWaitersTimer();
+            //ConfigureViewWaitersTimer();
 
             Bot.StartReceiving();
             Console.ReadLine();
@@ -86,16 +86,14 @@ namespace TelegramBotTry1
             }
             catch (SocketException e)
             {
-                Console.WriteLine(e.Message);
-                Console.WriteLine(e.InnerException);
-                Bot.SendTextMessageAsync(new ChatId(chatBotvaId), "Пропала коннекция к базе. Отключаюсь, чтобы не потерялись данные."
+                Console.WriteLine(e.ToString());
+                Bot.SendTextMessageAsync(new ChatId(chatBotvaId), "Пропала коннекция к базе. Отключаюсь, чтобы не потерялись данные. msg\r\n"
                 + "Пожалуйста, включите меня в течение суток");
                 throw;
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
-                Console.WriteLine(e.InnerException);
+                Console.WriteLine(e.ToString());
                 Bot.SendTextMessageAsync(new ChatId(chat125Id), e.ToString());
             }
         }
@@ -150,7 +148,7 @@ namespace TelegramBotTry1
         {
             try
             {
-                var scheduledRunUtc = DateTime.UtcNow.Date.AddHours(10).AddHours(-8); //7 часов относительно Гринвича, около того
+                var scheduledRunUtc = DateTime.UtcNow.Date.AddHours(10).AddHours(-8); //7 часов по-нашему
                 if (DateTime.UtcNow > scheduledRunUtc)
                 {
                     if (scheduledRunUtc.Date > lastIAmAliveCheckUtc.Date)
@@ -159,6 +157,13 @@ namespace TelegramBotTry1
                         lastIAmAliveCheckUtc = DateTime.UtcNow;
                     }
                 }
+            }
+            catch (SocketException exception)
+            {
+                Console.WriteLine(exception.ToString());
+                Bot.SendTextMessageAsync(new ChatId(chatBotvaId), "Пропала коннекция к базе. Отключаюсь, чтобы не потерялись данные. sgn\r\n"
+                                                                  + "Пожалуйста, включите меня в течение суток");
+                throw;
             }
             catch (Exception exception)
             {
@@ -174,13 +179,12 @@ namespace TelegramBotTry1
             using (var context = new MsgContext())
             {
                 var lastMessage = context.MessageDataSets.OrderByDescending(message => message.Date).FirstOrDefault();
-                lastMessageDate = lastMessage?.Date.AddHours(10).AddHours(-8) ?? DateTime.MinValue;
+                lastMessageDate = lastMessage?.Date.AddHours(5) ?? DateTime.MinValue;
                 lastMessageChat = lastMessage?.ChatName;
             }
 
-            var signMessage = "Работаю в штатном режиме\r\nПоследнее сообщение от " + lastMessageDate.ToString() + " в \"" + lastMessageChat + "\"";
+            var signMessage = "Работаю в штатном режиме\r\nПоследнее сообщение от " + lastMessageDate.ToString("dd/MM/yyyy H:mm") + " в \"" + lastMessageChat + "\"";
             Bot.SendTextMessageAsync(new ChatId(chatBotvaId), signMessage);
-            Console.WriteLine("sm " + signMessage);
         }
         
         private static void ConfigureViewWaitersTimer()
@@ -201,17 +205,24 @@ namespace TelegramBotTry1
                 var sinceDate = DateTime.UtcNow.Date.AddMinutes(-90);
                 var untilDate = DateTime.UtcNow.Date.AddMinutes(-60);
                 var waitersMessages = ViewWaitersProvider.GetWaiters(sinceDate, untilDate);
-                //TODO обобщить с ппроцессором
+                //TODO обобщить с процессором
                 foreach (var msg in waitersMessages)
                 {
                     var result = string.Format(
                         @"В чате {0} сообщение от {1} {2}, оставленное {3}, без ответа ({4}). Текст сообщения: ""{5}"""
                         , msg.ChatName, msg.UserLastName, msg.UserFirstName
-                        , msg.Date.AddHours(10).AddHours(-8).ToString("dd/MM/yyyy H:mm")
+                        , msg.Date.AddHours(5).ToString("dd/MM/yyyy H:mm")
                         , DateTime.UtcNow.Subtract(msg.Date).ToString(@"dd\.hh\:mm\:ss")
                         , msg.Message);
                     Bot.SendTextMessageAsync(chatUnasweredId, result);
                 }
+            }
+            catch (SocketException exception)
+            {
+                Console.WriteLine(exception.ToString());
+                Bot.SendTextMessageAsync(new ChatId(chatBotvaId), "Пропала коннекция к базе. Отключаюсь, чтобы не потерялись данные. wit\r\n"
+                                                                  + "Пожалуйста, включите меня в течение суток");
+                throw;
             }
             catch (Exception exception)
             {

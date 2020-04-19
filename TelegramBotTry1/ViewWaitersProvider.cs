@@ -11,16 +11,20 @@ namespace TelegramBotTry1
         {
             using (var context = new MsgContext())
             {
-                var adminDataSets = context.Set<AdminDataSet>().AsNoTracking().ToArray();
-                var bkDataSets = context.Set<BookkeeperDataSet>().AsNoTracking().ToArray();
+                var adminDataSets = context.Set<AdminDataSet>().ToArray();
+                var bkDataSets = context.Set<BookkeeperDataSet>().ToArray();
                 var messageDataSets = context.Set<MessageDataSet>().AsNoTracking();
 
                 var allLastMessagesInChats = (
-                        from msg in messageDataSets
-                        group msg by msg.ChatId
-                        into groups
-                        select groups.OrderByDescending(p => p.Date).FirstOrDefault()
-                    ).ToList()
+                            from msg in messageDataSets
+                            group msg by msg.ChatId
+                            into groups
+                            select groups.OrderByDescending(p => p.Date).FirstOrDefault()
+                        )
+                        .Where(msg => msg.ChatName != null
+                                      && msg.Date > sinceDate
+                                      && msg.Date <= untilDate)
+                        .ToList()
                     ;
 
                 var lastMessagesFromDirectors =
@@ -30,9 +34,6 @@ namespace TelegramBotTry1
                         from admin in adminDataSets.Where(x => x.DeleteTime == null)
                             .Where(adm => adm.UserId == msg.UserId).DefaultIfEmpty()
                         where bookkeeper == null && admin == null
-                                                 && msg.ChatName != null
-                                                 && msg.Date > sinceDate
-                                                 && msg.Date <= untilDate
                         select msg
                     ;
 
