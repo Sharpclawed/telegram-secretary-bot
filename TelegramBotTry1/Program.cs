@@ -18,7 +18,7 @@ namespace TelegramBotTry1
 
         private static readonly long chat125Id = -219324188; //чат 125
         private static readonly long chatBotvaId = -1001100176543; //чат БотВажное
-        private static readonly long chatUnasweredId = -480518776;
+        private static readonly long chatUnasweredId = -1001469821060;
 
         private static DateTime lastIAmAliveCheckUtc = DateTime.UtcNow.Date;
 
@@ -202,8 +202,8 @@ namespace TelegramBotTry1
         {
             try
             {
-                var sinceDate = DateTime.UtcNow.AddMinutes(-65);
-                var untilDate = DateTime.UtcNow.AddMinutes(-60);
+                var sinceDate = DateTime.UtcNow.AddMinutes(-125);
+                var untilDate = DateTime.UtcNow.AddMinutes(-120);
                 var waitersMessages = ViewWaitersProvider.GetWaiters(sinceDate, untilDate);
                 //TODO обобщить с процессором
                 foreach (var msg in waitersMessages)
