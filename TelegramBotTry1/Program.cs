@@ -202,19 +202,26 @@ namespace TelegramBotTry1
         {
             try
             {
-                var sinceDate = DateTime.UtcNow.AddMinutes(-125);
-                var untilDate = DateTime.UtcNow.AddMinutes(-120);
-                var waitersMessages = ViewWaitersProvider.GetWaiters(sinceDate, untilDate);
-                //TODO обобщить с процессором
-                foreach (var msg in waitersMessages)
+                var signalTime = e.SignalTime;
+
+                if (signalTime.Hour >= 5 && signalTime.Hour < 17)
                 {
-                    var result = string.Format(
-                        @"В чате {0} сообщение от {1} {2}, оставленное {3}, без ответа ({4}). Текст сообщения: ""{5}"""
-                        , msg.ChatName, msg.UserLastName, msg.UserFirstName
-                        , msg.Date.AddHours(5).ToString("dd/MM/yyyy H:mm")
-                        , DateTime.UtcNow.Subtract(msg.Date).ToString(@"dd\.hh\:mm\:ss")
-                        , msg.Message);
-                    Bot.SendTextMessageAsync(chatUnasweredId, result);
+                    var sinceDate = signalTime.Hour == 5 && signalTime.Minute <= 5
+                        ? DateTime.Today.AddDays(-1).AddHours(19).AddHours(5).AddHours(-2)
+                        : DateTime.UtcNow.AddMinutes(-125);
+                    var untilDate = DateTime.UtcNow.AddMinutes(-120);
+                    var waitersMessages = ViewWaitersProvider.GetWaiters(sinceDate, untilDate);
+                    //TODO обобщить с процессором
+                    foreach (var msg in waitersMessages)
+                    {
+                        var result = string.Format(
+                            @"В чате {0} сообщение от {1} {2}, оставленное {3}, без ответа ({4}). Текст сообщения: ""{5}"""
+                            , msg.ChatName, msg.UserLastName, msg.UserFirstName
+                            , msg.Date.AddHours(5).ToString("dd/MM/yyyy H:mm")
+                            , DateTime.UtcNow.Subtract(msg.Date).ToString(@"dd\.hh\:mm\:ss")
+                            , msg.Message);
+                        Bot.SendTextMessageAsync(chatUnasweredId, result);
+                    }
                 }
             }
             catch (SocketException exception)

@@ -7,7 +7,7 @@ namespace TelegramBotTry1
 {
     public static class ViewWaitersProvider
     {
-        public static List<MessageDataSet> GetWaiters(DateTime sinceDate, DateTime untilDate)
+        public static List<MessageDataSet> GetUnanswered(DateTime sinceDate, DateTime untilDate)
         {
             using (var context = new MsgContext())
             {
@@ -40,5 +40,34 @@ namespace TelegramBotTry1
                 return lastMessagesFromDirectors.ToList();
             }
         }
+
+        public static List<MessageDataSet> GetWaiters(DateTime sinceDate, DateTime untilDate)
+        {
+            return GetUnanswered(sinceDate, untilDate).Where(z => !IgnoreUnanswered.Contains(z.Message.ToLower().Replace(new []{'!','.',','}, ""))).ToList();
+        }
+
+        private static readonly List<string> IgnoreUnanswered = new List<string>
+        {
+            "ок",
+            "спасибо",
+            "спасибо большое",
+            "большое спасибо",
+            "понял спасибо",
+            "поняла спасибо",
+            "добрый день хорошо",
+            "добрый день хорошо спасибо",
+            "хорошо",
+            "хорошо спасибо",
+            "ага спасибо",
+            "да конечно спасибо",
+            "да",
+            "спс",
+            "увидел благодарю",
+            "увидела благодарю",
+            "ок благодарю",
+            "понял большое спасибо",
+            "благодарим вас",
+            "понятно спасибо за информацию",
+        };
     }
 }
