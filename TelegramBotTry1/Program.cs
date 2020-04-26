@@ -184,11 +184,12 @@ namespace TelegramBotTry1
             {
                 var signalTime = e.SignalTime;
 
-                if (signalTime.Hour >= 5 && signalTime.Hour < 18)
+                if (signalTime.Hour >= 5 && signalTime.Hour < 18 && signalTime.DayOfWeek != DayOfWeek.Saturday && signalTime.DayOfWeek != DayOfWeek.Sunday)
                 {
-                    Bot.SendTextMessageAsync(chat125Id, DateTime.UtcNow + " " + signalTime.Hour + " " + signalTime.Minute);
                     var sinceDate = signalTime.Hour == 5 && signalTime.Minute <= 5
-                        ? DateTime.UtcNow.AddHours(-11).AddMinutes(-125)
+                        ? DateTime.UtcNow.AddHours(signalTime.DayOfWeek != DayOfWeek.Monday
+                            ? -11
+                            : -59).AddMinutes(-125)
                         : DateTime.UtcNow.AddMinutes(-125);
                     var untilDate = DateTime.UtcNow.AddMinutes(-120);
                     var waitersMessages = ViewWaitersProvider.GetWaiters(sinceDate, untilDate);
