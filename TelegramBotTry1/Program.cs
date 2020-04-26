@@ -80,7 +80,6 @@ namespace TelegramBotTry1
                 var recievedDataSet = new MessageDataSet(message);
 
                 ProcessIfCommand(message);
-                SaveContent(message, recievedDataSet);
 
                 SaveToDatabase(recievedDataSet);
             }
@@ -102,25 +101,6 @@ namespace TelegramBotTry1
         {
             if (message.Type == MessageType.Text)
                 CommandMessageProcessor.ProcessTextMessage(Bot, message);
-        }
-
-        private static void SaveContent(Message message, IMessageDataSet messageDataSet)
-        {
-            switch (message.Type)
-            {
-                case MessageType.Document:
-                    messageDataSet.Message =
-                        ContentSaver.SaveDocument(Bot, message.Document.FileId, message.Document.FileName);
-                    break;
-                case MessageType.Voice:
-                    messageDataSet.Message =
-                        ContentSaver.SaveDocument(Bot, message.Voice.FileId, message.Voice.FileId + ".ogg");
-                    break;
-                case MessageType.Photo:
-                    var photoToSave = message.Photo.OrderByDescending(x => x.FileSize).First();
-                    messageDataSet.Message = ContentSaver.SaveDocument(Bot, photoToSave.FileId, photoToSave.FileId);
-                    break;
-            }
         }
 
         private static void SaveToDatabase(MessageDataSet messageDataSet)

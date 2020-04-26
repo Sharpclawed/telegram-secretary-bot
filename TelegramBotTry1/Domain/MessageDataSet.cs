@@ -59,11 +59,9 @@ namespace TelegramBotTry1.Domain
                               message.Contact.PhoneNumber;
                     break;
 
-                //Message присвоится позднее
                 case MessageType.Document:
                 case MessageType.Voice:
                 case MessageType.Photo:
-                //Ничего не присваиваем
                 case MessageType.Unknown:
                 case MessageType.Audio:
                 case MessageType.Video:
@@ -86,7 +84,7 @@ namespace TelegramBotTry1.Domain
                 case MessageType.MigratedToSupergroup:
                 case MessageType.MigratedFromGroup:
                 case MessageType.Poll:
-                default:
+                    Message = "MessageType: " + message.Type;
                     break;
             }
             //MessageType = message.Type;

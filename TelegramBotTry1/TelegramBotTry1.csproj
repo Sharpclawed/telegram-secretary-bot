@@ -114,7 +114,6 @@
   <ItemGroup>
     <Compile Include="AdminDataSetExtensions.cs" />
     <Compile Include="CommandMessageProcessor.cs" />
-    <Compile Include="ContentSaver.cs" />
     <Compile Include="Dto\User.cs" />
     <Compile Include="MessageDataSetExtensions.cs" />
     <Compile Include="Domain\AdminDataSet.cs" />
