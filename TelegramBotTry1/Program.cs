@@ -186,7 +186,7 @@ namespace TelegramBotTry1
 
                 if (signalTime.Hour >= 5 && signalTime.Hour < 18 && signalTime.DayOfWeek != DayOfWeek.Saturday && signalTime.DayOfWeek != DayOfWeek.Sunday)
                 {
-                    var sinceDate = signalTime.Hour == 5 && signalTime.Minute <= 5
+                    var sinceDate = signalTime.Hour == 5 && signalTime.Minute < 5
                         ? DateTime.UtcNow.AddHours(signalTime.DayOfWeek != DayOfWeek.Monday
                             ? -11
                             : -59).AddMinutes(-125)
