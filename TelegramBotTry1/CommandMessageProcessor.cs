@@ -54,6 +54,12 @@ namespace TelegramBotTry1
                             return;
                         }
 
+                        if (!IsUserDatabaseAbsoluteAdmin(context, message.From.Id))
+                        {
+                            await bot.SendTextMessageAsync(message.Chat.Id, "У вас не хватает прав");
+                            return;
+                        }
+
                         var messageDataSets = context.Set<MessageDataSet>().AsNoTracking().GetActualDates(command);
                         if (!messageDataSets.Any())
                         {
@@ -79,10 +85,7 @@ namespace TelegramBotTry1
                             .ToList()
                             .GroupBy(x => x.ChatId)
                             .ToDictionary(gdc => gdc.Key, gdc => gdc.ToList());
-
-                        if (IsUserDatabaseAbsoluteAdmin(context, message.From.Id))
-                            dataSets = dataSets.CheckAskerRights(bot, message.From.Id);
-
+                        
                         if (!dataSets.Any())
                         {
                             await bot.SendTextMessageAsync(message.Chat.Id, "Нет данных за указанный период");

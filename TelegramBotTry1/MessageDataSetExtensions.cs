@@ -49,25 +49,6 @@ namespace TelegramBotTry1
             }
         }
 
-        public static Dictionary<long, List<IMessageDataSet>> CheckAskerRights(
-            this Dictionary<long, List<IMessageDataSet>> dataSetsDct, TelegramBotClient bot, int askerId)
-        {
-            var result = new Dictionary<long, List<IMessageDataSet>>();
-            foreach (var dataSet in dataSetsDct)
-            {
-                if (dataSet.Value.Count == 0)
-                    continue;
-                var chatMemberStatus = bot.GetChatMemberAsync(dataSet.Value[0].ChatId, askerId).Result.Status;
-                var allowSendFeedback = chatMemberStatus == ChatMemberStatus.Member ||
-                                        chatMemberStatus == ChatMemberStatus.Administrator ||
-                                        chatMemberStatus == ChatMemberStatus.Creator;
-                if (allowSendFeedback)
-                    result.Add(dataSet.Key, dataSet.Value);
-            }
-
-            return result;
-        }
-
         public static User GetUserByUserName(this IQueryable<IMessageDataSet> dataSets, string userName)
         {
             var message = dataSets.Where(x => x.UserName.ToLower() == userName.ToLower()).OrderByDescending(x => x.Date).FirstOrDefault();
