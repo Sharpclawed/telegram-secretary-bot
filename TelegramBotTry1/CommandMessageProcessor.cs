@@ -236,7 +236,7 @@ namespace TelegramBotTry1
                             {
                                 var sinceDate = DateTime.UtcNow.Date.AddMonths(-1);
                                 var untilDate = DateTime.UtcNow.Date.AddMinutes(-30);
-                                var waitersMessages = ViewWaitersProvider.GetUnanswered(sinceDate, untilDate);
+                                var waitersMessages = ViewWaitersProvider.GetWaiters(sinceDate, untilDate);
                                 foreach (var msg in waitersMessages)
                                 {
                                     var timeWithoutAnswer = DateTime.UtcNow.Subtract(msg.Date);
