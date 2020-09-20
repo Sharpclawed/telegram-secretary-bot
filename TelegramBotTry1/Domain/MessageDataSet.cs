@@ -84,7 +84,7 @@ namespace TelegramBotTry1.Domain
                 case MessageType.MigratedToSupergroup:
                 case MessageType.MigratedFromGroup:
                 case MessageType.Poll:
-                    Message = "MessageType: " + message.Type;
+                    Message = "MessageType: " + message.Type; //TODO Разделить на MessageType и Action
                     break;
             }
             //MessageType = message.Type;
