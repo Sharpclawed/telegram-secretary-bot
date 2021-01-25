@@ -4,6 +4,7 @@ using System.Linq;
 using NUnit.Framework;
 using TelegramBotTry1;
 using FluentAssertions;
+using Telegram.Bot.Types;
 using TelegramBotTry1.Domain;
 using TelegramBotTry1.Dto;
 
@@ -84,6 +85,26 @@ namespace FunctionalTests
                 MessageId = messageId,
                 Message = message
             };
+        }
+
+        //TODO mock for MessageDataSet
+        [Test]
+        public void ObviouslySuperfluousFilterTest()
+        {
+            var testCases = new List<string>
+            {
+                "Спасибо👍🏻",
+                "😊",
+                "Спасибо Насть",
+                "Спаибо🌷",
+                "Понятно)",
+                "Хорошо, понял, спасибо",
+                "🌸🌸🌸",
+            };
+            var set = testCases.Select(z => new MessageDataSet(new Message {Text = z, From = new Telegram.Bot.Types.User(), Chat = new Chat()})).ToList();
+            var sut = set.FilterObviouslySuperfluous();
+
+            sut.ShouldBeEquivalentTo(new List<MessageDataSet>());
         }
     }
 }

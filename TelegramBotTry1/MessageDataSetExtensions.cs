@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Telegram.Bot.Types.Enums;
-using Telegram.Bot;
+using System.Text.RegularExpressions;
 using TelegramBotTry1.Domain;
 using TelegramBotTry1.Dto;
 using TelegramBotTry1.Enums;
@@ -61,6 +61,87 @@ namespace TelegramBotTry1
                 Name = message.UserFirstName,
                 Surname = message.UserLastName
             };
+        }
+
+        public static IEnumerable<MessageDataSet> FilterObviouslySuperfluous(this IEnumerable<MessageDataSet> dataSets)
+        {
+            var ignoreUnanswered = new List<string>
+            {
+                "",
+                "ага",
+                "ага хорошо",
+                "благодарим вас",
+                "большое",
+                "вам",
+                "взаимно",
+                "вроде бы все хорошо",
+                "да",
+                "да конечно",
+                "да хорошо",
+                "нет",
+                "ну да",
+                "ну хорошо",
+                "ок",
+                "ок понял",
+                "ок поняла",
+                "ок спс",
+                "окей",
+                "окей понял",
+                "окей поняла",
+                "окей спс",
+                "отлично",
+                "понял",
+                "понял большое",
+                "понял ок",
+                "поняла",
+                "понятно",
+                "принято",
+                "сделаю",
+                "спс",
+                "супер",
+                "спаибо",
+                "увидел",
+                "увидела",
+                "ура",
+                "хорлшо",
+                "хорошо",
+                "хорошо понял",
+                "хорошо попробую",
+                "хорошо примем",
+                "хорошо сделаю сегодня",
+                "ясно",
+                "jr",
+                "ok",
+            };
+
+            return
+                dataSets.Select(z => new
+                    {
+                        msg = z,
+                        txt = new string(
+                            Regex.Replace(z.Message, @"\p{Cs}", "")
+                            .ToLower()
+                            .Replace(new[] {')', '(', '+' }, "")
+                            .Replace("айгюль", "")
+                            .Replace("благодарю", "")
+                            .Replace("вероника", "")
+                            .Replace("виктория", "")
+                            .Replace("добрый вечер", "")
+                            .Replace("добрый день", "")
+                            .Replace("доброе утро", "")
+                            .Replace("здравствуйте", "")
+                            .Replace("екатерина", "")
+                            .Replace("ирина", "")
+                            .Replace("насть", "")
+                            .Replace("светлана", "")
+                            .Replace("спасибо", "")
+                            .Replace("татьяна", "")
+                            .Trim()
+                            .Where(c => !char.IsPunctuation(c)).ToArray())
+                    })
+                    .Where(z => !ignoreUnanswered.Contains(z.txt))
+                    .Select(z => z.msg)
+                    .ToList();
         }
     }
 }
