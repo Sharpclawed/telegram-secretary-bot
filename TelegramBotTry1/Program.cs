@@ -129,13 +129,12 @@ namespace TelegramBotTry1
             try
             {
                 var scheduledRunUtc = DateTime.UtcNow.Date.AddHours(10).AddHours(-8); //7 часов по-нашему
-                if (DateTime.UtcNow > scheduledRunUtc)
+                if (DateTime.UtcNow > scheduledRunUtc
+                    && scheduledRunUtc.Date > lastIAmAliveCheckUtc.Date
+                    && (scheduledRunUtc.DayOfWeek == DayOfWeek.Saturday || scheduledRunUtc.DayOfWeek == DayOfWeek.Sunday))
                 {
-                    if (scheduledRunUtc.Date > lastIAmAliveCheckUtc.Date)
-                    {
-                        ShowASign();
-                        lastIAmAliveCheckUtc = DateTime.UtcNow;
-                    }
+                    ShowASign();
+                    lastIAmAliveCheckUtc = DateTime.UtcNow;
                 }
             }
             catch (SocketException exception)
@@ -164,7 +163,7 @@ namespace TelegramBotTry1
             }
 
             var signMessage = "Работаю в штатном режиме\r\nПоследнее сообщение от " + lastMessageDate.ToString("dd/MM/yyyy H:mm") + " в \"" + lastMessageChat + "\"";
-            Bot.SendTextMessageAsync(new ChatId(chatBotvaId), signMessage);
+            Bot.SendTextMessageAsync(new ChatId(chatUnasweredId), signMessage);
         }
         
         private static void ConfigureViewWaitersTimer()
