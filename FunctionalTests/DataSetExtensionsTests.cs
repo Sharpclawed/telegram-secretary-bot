@@ -100,6 +100,8 @@ namespace FunctionalTests
                 "Понятно)",
                 "Хорошо, понял, спасибо",
                 "🌸🌸🌸",
+                "вроде бы все хорошо",
+                "Да, хорошо!",
             };
             var set = testCases.Select(z => new MessageDataSet(new Message {Text = z, From = new Telegram.Bot.Types.User(), Chat = new Chat()})).ToList();
             var sut = set.FilterObviouslySuperfluous();
