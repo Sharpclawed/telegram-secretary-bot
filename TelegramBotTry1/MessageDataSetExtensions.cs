@@ -69,11 +69,11 @@ namespace TelegramBotTry1
             {
                 "",
                 "ага",
-                "благодарим вас",
                 "большое",
                 "вам",
-                "взаимно",
+                "вас",
                 "вроде бы все",
+                "все",
                 "да",
                 "да конечно",
                 "нет",
@@ -89,7 +89,6 @@ namespace TelegramBotTry1
                 "сделаю",
                 "сделаю сегодня",
                 "спс",
-                "супер",
                 "ура",
                 "ясно",
                 "jr",
@@ -106,7 +105,9 @@ namespace TelegramBotTry1
                             .Replace(new[] {')', '(', '+' }, "")
                             .Replace("айгюль", "")
                             .Replace("благодарю", "")
+                            .Replace("благодарим", "")
                             .Replace("вероника", "")
+                            .Replace("взаимно", "")
                             .Replace("виктория", "")
                             .Replace("добрый вечер", "")
                             .Replace("добрый день", "")
@@ -114,7 +115,9 @@ namespace TelegramBotTry1
                             .Replace("здравствуйте", "")
                             .Replace("екатерина", "")
                             .Replace("ирина", "")
+                            .Replace("марина", "")
                             .Replace("насть", "")
+                            .Replace("ольга", "")
                             .Replace("отлично", "")
                             .Replace("поняла", "")
                             .Replace("понял", "")
@@ -122,6 +125,8 @@ namespace TelegramBotTry1
                             .Replace("светлана", "")
                             .Replace("спаибо", "")
                             .Replace("спасибо", "")
+                            .Replace("супер", "")
+                            .Replace("спсаибо", "")
                             .Replace("татьяна", "")
                             .Replace("увидела", "")
                             .Replace("увидел", "")
