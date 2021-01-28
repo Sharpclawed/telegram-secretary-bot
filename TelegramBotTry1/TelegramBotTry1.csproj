@@ -114,6 +114,7 @@
   <ItemGroup>
     <Compile Include="AdminDataSetExtensions.cs" />
     <Compile Include="CommandMessageProcessor.cs" />
+    <Compile Include="Domain\OnetimeChatDataSet.cs" />
     <Compile Include="Dto\User.cs" />
     <Compile Include="MessageDataSetExtensions.cs" />
     <Compile Include="Domain\AdminDataSet.cs" />
@@ -137,6 +138,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StringExtentions.cs" />
+    <Compile Include="ViewInactiveChatsProvider.cs" />
     <Compile Include="ViewWaitersProvider.cs" />
   </ItemGroup>
   <ItemGroup>
