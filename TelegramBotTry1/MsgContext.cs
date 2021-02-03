@@ -1,5 +1,4 @@
 ﻿using System.Data.Entity;
-using System.Data.Entity.Migrations;
 using TelegramBotTry1.Domain;
 using TelegramBotTry1.Migrations;
 

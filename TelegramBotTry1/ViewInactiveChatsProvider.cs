@@ -7,7 +7,7 @@ namespace TelegramBotTry1
 {
     public static class ViewInactiveChatsProvider
     {
-        public static List<MessageDataSet> GetInactive(DateTime sinceDate, DateTime untilDate)
+        public static List<MessageDataSet> GetInactive(DateTime sinceDate, DateTime untilDate, int limit)
         {
             using (var context = new MsgContext())
             {
@@ -25,8 +25,7 @@ namespace TelegramBotTry1
                                 .Where(bk => bk.UserId == msg.UserId).DefaultIfEmpty()
                             from admin in adminDataSets.Where(x => x.DeleteTime == null)
                                 .Where(adm => adm.UserId == msg.UserId).DefaultIfEmpty()
-                            let isByDir = bookkeeper.BookkeeperDataSetId == null && admin.AdminDataSetId == null
-                            where isByDir //только сообщения директоров
+                            where bookkeeper.BookkeeperDataSetId == null && admin.AdminDataSetId == null //только сообщения директоров
                                   && onetimeChat == null //не чаты для разовых консультаций
                             select msg
                         )
@@ -34,7 +33,8 @@ namespace TelegramBotTry1
                         into groups
                         select groups.OrderByDescending(p => p.Date).FirstOrDefault()
                     )
-                    .Where(msg => msg.Date <= sinceDate);
+                    .Where(msg => msg.Date <= sinceDate)
+                    .Take(limit);
 
                 return lastMessagesFromDirectors.ToList();
             }

@@ -267,7 +267,7 @@ namespace TelegramBotTry1
                                     var result = string.Format(
                                         @"В чате {0} сообщение от {1} {2}, оставленное {3}, без ответа ({4}). Текст сообщения: ""{5}"""
                                         , msg.ChatName, msg.UserLastName, msg.UserFirstName
-                                        , msg.Date.AddHours(10).AddHours(-8).ToString("dd/MM/yyyy H:mm")
+                                        , msg.Date.AddHours(10).AddHours(-8).ToString("dd.MM.yyyy H:mm")
                                         , timeWithoutAnswer.Days + " дней " + timeWithoutAnswer.Hours + " часов " + timeWithoutAnswer.Minutes + " минут"
                                         , msg.Message);
                                     await bot.SendTextMessageAsync(message.Chat.Id, result);
@@ -292,16 +292,19 @@ namespace TelegramBotTry1
                             {
                                 var sinceDate = DateTime.UtcNow.AddDays(-7);
                                 var untilDate = DateTime.UtcNow;
-                                var messages = ViewInactiveChatsProvider.GetInactive(sinceDate, untilDate);
+                                var messages = ViewInactiveChatsProvider.GetInactive(sinceDate, untilDate, 25);
                                 foreach (var msg in messages)
                                 {
                                     var result = string.Format(
                                         @"В чате {0} нет активной переписки. Последнее сообщение от клиента было {1}. Текст сообщения: ""{2}"""
                                         , msg.ChatName
-                                        , msg.Date.AddHours(10).AddHours(-8).ToString("dd/MM/yyyy в H:mm")
+                                        , msg.Date.AddHours(10).AddHours(-8).ToString("dd.MM.yyyy в H:mm")
                                         , msg.Message);
                                     await bot.SendTextMessageAsync(message.Chat.Id, result);
                                 }
+                                if (!messages.Any())
+                                    await bot.SendTextMessageAsync(message.Chat.Id, "Неактивных чатов не найдено");
+
                                 break;
                             }
                         }

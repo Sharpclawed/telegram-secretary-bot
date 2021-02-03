@@ -162,7 +162,7 @@ namespace TelegramBotTry1
                 lastMessageChat = lastMessage?.ChatName;
             }
 
-            var signMessage = "Работаю в штатном режиме\r\nПоследнее сообщение от " + lastMessageDate.ToString("dd/MM/yyyy H:mm") + " в \"" + lastMessageChat + "\"";
+            var signMessage = "Работаю в штатном режиме\r\nПоследнее сообщение от " + lastMessageDate.ToString("dd.MM.yyyy H:mm") + " в \"" + lastMessageChat + "\"";
             Bot.SendTextMessageAsync(new ChatId(chatUnasweredId), signMessage);
         }
         
@@ -199,7 +199,7 @@ namespace TelegramBotTry1
                         var result = string.Format(
                             @"В чате {0} сообщение от {1} {2}, оставленное {3}, без ответа ({4}). Текст сообщения: ""{5}"""
                             , msg.ChatName, msg.UserLastName, msg.UserFirstName
-                            , msg.Date.AddHours(5).ToString("dd/MM/yyyy H:mm")
+                            , msg.Date.AddHours(5).ToString("dd.MM.yyyy H:mm")
                             , timeWithoutAnswer.Days + " дней " + timeWithoutAnswer.Hours + " часов " + timeWithoutAnswer.Minutes + " минут"
                             , msg.Message);
                         Bot.SendTextMessageAsync(chatUnasweredId, result);

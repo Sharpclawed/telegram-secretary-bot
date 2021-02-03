@@ -117,7 +117,7 @@ namespace FunctionalTests
                 "Доброе утро, благодарю!",
                 "Доброе утро! спасибо большое"
             };
-            var set = testCases.Select(z => new MessageDataSet(new Message {Text = z, From = new Telegram.Bot.Types.User(), Chat = new Chat()})).ToList();
+            var set = testCases.Select(z => new MessageDataSet(new Message {Text = z, From = new Telegram.Bot.Types.User(), Chat = new Telegram.Bot.Types.Chat()})).ToList();
             var sut = set.FilterObviouslySuperfluous();
 
             sut.ShouldBeEquivalentTo(new List<MessageDataSet>());
