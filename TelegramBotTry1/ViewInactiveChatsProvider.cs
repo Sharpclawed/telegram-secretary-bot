@@ -32,7 +32,7 @@ namespace TelegramBotTry1
                         )
                         group msgExt by msgExt.ChatId
                         into groups
-                        select groups.OrderByDescending(p => p.Date).First()
+                        select groups.OrderByDescending(p => p.Date).FirstOrDefault()
                     )
                     .Where(msg => msg.Date <= sinceDate);
 
