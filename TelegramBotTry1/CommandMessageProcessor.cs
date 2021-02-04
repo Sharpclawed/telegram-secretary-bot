@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Telegram.Bot;
@@ -292,18 +293,19 @@ namespace TelegramBotTry1
                             {
                                 var sinceDate = DateTime.UtcNow.AddDays(-7);
                                 var untilDate = DateTime.UtcNow;
-                                var messages = ViewInactiveChatsProvider.GetInactive(sinceDate, untilDate, 25);
-                                foreach (var msg in messages)
+                                var messageDataSets = new Dictionary<long, List<IMessageDataSet>>
                                 {
-                                    var result = string.Format(
-                                        @"В чате {0} нет активной переписки. Последнее сообщение от клиента было {1}. Текст сообщения: ""{2}"""
-                                        , msg.ChatName
-                                        , msg.Date.AddHours(10).AddHours(-8).ToString("dd.MM.yyyy в H:mm")
-                                        , msg.Message);
-                                    await bot.SendTextMessageAsync(message.Chat.Id, result);
+                                    {1, ViewInactiveChatsProvider.GetInactive(sinceDate, untilDate, 25)}
+                                };
+
+                                var report = ReportCreator.Create(messageDataSets, message.From.Id);
+
+                                using (var fileStream = new FileStream(report.Name, FileMode.Open, FileAccess.Read,
+                                    FileShare.Read))
+                                {
+                                    var fileToSend = new InputOnlineFile(fileStream, "History.xls");
+                                    await bot.SendDocumentAsync(message.Chat.Id, fileToSend, "Отчет подготовлен");
                                 }
-                                if (!messages.Any())
-                                    await bot.SendTextMessageAsync(message.Chat.Id, "Неактивных чатов не найдено");
 
                                 break;
                             }

@@ -7,7 +7,7 @@ namespace TelegramBotTry1
 {
     public static class ViewInactiveChatsProvider
     {
-        public static List<MessageDataSet> GetInactive(DateTime sinceDate, DateTime untilDate, int limit)
+        public static List<IMessageDataSet> GetInactive(DateTime sinceDate, DateTime untilDate, int limit)
         {
             using (var context = new MsgContext())
             {
@@ -34,6 +34,7 @@ namespace TelegramBotTry1
                         select groups.OrderByDescending(p => p.Date).FirstOrDefault()
                     )
                     .Where(msg => msg.Date <= sinceDate)
+                    .OrderByDescending(p => p.Date)
                     .Take(limit);
 
                 return lastMessagesFromDirectors.ToList();
