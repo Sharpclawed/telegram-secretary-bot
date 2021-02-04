@@ -295,13 +295,12 @@ namespace TelegramBotTry1
                                 var untilDate = DateTime.UtcNow;
                                 var messageDataSets = new Dictionary<long, List<IMessageDataSet>>
                                 {
-                                    {1, ViewInactiveChatsProvider.GetInactive(sinceDate, untilDate, 25)}
+                                    {1, ViewInactiveChatsProvider.GetInactive(sinceDate, untilDate, TimeSpan.FromDays(7))}
                                 };
 
                                 var report = ReportCreator.Create(messageDataSets, message.From.Id);
 
-                                using (var fileStream = new FileStream(report.Name, FileMode.Open, FileAccess.Read,
-                                    FileShare.Read))
+                                using (var fileStream = new FileStream(report.Name, FileMode.Open, FileAccess.Read, FileShare.Read))
                                 {
                                     var fileToSend = new InputOnlineFile(fileStream, "History.xls");
                                     await bot.SendDocumentAsync(message.Chat.Id, fileToSend, "Отчет подготовлен");

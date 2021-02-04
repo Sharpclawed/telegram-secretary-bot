@@ -21,6 +21,7 @@ namespace TelegramBotTry1
         private static readonly long chatUnasweredId = -1001469821060;
 
         private static DateTime lastIAmAliveCheckUtc = DateTime.UtcNow.Date;
+        private static DateTime lastInactiveChatCheckUtc = DateTime.UtcNow.Date;
 
         static void Main()
         {
@@ -42,6 +43,7 @@ namespace TelegramBotTry1
             Console.WriteLine(DateTime.Now + " Start working");
             ConfigureIAmAliveTimer();
             ConfigureViewWaitersTimer();
+            ConfigureViewInactiveChatsTimer();
 
             Bot.StartReceiving();
             Console.ReadLine();
@@ -128,7 +130,7 @@ namespace TelegramBotTry1
         {
             try
             {
-                var scheduledRunUtc = DateTime.UtcNow.Date.AddHours(10).AddHours(-8); //7 часов по-нашему
+                var scheduledRunUtc = DateTime.UtcNow.Date.AddHours(12).AddHours(-8); //9 часов по-нашему
                 if (DateTime.UtcNow > scheduledRunUtc
                     && scheduledRunUtc.Date > lastIAmAliveCheckUtc.Date
                     && (scheduledRunUtc.DayOfWeek == DayOfWeek.Saturday || scheduledRunUtc.DayOfWeek == DayOfWeek.Sunday))
@@ -177,6 +179,17 @@ namespace TelegramBotTry1
             viewWaitersTimer.Start();
         }
 
+        private static void ConfigureViewInactiveChatsTimer()
+        {
+            var timer = new Timer
+            {
+                Interval = 1000 * 60 * 5 //5 минут
+            };
+            timer.Elapsed += ViewInactiveChatsEvent;
+            timer.AutoReset = true;
+            timer.Start();
+        }
+
         private static void ViewWaitersEvent(object sender, ElapsedEventArgs e)
         {
             try
@@ -204,6 +217,44 @@ namespace TelegramBotTry1
                             , msg.Message);
                         Bot.SendTextMessageAsync(chatUnasweredId, result);
                     }
+                }
+            }
+            catch (SocketException exception)
+            {
+                Console.WriteLine(exception.ToString());
+                Bot.SendTextMessageAsync(new ChatId(chatBotvaId), "Пропала коннекция к базе. Отключаюсь, чтобы не потерялись данные. wit\r\n"
+                                                                  + "Пожалуйста, включите меня в течение суток");
+                throw;
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception.ToString());
+            }
+        }
+
+        private static void ViewInactiveChatsEvent(object sender, ElapsedEventArgs e)
+        {
+            try
+            {
+                var scheduledRunUtc = DateTime.UtcNow.Date.AddHours(12).AddHours(-8); //9 часов по-нашему
+                if (DateTime.UtcNow > scheduledRunUtc
+                    && scheduledRunUtc.Date > lastInactiveChatCheckUtc.Date
+                    && scheduledRunUtc.DayOfWeek == DayOfWeek.Sunday)
+                {
+                    var sinceDate = scheduledRunUtc.AddDays(-28);
+                    var untilDate = scheduledRunUtc;
+                    var waitersMessages = ViewInactiveChatsProvider.GetInactive(sinceDate, untilDate, TimeSpan.FromDays(7));
+                    foreach (var msg in waitersMessages)
+                    {
+                        var result = string.Format(
+                            @"В чате {0} нет активной переписки. Последнее сообщение от клиента было {1}. Текст сообщения: ""{2}"""
+                            , msg.ChatName
+                            , msg.Date.AddHours(5).ToString("dd.MM.yyyy в H:mm")
+                            , msg.Message);
+                        Bot.SendTextMessageAsync(chatBotvaId, result);
+                    }
+
+                    lastInactiveChatCheckUtc = DateTime.UtcNow;
                 }
             }
             catch (SocketException exception)
