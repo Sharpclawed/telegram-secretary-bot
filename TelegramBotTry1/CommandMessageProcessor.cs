@@ -291,7 +291,7 @@ namespace TelegramBotTry1
                             }
                             case EntityType.InactiveChat:
                             {
-                                var sinceDate = DateTime.UtcNow.AddDays(-7);
+                                var sinceDate = DateTime.MinValue;
                                 var untilDate = DateTime.UtcNow;
                                 var messageDataSets = new Dictionary<long, List<IMessageDataSet>>
                                 {
@@ -302,7 +302,7 @@ namespace TelegramBotTry1
 
                                 using (var fileStream = new FileStream(report.Name, FileMode.Open, FileAccess.Read, FileShare.Read))
                                 {
-                                    var fileToSend = new InputOnlineFile(fileStream, "History.xls");
+                                    var fileToSend = new InputOnlineFile(fileStream, "InactiveChats.xls");
                                     await bot.SendDocumentAsync(message.Chat.Id, fileToSend, "Отчет подготовлен");
                                 }
 

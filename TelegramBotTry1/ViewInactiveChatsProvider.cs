@@ -15,6 +15,7 @@ namespace TelegramBotTry1
                 var bkDataSets = context.Set<BookkeeperDataSet>();
                 var messageDataSets = context.Set<MessageDataSet>();
                 var onetimeChatDataSets = context.Set<OnetimeChatDataSet>();
+                var timeBorder = untilDate.Add(checkingPeriod.Negate());
 
                 var lastMessagesFromDirectors = (
                         from msgExt in (
@@ -25,16 +26,16 @@ namespace TelegramBotTry1
                                 .Where(bk => bk.UserId == msg.UserId).DefaultIfEmpty()
                             from admin in adminDataSets.Where(x => x.DeleteTime == null)
                                 .Where(adm => adm.UserId == msg.UserId).DefaultIfEmpty()
-                            where bookkeeper.BookkeeperDataSetId ==
-                                null && admin.AdminDataSetId == null //только сообщения директоров
-                                     && onetimeChat == null //не чаты для разовых консультаций
+                            where bookkeeper.BookkeeperDataSetId == null
+                                  && admin.AdminDataSetId == null //только сообщения директоров
+                                  && onetimeChat == null //не чаты для разовых консультаций
                             select msg
-                        )
+                        ).ToList()
                         group msgExt by msgExt.ChatId
                         into groups
                         select groups.OrderByDescending(p => p.Date).FirstOrDefault()
                     )
-                    .Where(msg => msg.Date <= untilDate.Add(checkingPeriod.Negate()))
+                    .Where(msg => msg.Date <= timeBorder)
                     .OrderByDescending(p => p.Date)
                     .ToList<IMessageDataSet>();
 
