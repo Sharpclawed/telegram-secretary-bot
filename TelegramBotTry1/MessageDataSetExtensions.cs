@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -81,13 +80,13 @@ namespace TelegramBotTry1
             {
                 "",
                 "ага",
-                "большое",
                 "вам",
                 "вас",
                 "вроде бы все",
                 "все",
                 "да",
                 "да конечно",
+                "договорились",
                 "нет",
                 "ну да",
                 "ну",
@@ -114,13 +113,20 @@ namespace TelegramBotTry1
                         txt = new string(
                             Regex.Replace(z.Message, @"\p{Cs}", "")
                             .ToLower()
+                            .Replace("ё", "е")
+                            .Replace("☺️", string.Empty)
+                            .Replace("✅", string.Empty)
                             .Replace(new[] {')', '(', '+' }, "")
                             .Replace("айгюль", "")
+                            .Replace("анна", "")
                             .Replace("благодарю", "")
                             .Replace("благодарим", "")
+                            .Replace("большое", "")
+                            .Replace("валентина", "")
                             .Replace("вероника", "")
                             .Replace("взаимно", "")
                             .Replace("виктория", "")
+                            .Replace("готово", "")
                             .Replace("добрый вечер", "")
                             .Replace("добрый день", "")
                             .Replace("доброе утро", "")
@@ -129,22 +135,35 @@ namespace TelegramBotTry1
                             .Replace("ирина", "")
                             .Replace("марина", "")
                             .Replace("насть", "")
+                            .Replace("наталья", "")
                             .Replace("ольга", "")
+                            .Replace("оплатила", "")
+                            .Replace("оплатил", "")
                             .Replace("отлично", "")
+                            .Replace("отправила", "")
+                            .Replace("отправил", "")
+                            .Replace("подписала", "")
+                            .Replace("подписал", "")
+                            .Replace("подумаю", "")
                             .Replace("поняла", "")
                             .Replace("понял", "")
                             .Replace("понятно", "")
+                            .Replace("приняла", "")
+                            .Replace("принял", "")
                             .Replace("светлана", "")
                             .Replace("спаибо", "")
                             .Replace("спасибо", "")
-                            .Replace("супер", "")
+                            .Replace("спасиьо", "")
+                            .Replace("спасио", "")
                             .Replace("спсаибо", "")
+                            .Replace("супер", "")
                             .Replace("татьяна", "")
+                            .Replace("точно", "")
                             .Replace("увидела", "")
                             .Replace("увидел", "")
                             .Replace("хорлшо", "")
                             .Replace("хорошо", "")
-                            .Where(c => !char.IsPunctuation(c)).ToArray())
+                            .Where(c => c == '?' || !char.IsPunctuation(c)).ToArray())
                             .Trim()
                 })
                     .Where(z => !ignoreUnanswered.Contains(z.txt))

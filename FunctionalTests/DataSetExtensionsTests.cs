@@ -87,7 +87,6 @@ namespace FunctionalTests
             };
         }
 
-        //TODO mock for MessageDataSet
         [Test]
         public void ObviouslySuperfluousFilterTest()
         {
@@ -115,7 +114,17 @@ namespace FunctionalTests
                 "Поняла, спасибо большое!",
                 "Добрый день,Ольга!Спасибо!",
                 "Доброе утро, благодарю!",
-                "Доброе утро! спасибо большое"
+                "Доброе утро! спасибо большое",
+                "Спасиьо",
+                "Спасибо. ☺️",
+                "Здравствуйте Наталья, хорошо",
+                "Спасибо вам большое",
+                "Да, точно",
+                "Готово",
+                "✅",
+                "спасибо ☺️",
+                "Анна, добрый день! Хорошо",
+                "Все подписал, спасибо"
             };
             var set = testCases.Select(z => new MessageDataSet(new Message {Text = z, From = new Telegram.Bot.Types.User(), Chat = new Telegram.Bot.Types.Chat()})).ToList();
             var sut = set.FilterObviouslySuperfluous();
