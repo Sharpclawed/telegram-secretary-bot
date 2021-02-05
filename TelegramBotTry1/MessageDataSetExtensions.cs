@@ -63,6 +63,18 @@ namespace TelegramBotTry1
             };
         }
 
+        public static Chat GetChatByChatName(this IQueryable<IMessageDataSet> dataSets, string chatName)
+        {
+            var message = dataSets.Where(x => x.ChatName.ToLower() == chatName.ToLower()).OrderByDescending(x => x.Date).FirstOrDefault();
+            if (message == null)
+                throw new ArgumentException("Чат не найден");
+            return new Chat
+            {
+                Id = message.ChatId,
+                Name = message.ChatName,
+            };
+        }
+
         public static IEnumerable<MessageDataSet> FilterObviouslySuperfluous(this IEnumerable<MessageDataSet> dataSets)
         {
             var ignoreUnanswered = new List<string>

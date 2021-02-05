@@ -114,14 +114,15 @@
   <ItemGroup>
     <Compile Include="AdminDataSetExtensions.cs" />
     <Compile Include="CommandMessageProcessor.cs" />
+    <Compile Include="Domain\OnetimeChatDataSet.cs" />
+    <Compile Include="Dto\Chat.cs" />
     <Compile Include="Dto\User.cs" />
     <Compile Include="MessageDataSetExtensions.cs" />
     <Compile Include="Domain\AdminDataSet.cs" />
     <Compile Include="Domain\BookkeeperDataSet.cs" />
-    <Compile Include="Dto\UserManagingCommand.cs" />
-    <Compile Include="Dto\UserViewCommand.cs" />
+    <Compile Include="Dto\ManagingCommand.cs" />
     <Compile Include="Enums\ManagingType.cs" />
-    <Compile Include="Enums\UserEntityType.cs" />
+    <Compile Include="Enums\EntityType.cs" />
     <Compile Include="Migrations\202002171859206_InitialCreate.cs" />
     <Compile Include="Migrations\202002171859206_InitialCreate.designer.cs">
       <DependentUpon>202002171859206_InitialCreate.cs</DependentUpon>
@@ -137,6 +138,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StringExtentions.cs" />
+    <Compile Include="ViewInactiveChatsProvider.cs" />
     <Compile Include="ViewWaitersProvider.cs" />
   </ItemGroup>
   <ItemGroup>

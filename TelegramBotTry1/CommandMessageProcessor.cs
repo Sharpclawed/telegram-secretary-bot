@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Telegram.Bot;
@@ -36,6 +37,11 @@ namespace TelegramBotTry1
                         + "\r\n/removebk: \"username\""
                         + "\r\n/viewbk"
                         + "\r\n/viewwaiters"
+                        + "Работа с чатами:"
+                        + "\r\n/addonetimechat: \"chatname\""
+                        + "\r\n/removeonetimechat: \"chatname\""
+                        + "\r\n/viewonetimechats"
+                        + "\r\n/viewinactivechats"
                     ;
                 await bot.SendTextMessageAsync(message.Chat.Id, helperMsg);
             }
@@ -47,7 +53,6 @@ namespace TelegramBotTry1
                     {
                         var command = new HistoryCommand(message.Text);
 
-                        //TODO записать, не разрывая флуент
                         if (command.Type == HistoryCommandType.Unknown)
                         {
                             await bot.SendTextMessageAsync(message.Chat.Id, "Неизвестная команда");
@@ -112,9 +117,8 @@ namespace TelegramBotTry1
             {
                 try
                 {
-                    var command = new UserManagingCommand(message.Text);
-                    //TODO записать, не разрывая флуент
-                    if (command.ManagingType == ManagingType.Unknown || command.UserType == UserEntityType.Unknown)
+                    var command = new ManagingCommand(message.Text);
+                    if (command.ManagingType == ManagingType.Unknown || command.EntityType == EntityType.Unknown)
                     {
                         await bot.SendTextMessageAsync(message.Chat.Id, "Неизвестная команда");
                         return;
@@ -124,43 +128,65 @@ namespace TelegramBotTry1
                     {
                         var adminDataSets = context.Set<AdminDataSet>();
                         var messageDataSets = context.Set<MessageDataSet>();
-                        var bkDataSets = context.Set<BookkeeperDataSet>();
-                        
+
                         if (adminDataSets.IsAdmin(message.From.Id))
                         {
-                            var user = messageDataSets.GetUserByUserName(command.UserUserName);
-                            if (command.UserType == UserEntityType.Admin)
+                            switch (command.EntityType)
                             {
-                                if (command.ManagingType == ManagingType.Add && !adminDataSets.IsAdmin(user.UserId))
-                                    adminDataSets.Add(new AdminDataSet
-                                    {
-                                        AddTime = DateTime.UtcNow,
-                                        AddedUserId = message.From.Id,
-                                        AddedUserName = message.From.Username,
-                                        UserId = user.UserId,
-                                        UserName = command.UserUserName
-                                    });
-                                else if (command.ManagingType == ManagingType.Remove && adminDataSets.IsAdmin(user.UserId))
+                                case EntityType.Admin:
                                 {
-                                    var adminDataSet = adminDataSets.Single(x => x.UserId == user.UserId && x.DeleteTime == null);
-                                    adminDataSet.DeleteTime = DateTime.UtcNow;
-                                    adminDataSet.DeletedUserId = message.From.Id;
-                                    adminDataSet.DeletedUserName = message.From.Username;
+                                    var user = messageDataSets.GetUserByUserName(command.EntityName);
+                                    if (command.ManagingType == ManagingType.Add && !adminDataSets.IsAdmin(user.UserId))
+                                        adminDataSets.Add(new AdminDataSet
+                                        {
+                                            AddTime = DateTime.UtcNow,
+                                            AddedUserId = message.From.Id,
+                                            AddedUserName = message.From.Username,
+                                            UserId = user.UserId,
+                                            UserName = command.EntityName
+                                        });
+                                    else if (command.ManagingType == ManagingType.Remove && adminDataSets.IsAdmin(user.UserId))
+                                    {
+                                        var adminDataSet = adminDataSets.Single(x =>
+                                            x.UserId == user.UserId && x.DeleteTime == null);
+                                        adminDataSet.DeleteTime = DateTime.UtcNow;
+                                        adminDataSet.DeletedUserId = message.From.Id;
+                                        adminDataSet.DeletedUserName = message.From.Username;
+                                    }
+
+                                    break;
                                 }
-                            }
-                            else if (command.UserType == UserEntityType.Bookkeeper)
-                            {
-                                if (command.ManagingType == ManagingType.Add && !bkDataSets.Any(x => x.UserId == user.UserId))
-                                    bkDataSets.Add(new BookkeeperDataSet
-                                    {
-                                        UserId = user.UserId,
-                                        UserName = command.UserUserName,
-                                        UserFirstName = user.Name,
-                                        UserLastName = user.Surname
-                                    });
-                                else if (command.ManagingType == ManagingType.Remove)
+                                case EntityType.Bookkeeper:
                                 {
-                                    bkDataSets.Remove(bkDataSets.First(x => x.UserId == user.UserId));
+                                    var user = messageDataSets.GetUserByUserName(command.EntityName);
+                                    var bkDataSets = context.Set<BookkeeperDataSet>();
+                                    if (command.ManagingType == ManagingType.Add && !bkDataSets.Any(x => x.UserId == user.UserId))
+                                        bkDataSets.Add(new BookkeeperDataSet
+                                        {
+                                            UserId = user.UserId,
+                                            UserName = command.EntityName,
+                                            UserFirstName = user.Name,
+                                            UserLastName = user.Surname
+                                        });
+                                    else if (command.ManagingType == ManagingType.Remove)
+                                        bkDataSets.Remove(bkDataSets.First(x => x.UserId == user.UserId));
+
+                                    break;
+                                }
+                                case EntityType.InactiveChatException:
+                                {
+                                    var chat = messageDataSets.GetChatByChatName(command.EntityName);
+                                    var onetimeChatDataSets = context.Set<OnetimeChatDataSet>();
+                                    if (command.ManagingType == ManagingType.Add && !onetimeChatDataSets.Any(x => x.ChatId == chat.Id))
+                                        onetimeChatDataSets.Add(new OnetimeChatDataSet
+                                        {
+                                            ChatName = chat.Name,
+                                            ChatId = chat.Id
+                                        });
+                                    else if (command.ManagingType == ManagingType.Remove)
+                                        onetimeChatDataSets.Remove(onetimeChatDataSets.First(x => x.ChatId == chat.Id));
+
+                                    break;
                                 }
                             }
 
@@ -184,9 +210,8 @@ namespace TelegramBotTry1
             {
                 try
                 {
-                    var command = new UserViewCommand(message.Text);
-                    //TODO записать, не разрывая флуент
-                    if (command.ManagingType == ManagingType.Unknown || command.ContentType == UserEntityType.Unknown)
+                    var command = new ManagingCommand(message.Text);
+                    if (command.ManagingType == ManagingType.Unknown || command.EntityType == EntityType.Unknown)
                     {
                         await bot.SendTextMessageAsync(message.Chat.Id, "Неизвестная команда");
                         return;
@@ -201,9 +226,9 @@ namespace TelegramBotTry1
 
                     if (isAdminAsking)
                     {
-                        switch (command.ContentType)
+                        switch (command.EntityType)
                         {
-                            case UserEntityType.Admin:
+                            case EntityType.Admin:
                             {
                                 string result;
                                 using (var context = new MsgContext())
@@ -218,7 +243,7 @@ namespace TelegramBotTry1
 
                                 break;
                             }
-                            case UserEntityType.Bookkeeper:
+                            case EntityType.Bookkeeper:
                             {
                                 string result;
                                 using (var context = new MsgContext())
@@ -232,7 +257,7 @@ namespace TelegramBotTry1
                                 await bot.SendTextMessageAsync(message.Chat.Id, "Список бухгалтеров:\r\n" + result);
                                 break;
                             }
-                            case UserEntityType.Waiter:
+                            case EntityType.Waiter:
                             {
                                 var sinceDate = DateTime.UtcNow.Date.AddMonths(-1);
                                 var untilDate = DateTime.UtcNow.Date.AddMinutes(-30);
@@ -243,11 +268,44 @@ namespace TelegramBotTry1
                                     var result = string.Format(
                                         @"В чате {0} сообщение от {1} {2}, оставленное {3}, без ответа ({4}). Текст сообщения: ""{5}"""
                                         , msg.ChatName, msg.UserLastName, msg.UserFirstName
-                                        , msg.Date.AddHours(10).AddHours(-8).ToString("dd/MM/yyyy H:mm")
+                                        , msg.Date.AddHours(10).AddHours(-8).ToString("dd.MM.yyyy H:mm")
                                         , timeWithoutAnswer.Days + " дней " + timeWithoutAnswer.Hours + " часов " + timeWithoutAnswer.Minutes + " минут"
                                         , msg.Message);
                                     await bot.SendTextMessageAsync(message.Chat.Id, result);
                                 }
+                                break;
+                            }
+                            case EntityType.InactiveChatException:
+                            {
+                                string result;
+                                using (var context = new MsgContext())
+                                {
+                                    var dataSets = context.Set<OnetimeChatDataSet>().AsNoTracking();
+                                    var values = dataSets.ToList()
+                                        .Select(x => x.ChatName);
+                                    result = string.Join("\r\n", values);
+                                }
+
+                                await bot.SendTextMessageAsync(message.Chat.Id, "Список исключений для просмотра неактивных чатов:\r\n" + result);
+                                break;
+                            }
+                            case EntityType.InactiveChat:
+                            {
+                                var sinceDate = DateTime.UtcNow.AddDays(-365);
+                                var untilDate = DateTime.UtcNow;
+                                var messageDataSets = new Dictionary<long, List<IMessageDataSet>>
+                                {
+                                    {1, ViewInactiveChatsProvider.GetInactive(sinceDate, untilDate, TimeSpan.FromDays(7))}
+                                };
+
+                                var report = ReportCreator.Create(messageDataSets, message.From.Id);
+
+                                using (var fileStream = new FileStream(report.Name, FileMode.Open, FileAccess.Read, FileShare.Read))
+                                {
+                                    var fileToSend = new InputOnlineFile(fileStream, "InactiveChats.xls");
+                                    await bot.SendDocumentAsync(message.Chat.Id, fileToSend, "Отчет подготовлен");
+                                }
+
                                 break;
                             }
                         }

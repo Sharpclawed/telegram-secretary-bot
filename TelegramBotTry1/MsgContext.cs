@@ -1,5 +1,4 @@
 ﻿using System.Data.Entity;
-using System.Data.Entity.Migrations;
 using TelegramBotTry1.Domain;
 using TelegramBotTry1.Migrations;
 
@@ -17,6 +16,7 @@ namespace TelegramBotTry1
         public DbSet<MessageDataSet> MessageDataSets { get; set; }
         public DbSet<AdminDataSet> AdminDataSets { get; set; }
         public DbSet<BookkeeperDataSet> BookkeeperDataSets { get; set; }
+        public DbSet<OnetimeChatDataSet> OnetimeChatDataSets { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
