@@ -246,9 +246,23 @@ namespace TelegramBotTry1
                     var waitersMessages = ViewInactiveChatsProvider.GetInactive(sinceDate, untilDate, TimeSpan.FromDays(7));
                     foreach (var msg in waitersMessages)
                     {
+                        var express = string.Empty;
+                        switch (msg.Date)
+                        {
+                            case DateTime date when (DateTime.UtcNow - date).TotalDays < 7:
+                                break;
+                            case DateTime date when (DateTime.UtcNow - date).TotalDays < 14:
+                                express = " больше недели 😐";
+                                break;
+                            case DateTime date when (DateTime.UtcNow - date).TotalDays < 21:
+                                express = " больше двух недель 😕";
+                                break;
+                        }
+
                         var result = string.Format(
-                            @"В чате {0} нет активной переписки. Последнее сообщение от клиента было {1}. Текст сообщения: ""{2}"""
+                            @"В чате {0} нет активной переписки {1}. Последнее сообщение от клиента было {2}. Текст сообщения: ""{3}"""
                             , msg.ChatName
+                            , express
                             , msg.Date.AddHours(5).ToString("dd.MM.yyyy в H:mm")
                             , msg.Message);
                         Bot.SendTextMessageAsync(chatBotvaId, result);

@@ -291,7 +291,7 @@ namespace TelegramBotTry1
                             }
                             case EntityType.InactiveChat:
                             {
-                                var sinceDate = DateTime.MinValue;
+                                var sinceDate = DateTime.UtcNow.AddDays(-365);
                                 var untilDate = DateTime.UtcNow;
                                 var messageDataSets = new Dictionary<long, List<IMessageDataSet>>
                                 {
