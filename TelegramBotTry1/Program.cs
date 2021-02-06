@@ -257,6 +257,9 @@ namespace TelegramBotTry1
                             case DateTime date when (DateTime.UtcNow - date).TotalDays < 21:
                                 express = " больше двух недель 😕";
                                 break;
+                            default:
+                                express = " больше трех недель 😟";
+                                break;
                         }
 
                         var result = string.Format(
