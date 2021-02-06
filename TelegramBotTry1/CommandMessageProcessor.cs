@@ -86,18 +86,24 @@ namespace TelegramBotTry1
                             return;
                         }
 
-                        var dataSets = messageDataSets
+                        var messagesByChatname = messageDataSets
                             .ToList()
                             .GroupBy(x => x.ChatId)
-                            .ToDictionary(gdc => gdc.Key, gdc => gdc.ToList());
+                            .Select(gdc =>
+                            {
+                                var dataSets = gdc.OrderBy(z => z.Date).ToList();
+                                return new KeyValuePair<string, List<IMessageDataSet>>(
+                                    dataSets.LastOrDefault()?.ChatName ?? "Чат",
+                                    dataSets);
+                            });
                         
-                        if (!dataSets.Any())
+                        if (!messagesByChatname.Any())
                         {
                             await bot.SendTextMessageAsync(message.Chat.Id, "Нет данных за указанный период");
                             return;
                         }
 
-                        var report = ReportCreator.Create(dataSets, message.From.Id);
+                        var report = ReportCreator.Create(messagesByChatname, message.From.Id);
 
                         using (var fileStream = new FileStream(report.Name, FileMode.Open, FileAccess.Read, FileShare.Read))
                         {
@@ -293,9 +299,9 @@ namespace TelegramBotTry1
                             {
                                 var sinceDate = DateTime.UtcNow.AddDays(-365);
                                 var untilDate = DateTime.UtcNow;
-                                var messageDataSets = new Dictionary<long, List<IMessageDataSet>>
+                                var messageDataSets = new Dictionary<string, List<IMessageDataSet>>
                                 {
-                                    {1, ViewInactiveChatsProvider.GetInactive(sinceDate, untilDate, TimeSpan.FromDays(7))}
+                                    {"Неактивные", ViewInactiveChatsProvider.GetInactive(sinceDate, untilDate, TimeSpan.FromDays(7))}
                                 };
 
                                 var report = ReportCreator.Create(messageDataSets, message.From.Id);

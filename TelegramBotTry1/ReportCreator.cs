@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using TelegramBotTry1.Domain;
@@ -10,36 +9,35 @@ namespace TelegramBotTry1
 {
     public static class ReportCreator
     {
-        public static FileInfo Create(Dictionary<long, List<IMessageDataSet>> messageDataSets, long userId)
+        public static FileInfo Create(IEnumerable<KeyValuePair<string, List<IMessageDataSet>>> sheetsData, long userId)
         {
             var tempFile = new FileInfo("temp" + userId + ".xls");
             using (var xlPackage = new ExcelPackage(tempFile))
             {
                 ClearSheets(xlPackage);
-                var sheetNames = new Dictionary<string, int>();
 
-                foreach (var dataSetKeyValuePair in messageDataSets)
+                //TODO выводить всю информацию в один лист с группировками
+                var sheetNameCounts = new Dictionary<string, int>();
+
+                foreach (var messagesBySheetName in sheetsData)
                 {
-                    var messageDataSetList = dataSetKeyValuePair.Value;
-                    if (messageDataSetList.Count == 0)
+                    var messages = messagesBySheetName.Value;
+                    if (messages.Count == 0)
                         continue;
-                    var messageDataSet = messageDataSetList.OrderBy(x => x.Date).ToArray();
+                    var sheetName = NormalizeSheetName(messagesBySheetName.Key);
 
-                    //TODO выводить всю информацию в один лист
-                    var chatName = GetExcelSheetCorrectName(messageDataSet[messageDataSet.Length - 1].ChatName);
-
-                    if (sheetNames.ContainsKey(chatName))
+                    if (sheetNameCounts.ContainsKey(sheetName))
                     {
-                        sheetNames[chatName]++;
-                        chatName = chatName + "(" + sheetNames[chatName] + ")";
+                        sheetNameCounts[sheetName]++;
+                        sheetName = sheetName + "(" + sheetNameCounts[sheetName] + ")";
                     }
                     else
-                        sheetNames.Add(chatName, 1);
+                        sheetNameCounts.Add(sheetName, 1);
 
-                    var worksheet = xlPackage.Workbook.Worksheets.Add(chatName);
+                    var worksheet = xlPackage.Workbook.Worksheets.Add(sheetName);
                     var properties = new[]
                     {
-                        " npp ", "  Date  ", " UserFirstName  ", " UserLastName  ", " Message ", "  UserName  ", " UserID "
+                        " npp ", "  Date  ", " UserFirstName  ", " UserLastName  ", " Message ", "  UserName  ", " UserID ", " ChatName "
                     };
                     for (var i = 0; i < properties.Length; i++)
                     {
@@ -49,16 +47,17 @@ namespace TelegramBotTry1
                         worksheet.Cells[1, i + 1].Style.Font.Bold = true;
                     }
 
-                    for (var index = 1; index <= messageDataSet.Length; index++)
+                    for (var index = 1; index <= messages.Count; index++)
                     {
                         worksheet.Cells[index + 1, 1].Value = index;
-                        worksheet.Cells[index + 1, 2].Value = messageDataSet[index - 1].Date;
+                        worksheet.Cells[index + 1, 2].Value = messages[index - 1].Date;
                         worksheet.Cells[index + 1, 2].Style.Numberformat.Format = "dd-mm-yy h:mm:ss";
-                        worksheet.Cells[index + 1, 3].Value = messageDataSet[index - 1].UserFirstName;
-                        worksheet.Cells[index + 1, 4].Value = messageDataSet[index - 1].UserLastName;
-                        worksheet.Cells[index + 1, 5].Value = messageDataSet[index - 1].Message;
-                        worksheet.Cells[index + 1, 6].Value = messageDataSet[index - 1].UserName;
-                        worksheet.Cells[index + 1, 7].Value = messageDataSet[index - 1].UserId;
+                        worksheet.Cells[index + 1, 3].Value = messages[index - 1].UserFirstName;
+                        worksheet.Cells[index + 1, 4].Value = messages[index - 1].UserLastName;
+                        worksheet.Cells[index + 1, 5].Value = messages[index - 1].Message;
+                        worksheet.Cells[index + 1, 6].Value = messages[index - 1].UserName;
+                        worksheet.Cells[index + 1, 7].Value = messages[index - 1].UserId;
+                        worksheet.Cells[index + 1, 8].Value = messages[index - 1].ChatName;
                     }
                     worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
                 }
@@ -79,7 +78,7 @@ namespace TelegramBotTry1
             }
         }
 
-        private static string GetExcelSheetCorrectName(string value)
+        private static string NormalizeSheetName(string value)
         {
             var correctValue = value.Replace(new[] { '#', '%', '@', '!', '?', '*', '\'' }, "");
             return correctValue.Length > 30 ? correctValue.Substring(1, 27) : correctValue; //TODO 27 из-за потенциальных страниц с тем же названием
