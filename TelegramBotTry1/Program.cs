@@ -85,17 +85,20 @@ namespace TelegramBotTry1
 
                 SaveToDatabase(recievedDataSet);
             }
-            catch (SocketException e)
+            catch (Exception exception)
             {
-                Console.WriteLine(e.ToString());
-                Bot.SendTextMessageAsync(new ChatId(chatBotvaId), "Пропала коннекция к базе. Отключаюсь, чтобы не потерялись данные. msg\r\n"
-                + "Пожалуйста, включите меня в течение суток");
-                throw;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-                Bot.SendTextMessageAsync(new ChatId(chat125Id), e.ToString());
+                Console.WriteLine(exception.ToString());
+                switch (exception)
+                {
+                    case SocketException _:
+                    case ObjectDisposedException _:
+                        Bot.SendTextMessageAsync(new ChatId(chatBotvaId), "Пропала коннекция к базе. Отключаюсь, чтобы не потерялись данные. wit\r\n"
+                                                                          + "Пожалуйста, включите меня в течение суток");
+                        throw;
+                    default:
+                        Bot.SendTextMessageAsync(new ChatId(chat125Id), exception.ToString());
+                        break;
+                }
             }
         }
 
@@ -133,22 +136,26 @@ namespace TelegramBotTry1
                 var scheduledRunUtc = DateTime.UtcNow.Date.AddHours(12).AddHours(-8); //9 часов по-нашему
                 if (DateTime.UtcNow > scheduledRunUtc
                     && scheduledRunUtc.Date > lastIAmAliveCheckUtc.Date
-                    && (scheduledRunUtc.DayOfWeek == DayOfWeek.Saturday || scheduledRunUtc.DayOfWeek == DayOfWeek.Sunday))
+                    && scheduledRunUtc.DayOfWeek == DayOfWeek.Saturday)
                 {
                     ShowASign();
                     lastIAmAliveCheckUtc = DateTime.UtcNow;
                 }
             }
-            catch (SocketException exception)
-            {
-                Console.WriteLine(exception.ToString());
-                Bot.SendTextMessageAsync(new ChatId(chatBotvaId), "Пропала коннекция к базе. Отключаюсь, чтобы не потерялись данные. sgn\r\n"
-                                                                  + "Пожалуйста, включите меня в течение суток");
-                throw;
-            }
             catch (Exception exception)
             {
                 Console.WriteLine(exception.ToString());
+                switch (exception)
+                {
+                    case SocketException _:
+                    case ObjectDisposedException _:
+                        Bot.SendTextMessageAsync(new ChatId(chatBotvaId), "Пропала коннекция к базе. Отключаюсь, чтобы не потерялись данные. wit\r\n"
+                                                                          + "Пожалуйста, включите меня в течение суток");
+                        throw;
+                    default:
+                        Bot.SendTextMessageAsync(new ChatId(chat125Id), exception.ToString());
+                        break;
+                }
             }
         }
 
@@ -219,16 +226,20 @@ namespace TelegramBotTry1
                     }
                 }
             }
-            catch (SocketException exception)
-            {
-                Console.WriteLine(exception.ToString());
-                Bot.SendTextMessageAsync(new ChatId(chatBotvaId), "Пропала коннекция к базе. Отключаюсь, чтобы не потерялись данные. wit\r\n"
-                                                                  + "Пожалуйста, включите меня в течение суток");
-                throw;
-            }
             catch (Exception exception)
             {
                 Console.WriteLine(exception.ToString());
+                switch (exception)
+                {
+                    case SocketException _:
+                    case ObjectDisposedException _:
+                        Bot.SendTextMessageAsync(new ChatId(chatBotvaId), "Пропала коннекция к базе. Отключаюсь, чтобы не потерялись данные. wit\r\n"
+                                                                          + "Пожалуйста, включите меня в течение суток");
+                        throw;
+                    default:
+                        Bot.SendTextMessageAsync(new ChatId(chat125Id), exception.ToString());
+                        break;
+                }
             }
         }
 
@@ -268,22 +279,26 @@ namespace TelegramBotTry1
                             , mark
                             , msg.Date.AddHours(5).ToString("dd.MM.yyyy в H:mm")
                             , msg.Message);
-                        Bot.SendTextMessageAsync(chatBotvaId, result);
+                        Bot.SendTextMessageAsync(chatUnasweredId, result);
                     }
 
                     lastInactiveChatCheckUtc = DateTime.UtcNow;
                 }
             }
-            catch (SocketException exception)
-            {
-                Console.WriteLine(exception.ToString());
-                Bot.SendTextMessageAsync(new ChatId(chatBotvaId), "Пропала коннекция к базе. Отключаюсь, чтобы не потерялись данные. wit\r\n"
-                                                                  + "Пожалуйста, включите меня в течение суток");
-                throw;
-            }
             catch (Exception exception)
             {
                 Console.WriteLine(exception.ToString());
+                switch (exception)
+                {
+                    case SocketException _:
+                    case ObjectDisposedException _:
+                        Bot.SendTextMessageAsync(new ChatId(chatBotvaId), "Пропала коннекция к базе. Отключаюсь, чтобы не потерялись данные. wit\r\n"
+                                                                          + "Пожалуйста, включите меня в течение суток");
+                        throw;
+                    default:
+                        Bot.SendTextMessageAsync(new ChatId(chat125Id), exception.ToString());
+                        break;
+                }
             }
         }
     }
