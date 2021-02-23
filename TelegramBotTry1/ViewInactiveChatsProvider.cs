@@ -36,7 +36,7 @@ namespace TelegramBotTry1
                         select groups.OrderByDescending(p => p.Date).FirstOrDefault()
                     )
                     .Where(msg => msg.Date <= timeBorder)
-                    .OrderByDescending(p => p.Date)
+                    .OrderByDescending(msg => msg.Date)
                     .ToList<IMessageDataSet>();
 
                 return lastMessagesFromDirectors;

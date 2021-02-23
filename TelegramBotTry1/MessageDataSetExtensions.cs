@@ -79,27 +79,22 @@ namespace TelegramBotTry1
             var ignoreUnanswered = new List<string>
             {
                 "",
+                "а",
                 "ага",
                 "вам",
                 "вас",
                 "вроде бы все",
                 "все",
                 "да",
-                "да конечно",
                 "договорились",
+                "за",
                 "нет",
                 "ну да",
                 "ну",
                 "ок",
                 "ок спс",
                 "окей",
-                "окей спс",
                 "попробую",
-                "примем",
-                "принято",
-                "сделаю",
-                "сделаю сегодня",
-                "спс",
                 "ура",
                 "ясно",
                 "jr",
@@ -111,12 +106,15 @@ namespace TelegramBotTry1
                     {
                         msg = z,
                         txt = new string(
-                            Regex.Replace(z.Message, @"\p{Cs}", "")
+                            Regex.Replace(z.Message, @"\p{Cs}", " ")
                             .ToLower()
                             .Replace("ё", "е")
                             .Replace("☺️", string.Empty)
                             .Replace("✅", string.Empty)
                             .Replace(new[] {')', '(', '+' }, "")
+                            .Replace("  ", " ")
+                            .Replace("ааа", "а")
+                            .Replace("аа", "а")
                             .Replace("айгюль", "")
                             .Replace("анна", "")
                             .Replace("благодарю", "")
@@ -127,34 +125,50 @@ namespace TelegramBotTry1
                             .Replace("взаимно", "")
                             .Replace("виктория", "")
                             .Replace("готово", "")
+                            .Replace("громадное", "")
+                            .Replace("девочки", "")
                             .Replace("добрый вечер", "")
                             .Replace("добрый день", "")
                             .Replace("доброе утро", "")
+                            .Replace("дорогие коллеги", "")
                             .Replace("здравствуйте", "")
                             .Replace("екатерина", "")
                             .Replace("ирина", "")
+                            .Replace("коллеги", "")
+                            .Replace("конечно", "")
                             .Replace("марина", "")
                             .Replace("насть", "")
                             .Replace("наталья", "")
+                            .Replace("огромное", "")
                             .Replace("ольга", "")
+                            .Replace("оля", "")
                             .Replace("оплатила", "")
                             .Replace("оплатил", "")
                             .Replace("отлично", "")
                             .Replace("отправила", "")
                             .Replace("отправил", "")
+                            .Replace("очень приятно", "")
                             .Replace("подписала", "")
                             .Replace("подписал", "")
                             .Replace("подумаю", "")
+                            .Replace("поздравление", "")
+                            .Replace("поздравления", "")
                             .Replace("поняла", "")
                             .Replace("понял", "")
                             .Replace("понятно", "")
+                            .Replace("примем", "")
                             .Replace("приняла", "")
                             .Replace("принял", "")
+                            .Replace("принято", "")
                             .Replace("светлана", "")
+                            .Replace("сделаю", "")
                             .Replace("спаибо", "")
                             .Replace("спасибо", "")
+                            .Replace("спасиб", "")
                             .Replace("спасиьо", "")
                             .Replace("спасио", "")
+                            .Replace("спассибо", "")
+                            .Replace("спс", "")
                             .Replace("спсаибо", "")
                             .Replace("супер", "")
                             .Replace("татьяна", "")
@@ -163,6 +177,7 @@ namespace TelegramBotTry1
                             .Replace("увидел", "")
                             .Replace("хорлшо", "")
                             .Replace("хорошо", "")
+                            .Replace("шпасиба", "")
                             .Where(c => c == '?' || !char.IsPunctuation(c)).ToArray())
                             .Trim()
                 })
