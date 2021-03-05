@@ -42,5 +42,36 @@ namespace TelegramBotTry1
                 return lastMessagesFromDirectors;
             }
         }
+
+        //todo formatting is another responsibility
+        public static List<string> GetInactiveFormatted(DateTime sinceDate, DateTime untilDate, TimeSpan checkingPeriod)
+        {
+            return GetInactive(sinceDate, untilDate, checkingPeriod)
+                .Select(msg =>
+                {
+                    var mark = string.Empty;
+                    switch (msg.Date)
+                    {
+                        case DateTime date when (untilDate - date).TotalDays < 7:
+                            break;
+                        case DateTime date when (untilDate - date).TotalDays < 14:
+                            mark = " больше недели 😐";
+                            break;
+                        case DateTime date when (untilDate - date).TotalDays < 21:
+                            mark = " больше двух недель 😕";
+                            break;
+                        default:
+                            mark = " больше трех недель 😟";
+                            break;
+                    }
+
+                    return string.Format(
+                        @"В чате {0} нет активной переписки{1}. Последнее сообщение от клиента было {2}. Текст сообщения: ""{3}"""
+                        , msg.ChatName
+                        , mark
+                        , msg.Date.AddHours(5).ToString("dd.MM.yyyy в H:mm")
+                        , msg.Message);
+                }).ToList();
+        }
     }
 }

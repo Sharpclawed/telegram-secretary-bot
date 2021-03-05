@@ -15,12 +15,13 @@ namespace TelegramBotTry1
     {
         public static async void ProcessTextMessage(TelegramBotClient bot, Message message)
         {
+            var botClientWrapper = new BotClientWrapper(bot);
+
             var isMessagePersonal = message.Chat.Title == null;
             if (!isMessagePersonal)
                 return;
 
             //TODO парсинг комманд вынести сюда
-
             if (message.Text.StartsWith("/help"))
             {
                 const string helperMsg =
@@ -236,63 +237,50 @@ namespace TelegramBotTry1
                         {
                             case EntityType.Admin:
                             {
-                                string result;
+                                IEnumerable<string> result;
                                 using (var context = new MsgContext())
                                 {
                                     var adminDataSets = context.Set<AdminDataSet>().AsNoTracking();
-                                    var values = adminDataSets.Where(x => x.DeleteTime == null).ToList()
+                                    result = adminDataSets.Where(x => x.DeleteTime == null).ToList()
                                         .Select(x => x.UserName + " " + x.AddTime.ToShortDateString());
-                                    result = string.Join("\r\n", values);
                                 }
 
-                                await bot.SendTextMessageAsync(message.Chat.Id, "Список админов:\r\n" + result);
-
+                                await botClientWrapper.SendTextMessagesAsSingleTextAsync(message.Chat.Id, result, "Список админов:\r\n");
                                 break;
                             }
                             case EntityType.Bookkeeper:
                             {
-                                string result;
+                                IEnumerable<string> result;
                                 using (var context = new MsgContext())
                                 {
                                     var bkDataSets = context.Set<BookkeeperDataSet>().AsNoTracking();
-                                    var values = bkDataSets.ToList()
+                                    result = bkDataSets.ToList()
                                         .Select(x => x.UserFirstName + " " + x.UserLastName);
-                                    result = string.Join("\r\n", values);
                                 }
 
-                                await bot.SendTextMessageAsync(message.Chat.Id, "Список бухгалтеров:\r\n" + result);
+                                await botClientWrapper.SendTextMessagesAsSingleTextAsync(message.Chat.Id, result, "Список бухгалтеров:\r\n");
                                 break;
                             }
                             case EntityType.Waiter:
                             {
                                 var sinceDate = DateTime.UtcNow.Date.AddMonths(-1);
                                 var untilDate = DateTime.UtcNow.Date.AddMinutes(-30);
-                                var waitersMessages = ViewWaitersProvider.GetWaiters(sinceDate, untilDate);
-                                foreach (var msg in waitersMessages)
-                                {
-                                    var timeWithoutAnswer = DateTime.UtcNow.Subtract(msg.Date);
-                                    var result = string.Format(
-                                        @"В чате {0} сообщение от {1} {2}, оставленное {3}, без ответа ({4}). Текст сообщения: ""{5}"""
-                                        , msg.ChatName, msg.UserLastName, msg.UserFirstName
-                                        , msg.Date.AddHours(10).AddHours(-8).ToString("dd.MM.yyyy H:mm")
-                                        , timeWithoutAnswer.Days + " дней " + timeWithoutAnswer.Hours + " часов " + timeWithoutAnswer.Minutes + " минут"
-                                        , msg.Message);
-                                    await bot.SendTextMessageAsync(message.Chat.Id, result);
-                                }
+                                var waitersReport = ViewWaitersProvider.GetWaitersFormatted(sinceDate, untilDate);
+                                await botClientWrapper.SendTextMessagesAsListAsync(message.Chat.Id, waitersReport);
                                 break;
                             }
                             case EntityType.InactiveChatException:
                             {
-                                string result;
+                                IEnumerable<string> result;
                                 using (var context = new MsgContext())
                                 {
                                     var dataSets = context.Set<OnetimeChatDataSet>().AsNoTracking();
-                                    var values = dataSets.ToList()
+                                    result = dataSets.ToList()
                                         .Select(x => x.ChatName);
-                                    result = string.Join("\r\n", values);
                                 }
 
-                                await bot.SendTextMessageAsync(message.Chat.Id, "Список исключений для просмотра неактивных чатов:\r\n" + result);
+                                await botClientWrapper.SendTextMessagesAsSingleTextAsync(message.Chat.Id, result
+                                    , "Список исключений для просмотра неактивных чатов:\r\n");
                                 break;
                             }
                             case EntityType.InactiveChat:

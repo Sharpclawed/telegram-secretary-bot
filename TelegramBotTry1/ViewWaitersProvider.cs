@@ -61,5 +61,21 @@ namespace TelegramBotTry1
                 .FilterObviouslySuperfluous()
                 .ToList();
         }
+
+        //todo formatting is another responsibility
+        public static List<string> GetWaitersFormatted(DateTime sinceDate, DateTime untilDate)
+        {
+            return GetWaiters(sinceDate, untilDate).Select(msg =>
+            {
+                var timeWithoutAnswer = DateTime.UtcNow.Subtract(msg.Date);
+                return string.Format(
+                    @"В чате {0} сообщение от {1} {2}, оставленное {3}, без ответа ({4}). Текст сообщения: ""{5}"""
+                    , msg.ChatName, msg.UserLastName, msg.UserFirstName
+                    , msg.Date.AddHours(5).ToString("dd.MM.yyyy H:mm")
+                    , timeWithoutAnswer.Days + " дней " + timeWithoutAnswer.Hours + " часов " +
+                      timeWithoutAnswer.Minutes + " минут"
+                    , msg.Message);
+            }).ToList();
+        }
     }
 }
