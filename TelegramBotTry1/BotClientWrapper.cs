@@ -13,7 +13,7 @@ namespace TelegramBotTry1
     {
         private readonly ITelegramBotClient client;
 
-        private readonly SenderConfig defaultConfig = new SenderConfig
+        private readonly ListSenderConfig defaultConfig = new ListSenderConfig
         {
             TotalMessagesLimit = 34,
             MessagesPerPackage = 17,
@@ -25,21 +25,23 @@ namespace TelegramBotTry1
             this.client = client;
         }
 
-        public async Task SendTextMessagesAsListAsync(long chatId, IList<string> msgs, SenderConfig config = null)
+        public async Task SendTextMessagesAsListAsync(long chatId, IList<string> msgs, ListSenderConfig config = null)
         {
             config = config ?? defaultConfig;
 
             var preparedSet = msgs.Count <= config.TotalMessagesLimit
                 ? msgs
-                : msgs.Take(config.TotalMessagesLimit).ToList();
+                : msgs.Take(config.TotalMessagesLimit);
 
-            for (var i = 1; i <= preparedSet.Count; i++)
+            var i = 0;
+            foreach (var msg in preparedSet)
             {
+                i++;
                 //todo is Thread.Sleep bad in this case?
                 if (i % config.MessagesPerPackage == 0)
-                    Thread.Sleep((int) config.IntervalBetweenPackages.TotalSeconds);
+                    Thread.Sleep((int)config.IntervalBetweenPackages.TotalMilliseconds);
 
-                await client.SendTextMessageAsync(chatId, preparedSet[i]);
+                await client.SendTextMessageAsync(chatId, msg);
             }
         }
 
@@ -50,7 +52,7 @@ namespace TelegramBotTry1
         }
     }
 
-    public class SenderConfig
+    public class ListSenderConfig
     {
         public int MessagesPerPackage { get; set; }
         public int TotalMessagesLimit { get; set; }

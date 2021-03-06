@@ -33,8 +33,7 @@ namespace TelegramBotTry1
             }
         }
 
-        public static IQueryable<IMessageDataSet> GetActualUser(this IQueryable<IMessageDataSet> dataSets,
-            HistoryCommand command)
+        public static IQueryable<IMessageDataSet> GetActualUser(this IQueryable<IMessageDataSet> dataSets, HistoryCommand command)
         {
             switch (command.Type)
             {
@@ -48,6 +47,7 @@ namespace TelegramBotTry1
             }
         }
 
+        //todo test it
         public static User GetUserByUserName(this IQueryable<IMessageDataSet> dataSets, string userName)
         {
             var message = dataSets.Where(x => x.UserName.ToLower() == userName.ToLower()).OrderByDescending(x => x.Date).FirstOrDefault();
@@ -62,6 +62,7 @@ namespace TelegramBotTry1
             };
         }
 
+        //todo test it
         public static Chat GetChatByChatName(this IQueryable<IMessageDataSet> dataSets, string chatName)
         {
             var message = dataSets.Where(x => x.ChatName.ToLower() == chatName.ToLower()).OrderByDescending(x => x.Date).FirstOrDefault();
