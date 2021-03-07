@@ -128,6 +128,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AdminDataSetExtensions.cs" />
+    <Compile Include="BotClientWrapper.cs" />
     <Compile Include="CommandMessageProcessor.cs" />
     <Compile Include="Domain\OnetimeChatDataSet.cs" />
     <Compile Include="Dto\Chat.cs" />
@@ -166,6 +167,11 @@
     <EmbeddedResource Include="Migrations\202002171859206_InitialCreate.resx">
       <DependentUpon>202002171859206_InitialCreate.cs</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="DataAdders\" />
+    <Folder Include="DataProviders\" />
+    <Folder Include="DataRemovers\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

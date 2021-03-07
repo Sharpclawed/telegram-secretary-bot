@@ -13,6 +13,7 @@ namespace FunctionalTests
     [TestFixture]
     public class DataSetExtensionsTests
     {
+        //todo should be isolated
         private List<IMessageDataSet> dataSet;
 
         [SetUp]
