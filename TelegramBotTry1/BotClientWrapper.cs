@@ -13,11 +13,18 @@ namespace TelegramBotTry1
     {
         private readonly ITelegramBotClient client;
 
-        private readonly ListSenderConfig defaultConfig = new ListSenderConfig
+        private readonly ListSenderConfig defaultConfigPersonal = new ListSenderConfig
         {
             TotalMessagesLimit = 34,
             MessagesPerPackage = 17,
             IntervalBetweenPackages = TimeSpan.FromSeconds(5)
+        };
+
+        private readonly ListSenderConfig defaultConfigChat = new ListSenderConfig
+        {
+            TotalMessagesLimit = 20,
+            MessagesPerPackage = 4,
+            IntervalBetweenPackages = TimeSpan.FromSeconds(3)
         };
 
         public BotClientWrapper(ITelegramBotClient client)
@@ -25,9 +32,11 @@ namespace TelegramBotTry1
             this.client = client;
         }
 
-        public async Task SendTextMessagesAsListAsync(long chatId, IList<string> msgs, ListSenderConfig config = null)
+        public async Task SendTextMessagesAsListAsync(long chatId, IList<string> msgs, ChatType destinationChatType)
         {
-            config = config ?? defaultConfig;
+            var config = destinationChatType == ChatType.Personal
+                ? defaultConfigPersonal
+                : defaultConfigChat;
 
             var preparedSet = msgs.Count <= config.TotalMessagesLimit
                 ? msgs
@@ -57,5 +66,11 @@ namespace TelegramBotTry1
         public int MessagesPerPackage { get; set; }
         public int TotalMessagesLimit { get; set; }
         public TimeSpan IntervalBetweenPackages { get; set; }
+    }
+
+    public enum ChatType
+    {
+        Chat,
+        Personal
     }
 }

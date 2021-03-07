@@ -266,7 +266,7 @@ namespace TelegramBotTry1
                                 var sinceDate = DateTime.UtcNow.Date.AddMonths(-1);
                                 var untilDate = DateTime.UtcNow.Date.AddMinutes(-30);
                                 var waitersReport = ViewWaitersProvider.GetWaitersFormatted(sinceDate, untilDate);
-                                await botClientWrapper.SendTextMessagesAsListAsync(message.Chat.Id, waitersReport);
+                                await botClientWrapper.SendTextMessagesAsListAsync(message.Chat.Id, waitersReport, ChatType.Personal);
                                 break;
                             }
                             case EntityType.InactiveChatException:

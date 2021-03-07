@@ -213,7 +213,7 @@ namespace TelegramBotTry1
                     var untilDate = DateTime.UtcNow.AddMinutes(-120);
                     var waitersReport = ViewWaitersProvider.GetWaitersFormatted(sinceDate, untilDate);
                     var botClientWrapper = new BotClientWrapper(Bot);
-                    botClientWrapper.SendTextMessagesAsListAsync(chatUnasweredId, waitersReport).ConfigureAwait(false);
+                    botClientWrapper.SendTextMessagesAsListAsync(chatUnasweredId, waitersReport, ChatType.Chat).ConfigureAwait(false);
                 }
             }
             catch (Exception exception)
@@ -246,7 +246,7 @@ namespace TelegramBotTry1
                     var untilDate = scheduledRunUtc;
                     var inactiveChatsReport = ViewInactiveChatsProvider.GetInactiveFormatted(sinceDate, untilDate, TimeSpan.FromDays(7));
                     var botClientWrapper = new BotClientWrapper(Bot);
-                    botClientWrapper.SendTextMessagesAsListAsync(chatUnasweredId, inactiveChatsReport).ConfigureAwait(false);
+                    botClientWrapper.SendTextMessagesAsListAsync(chatUnasweredId, inactiveChatsReport, ChatType.Chat).ConfigureAwait(false);
                     lastInactiveChatCheckUtc = scheduledRunUtc;
                 }
             }
