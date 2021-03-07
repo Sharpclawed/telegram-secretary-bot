@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using System.Timers;
@@ -6,6 +8,7 @@ using Telegram.Bot;
 using Telegram.Bot.Args;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.InputFiles;
 using TelegramBotTry1.Domain;
 
 namespace TelegramBotTry1
@@ -16,7 +19,7 @@ namespace TelegramBotTry1
             new TelegramBotClient("361040811:AAGQlsM84JwDIRtcztbMMboKLXWqbPwW4VI");  //kontakt bot
             //new TelegramBotClient("245135166:AAEYEEsWjQmN_wLENwnA84Wb9xkgQJ-TLFE");   //my bot
 
-        private static readonly long chat125Id = -219324188; //чат 125
+        private static readonly long chat125Id = -1001448532640;//- 219324188; //чат 125
         private static readonly long chatBotvaId = -1001100176543; //чат БотВажное
         private static readonly long chatUnasweredId = -1001469821060;
 
@@ -197,7 +200,7 @@ namespace TelegramBotTry1
             timer.Start();
         }
 
-        private static void ViewWaitersEvent(object sender, ElapsedEventArgs e)
+        private static async void ViewWaitersEvent(object sender, ElapsedEventArgs e)
         {
             try
             {
@@ -211,9 +214,25 @@ namespace TelegramBotTry1
                             : -59).AddMinutes(-125)
                         : DateTime.UtcNow.AddMinutes(-125);
                     var untilDate = DateTime.UtcNow.AddMinutes(-120);
-                    var waitersReport = ViewWaitersProvider.GetWaitersFormatted(sinceDate, untilDate);
-                    var botClientWrapper = new BotClientWrapper(Bot);
-                    botClientWrapper.SendTextMessagesAsListAsync(chatUnasweredId, waitersReport, ChatType.Chat).ConfigureAwait(false);
+                    var waitersReport = ViewWaitersProvider.GetWaiters(sinceDate, untilDate);
+                    var messagesByChatname = waitersReport
+                        .ToList<IMessageDataSet>()
+                        .GroupBy(x => x.ChatId)
+                        .Select(gdc =>
+                        {
+                            var dataSets = gdc.OrderBy(z => z.Date).ToList();
+                            return new KeyValuePair<string, List<IMessageDataSet>>(
+                                dataSets.LastOrDefault()?.ChatName ?? "Чат",
+                                dataSets);
+                        });
+
+                    var report = ReportCreator.Create(messagesByChatname, chatUnasweredId);
+
+                    using (var fileStream = new FileStream(report.Name, FileMode.Open, FileAccess.Read, FileShare.Read))
+                    {
+                        var fileToSend = new InputOnlineFile(fileStream, "Waiters.xls");
+                        await Bot.SendDocumentAsync(new ChatId(chatUnasweredId), fileToSend, "Отчет по неотвеченным сообщениям").ConfigureAwait(false);
+                    }
                 }
             }
             catch (Exception exception)
@@ -223,17 +242,17 @@ namespace TelegramBotTry1
                 {
                     case SocketException _:
                     case ObjectDisposedException _:
-                        Bot.SendTextMessageAsync(new ChatId(chatBotvaId), "Пропала коннекция к базе. Отключаюсь, чтобы не потерялись данные. vw\r\n"
-                                                                          + "Пожалуйста, включите меня в течение суток");
+                        await Bot.SendTextMessageAsync(new ChatId(chatBotvaId), "Пропала коннекция к базе. Отключаюсь, чтобы не потерялись данные. vw\r\n"
+                                                                          + "Пожалуйста, включите меня в течение суток").ConfigureAwait(false);
                         throw;
                     default:
-                        Bot.SendTextMessageAsync(new ChatId(chat125Id), exception.ToString());
+                        await Bot.SendTextMessageAsync(new ChatId(chat125Id), exception.ToString()).ConfigureAwait(false);
                         break;
                 }
             }
         }
 
-        private static void ViewInactiveChatsEvent(object sender, ElapsedEventArgs e)
+        private static async void ViewInactiveChatsEvent(object sender, ElapsedEventArgs e)
         {
             try
             {
@@ -244,9 +263,19 @@ namespace TelegramBotTry1
                 {
                     var sinceDate = scheduledRunUtc.AddDays(-28);
                     var untilDate = scheduledRunUtc;
-                    var inactiveChatsReport = ViewInactiveChatsProvider.GetInactiveFormatted(sinceDate, untilDate, TimeSpan.FromDays(7));
-                    var botClientWrapper = new BotClientWrapper(Bot);
-                    botClientWrapper.SendTextMessagesAsListAsync(chatUnasweredId, inactiveChatsReport, ChatType.Chat).ConfigureAwait(false);
+                    //todo обобщить код
+                    var messageDataSets = new Dictionary<string, List<IMessageDataSet>>
+                    {
+                        {"Неактивные", ViewInactiveChatsProvider.GetInactive(sinceDate, untilDate, TimeSpan.FromDays(7))}
+                    };
+
+                    var report = ReportCreator.Create(messageDataSets, chat125Id);
+
+                    using (var fileStream = new FileStream(report.Name, FileMode.Open, FileAccess.Read, FileShare.Read))
+                    {
+                        var fileToSend = new InputOnlineFile(fileStream, "InactiveChats.xls");
+                        await Bot.SendDocumentAsync(chatUnasweredId, fileToSend, "Отчет по неактивным чатам").ConfigureAwait(false);
+                    }
                     lastInactiveChatCheckUtc = scheduledRunUtc;
                 }
             }
@@ -257,11 +286,11 @@ namespace TelegramBotTry1
                 {
                     case SocketException _:
                     case ObjectDisposedException _:
-                        Bot.SendTextMessageAsync(new ChatId(chatBotvaId), "Пропала коннекция к базе. Отключаюсь, чтобы не потерялись данные. vic\r\n"
-                                                                          + "Пожалуйста, включите меня в течение суток");
+                        await Bot.SendTextMessageAsync(chatBotvaId, "Пропала коннекция к базе. Отключаюсь, чтобы не потерялись данные. vic\r\n"
+                                                                          + "Пожалуйста, включите меня в течение суток").ConfigureAwait(false);
                         throw;
                     default:
-                        Bot.SendTextMessageAsync(new ChatId(chat125Id), exception.ToString());
+                        await Bot.SendTextMessageAsync(chat125Id, exception.ToString()).ConfigureAwait(false);
                         break;
                 }
             }

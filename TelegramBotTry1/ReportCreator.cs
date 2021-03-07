@@ -10,6 +10,7 @@ namespace TelegramBotTry1
     public static class ReportCreator
     {
         //TODO чистилку сделать для темп файла. Плюс учесть многопоточность. МБ помечать файлы, что используются, пока не отправили
+        //todo userId - дичь
         public static FileInfo Create(IEnumerable<KeyValuePair<string, List<IMessageDataSet>>> sheetsData, long userId)
         {
             var tempFile = new FileInfo("temp" + userId + ".xls");
