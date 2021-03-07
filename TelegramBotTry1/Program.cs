@@ -206,13 +206,9 @@ namespace TelegramBotTry1
             {
                 var signalTime = e.SignalTime;
 
-                if (signalTime.Hour >= 5 && signalTime.Hour < 18 && signalTime.DayOfWeek != DayOfWeek.Saturday && signalTime.DayOfWeek != DayOfWeek.Sunday)
+                if (signalTime.Hour == 5 && signalTime.Minute < 5 && signalTime.DayOfWeek == DayOfWeek.Monday)
                 {
-                    var sinceDate = signalTime.Hour == 5 && signalTime.Minute < 5
-                        ? DateTime.UtcNow.AddHours(signalTime.DayOfWeek != DayOfWeek.Monday
-                            ? -11
-                            : -59).AddMinutes(-125)
-                        : DateTime.UtcNow.AddMinutes(-125);
+                    var sinceDate = DateTime.UtcNow.AddHours(-59).AddMinutes(-125);
                     var untilDate = DateTime.UtcNow.AddMinutes(-120);
                     var waitersReport = ViewWaitersProvider.GetWaiters(sinceDate, untilDate);
                     var messagesByChatname = waitersReport
@@ -233,6 +229,16 @@ namespace TelegramBotTry1
                         var fileToSend = new InputOnlineFile(fileStream, "Waiters.xls");
                         await Bot.SendDocumentAsync(new ChatId(chatUnasweredId), fileToSend, "Отчет по неотвеченным сообщениям").ConfigureAwait(false);
                     }
+                }
+                else if (signalTime.Hour >= 5 && signalTime.Hour < 18 && signalTime.DayOfWeek != DayOfWeek.Saturday && signalTime.DayOfWeek != DayOfWeek.Sunday)
+                {
+                    var sinceDate = signalTime.Hour == 5 && signalTime.Minute < 5
+                        ? DateTime.UtcNow.AddHours(-11).AddMinutes(-125)
+                        : DateTime.UtcNow.AddMinutes(-125);
+                    var untilDate = DateTime.UtcNow.AddMinutes(-120);
+                    var waitersReport = ViewWaitersProvider.GetWaitersFormatted(sinceDate, untilDate);
+                    var botClientWrapper = new BotClientWrapper(Bot);
+                    await botClientWrapper.SendTextMessagesAsListAsync(chatUnasweredId, waitersReport, ChatType.Chat).ConfigureAwait(false);
                 }
             }
             catch (Exception exception)
