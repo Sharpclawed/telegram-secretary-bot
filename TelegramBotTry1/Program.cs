@@ -210,19 +210,12 @@ namespace TelegramBotTry1
                 {
                     var sinceDate = DateTime.UtcNow.AddHours(-59).AddMinutes(-125);
                     var untilDate = DateTime.UtcNow.AddMinutes(-120);
-                    var waitersReport = ViewWaitersProvider.GetWaiters(sinceDate, untilDate);
-                    var messagesByChatname = waitersReport
-                        .ToList<IMessageDataSet>()
-                        .GroupBy(x => x.ChatId)
-                        .Select(gdc =>
-                        {
-                            var dataSets = gdc.OrderBy(z => z.Date).ToList();
-                            return new KeyValuePair<string, List<IMessageDataSet>>(
-                                dataSets.LastOrDefault()?.ChatName ?? "Чат",
-                                dataSets);
-                        });
+                    var waitersReport = new Dictionary<string, List<IMessageDataSet>>
+                    {
+                        {"Неотвеченные", ViewWaitersProvider.GetWaiters(sinceDate, untilDate).ToList<IMessageDataSet>()}
+                    };
 
-                    var report = ReportCreator.Create(messagesByChatname, chatUnasweredId);
+                    var report = ReportCreator.Create(waitersReport, chatUnasweredId);
 
                     using (var fileStream = new FileStream(report.Name, FileMode.Open, FileAccess.Read, FileShare.Read))
                     {
