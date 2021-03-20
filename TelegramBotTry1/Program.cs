@@ -205,23 +205,27 @@ namespace TelegramBotTry1
             try
             {
                 var signalTime = e.SignalTime;
+                var botClientWrapper = new BotClientWrapper(Bot);
 
                 if (signalTime.Hour == 5 && signalTime.Minute < 5 && signalTime.DayOfWeek == DayOfWeek.Monday)
                 {
                     var sinceDate = DateTime.UtcNow.AddHours(-59).AddMinutes(-125);
                     var untilDate = DateTime.UtcNow.AddMinutes(-120);
-                    var waitersReport = new Dictionary<string, List<IMessageDataSet>>
-                    {
-                        {"Неотвеченные", ViewWaitersProvider.GetWaiters(sinceDate, untilDate).ToList<IMessageDataSet>()}
-                    };
 
-                    var report = ReportCreator.Create(waitersReport, chatUnasweredId);
-
-                    using (var fileStream = new FileStream(report.Name, FileMode.Open, FileAccess.Read, FileShare.Read))
-                    {
-                        var fileToSend = new InputOnlineFile(fileStream, "Waiters.xls");
-                        await Bot.SendDocumentAsync(new ChatId(chatUnasweredId), fileToSend, "Отчет по неотвеченным сообщениям").ConfigureAwait(false);
-                    }
+                    await botClientWrapper.SendTextMessagesAsExcelReportAsync(
+                        chatUnasweredId,
+                        ViewWaitersProvider.GetWaiters(sinceDate, untilDate).ToList<IMessageDataSet>(),
+                        "Отчет по неотвеченным сообщениям",
+                        new[]
+                        {
+                            nameof(IMessageDataSet.Date),
+                            nameof(IMessageDataSet.ChatName),
+                            nameof(IMessageDataSet.Message),
+                            nameof(IMessageDataSet.UserFirstName),
+                            nameof(IMessageDataSet.UserLastName),
+                            nameof(IMessageDataSet.UserName),
+                            nameof(IMessageDataSet.UserId)
+                        }).ConfigureAwait(false);
                 }
                 else if (signalTime.Hour >= 5 && signalTime.Hour < 18 && signalTime.DayOfWeek != DayOfWeek.Saturday && signalTime.DayOfWeek != DayOfWeek.Sunday)
                 {
@@ -230,7 +234,6 @@ namespace TelegramBotTry1
                         : DateTime.UtcNow.AddMinutes(-125);
                     var untilDate = DateTime.UtcNow.AddMinutes(-120);
                     var waitersReport = ViewWaitersProvider.GetWaitersFormatted(sinceDate, untilDate);
-                    var botClientWrapper = new BotClientWrapper(Bot);
                     await botClientWrapper.SendTextMessagesAsListAsync(chatUnasweredId, waitersReport, ChatType.Chat).ConfigureAwait(false);
                 }
             }
@@ -262,19 +265,22 @@ namespace TelegramBotTry1
                 {
                     var sinceDate = scheduledRunUtc.AddDays(-28);
                     var untilDate = scheduledRunUtc;
-                    //todo обобщить код
-                    var messageDataSets = new Dictionary<string, List<IMessageDataSet>>
-                    {
-                        {"Неактивные", ViewInactiveChatsProvider.GetInactive(sinceDate, untilDate, TimeSpan.FromDays(7))}
-                    };
 
-                    var report = ReportCreator.Create(messageDataSets, chat125Id);
-
-                    using (var fileStream = new FileStream(report.Name, FileMode.Open, FileAccess.Read, FileShare.Read))
-                    {
-                        var fileToSend = new InputOnlineFile(fileStream, "InactiveChats.xls");
-                        await Bot.SendDocumentAsync(chatUnasweredId, fileToSend, "Отчет по неактивным чатам").ConfigureAwait(false);
-                    }
+                    var botClientWrapper = new BotClientWrapper(Bot);
+                    await botClientWrapper.SendTextMessagesAsExcelReportAsync(
+                        chatUnasweredId,
+                        ViewInactiveChatsProvider.GetInactive(sinceDate, untilDate, TimeSpan.FromDays(7)),
+                        "Отчет по неактивным чатам",
+                        new[]
+                        {
+                            nameof(IMessageDataSet.Date),
+                            nameof(IMessageDataSet.ChatName),
+                            nameof(IMessageDataSet.Message),
+                            nameof(IMessageDataSet.UserFirstName),
+                            nameof(IMessageDataSet.UserLastName),
+                            nameof(IMessageDataSet.UserName),
+                            nameof(IMessageDataSet.UserId)
+                        }).ConfigureAwait(false);
                     lastInactiveChatCheckUtc = scheduledRunUtc;
                 }
             }

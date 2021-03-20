@@ -87,30 +87,20 @@ namespace TelegramBotTry1
                             return;
                         }
 
-                        var messagesByChatname = messageDataSets
-                            .ToList()
-                            .GroupBy(x => x.ChatId)
-                            .Select(gdc =>
+                        await botClientWrapper.SendTextMessagesAsExcelReportAsync(
+                            message.Chat.Id,
+                            messageDataSets.ToList(),
+                            "История сообщений",
+                            new[]
                             {
-                                var dataSets = gdc.OrderBy(z => z.Date).ToList();
-                                return new KeyValuePair<string, List<IMessageDataSet>>(
-                                    dataSets.LastOrDefault()?.ChatName ?? "Чат",
-                                    dataSets);
-                            });
-                        
-                        if (!messagesByChatname.Any())
-                        {
-                            await bot.SendTextMessageAsync(message.Chat.Id, "Нет данных за указанный период");
-                            return;
-                        }
-
-                        var report = ReportCreator.Create(messagesByChatname, message.From.Id);
-
-                        using (var fileStream = new FileStream(report.Name, FileMode.Open, FileAccess.Read, FileShare.Read))
-                        {
-                            var fileToSend = new InputOnlineFile(fileStream, "History.xls");
-                            await bot.SendDocumentAsync(message.Chat.Id, fileToSend, "Отчет подготовлен");
-                        }
+                                nameof(IMessageDataSet.Date),
+                                nameof(IMessageDataSet.Message),
+                                nameof(IMessageDataSet.UserFirstName),
+                                nameof(IMessageDataSet.UserLastName),
+                                nameof(IMessageDataSet.UserName),
+                                nameof(IMessageDataSet.UserId)
+                            },
+                            msg => msg.ChatName).ConfigureAwait(false);
                     }
                 }
                 catch (Exception ex)
@@ -287,18 +277,21 @@ namespace TelegramBotTry1
                             {
                                 var sinceDate = DateTime.UtcNow.AddDays(-365);
                                 var untilDate = DateTime.UtcNow;
-                                var messageDataSets = new Dictionary<string, List<IMessageDataSet>>
-                                {
-                                    {"Неактивные", ViewInactiveChatsProvider.GetInactive(sinceDate, untilDate, TimeSpan.FromDays(7))}
-                                };
 
-                                var report = ReportCreator.Create(messageDataSets, message.From.Id);
-
-                                using (var fileStream = new FileStream(report.Name, FileMode.Open, FileAccess.Read, FileShare.Read))
-                                {
-                                    var fileToSend = new InputOnlineFile(fileStream, "InactiveChats.xls");
-                                    await bot.SendDocumentAsync(message.Chat.Id, fileToSend, "Отчет подготовлен");
-                                }
+                                await botClientWrapper.SendTextMessagesAsExcelReportAsync(
+                                    message.Chat.Id,
+                                    ViewInactiveChatsProvider.GetInactive(sinceDate, untilDate, TimeSpan.FromDays(7)),
+                                    "Отчет по неактивным чатам",
+                                    new[]
+                                    {
+                                        nameof(IMessageDataSet.Date),
+                                        nameof(IMessageDataSet.ChatName),
+                                        nameof(IMessageDataSet.Message),
+                                        nameof(IMessageDataSet.UserFirstName),
+                                        nameof(IMessageDataSet.UserLastName),
+                                        nameof(IMessageDataSet.UserName),
+                                        nameof(IMessageDataSet.UserId)
+                                    }).ConfigureAwait(false);
 
                                 break;
                             }
