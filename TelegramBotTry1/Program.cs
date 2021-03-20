@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using System.Timers;
@@ -8,7 +6,6 @@ using Telegram.Bot;
 using Telegram.Bot.Args;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Types.InputFiles;
 using TelegramBotTry1.Domain;
 
 namespace TelegramBotTry1
@@ -136,7 +133,7 @@ namespace TelegramBotTry1
         {
             try
             {
-                var scheduledRunUtc = DateTime.UtcNow.Date.AddHours(12).AddHours(-8); //9 часов по-нашему
+                var scheduledRunUtc = DateTime.UtcNow.Date.AddHours(4); //9 часов по-нашему
                 if (DateTime.UtcNow > scheduledRunUtc
                     && scheduledRunUtc.Date > lastIAmAliveCheckUtc.Date
                     && scheduledRunUtc.DayOfWeek == DayOfWeek.Saturday)
@@ -207,9 +204,9 @@ namespace TelegramBotTry1
                 var signalTime = e.SignalTime;
                 var botClientWrapper = new BotClientWrapper(Bot);
 
-                if (signalTime.Hour == 5 && signalTime.Minute < 5 && signalTime.DayOfWeek == DayOfWeek.Monday)
+                if (signalTime.Hour == 7 && signalTime.Minute < 5 && signalTime.DayOfWeek == DayOfWeek.Monday)
                 {
-                    var sinceDate = DateTime.UtcNow.AddHours(-59).AddMinutes(-125);
+                    var sinceDate = DateTime.UtcNow.AddHours(-61).AddMinutes(-125);
                     var untilDate = DateTime.UtcNow.AddMinutes(-120);
 
                     await botClientWrapper.SendTextMessagesAsExcelReportAsync(
@@ -227,10 +224,10 @@ namespace TelegramBotTry1
                             nameof(IMessageDataSet.UserId)
                         }).ConfigureAwait(false);
                 }
-                else if (signalTime.Hour >= 5 && signalTime.Hour < 18 && signalTime.DayOfWeek != DayOfWeek.Saturday && signalTime.DayOfWeek != DayOfWeek.Sunday)
+                else if (signalTime.Hour >= 7 && signalTime.Hour < 18 && signalTime.DayOfWeek != DayOfWeek.Saturday && signalTime.DayOfWeek != DayOfWeek.Sunday)
                 {
-                    var sinceDate = signalTime.Hour == 5 && signalTime.Minute < 5
-                        ? DateTime.UtcNow.AddHours(-11).AddMinutes(-125)
+                    var sinceDate = signalTime.Hour == 7 && signalTime.Minute < 5
+                        ? DateTime.UtcNow.AddHours(-13).AddMinutes(-125)
                         : DateTime.UtcNow.AddMinutes(-125);
                     var untilDate = DateTime.UtcNow.AddMinutes(-120);
                     var waitersReport = ViewWaitersProvider.GetWaitersFormatted(sinceDate, untilDate);
