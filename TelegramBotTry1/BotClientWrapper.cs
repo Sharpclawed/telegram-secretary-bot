@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Bot;
+using Telegram.Bot.Types;
+using Telegram.Bot.Types.InputFiles;
+using TelegramBotTry1.Domain;
 
 namespace TelegramBotTry1
 {
@@ -58,6 +62,37 @@ namespace TelegramBotTry1
         {
             var result = string.Join("\r\n", msgs);
             await client.SendTextMessageAsync(chatId, caption + result);
+        }
+
+        //todo maybe all these methods should take List<IMessageDataSet> and lambda or maybe fileInfoInstead
+        public async Task SendTextMessagesAsExcelReportAsync(long chatId, List<IMessageDataSet> msgs, string caption, string[] columnNames, Func<IMessageDataSet, string> groupBy = null)
+        {
+            //todo put to IMessageDataSetExtensions and add tests
+            IEnumerable<KeyValuePair<string, List<IMessageDataSet>>> listsWithRows;
+            if (groupBy == null)
+                listsWithRows = new Dictionary<string, List<IMessageDataSet>>
+                {
+                    {caption, msgs}
+                };
+            else
+            {
+                listsWithRows = msgs
+                    .GroupBy(groupBy)
+                    .Select(gdc =>
+                    {
+                        var dataSets = gdc.OrderBy(z => z.Date).ToList();
+                        return new KeyValuePair<string, List<IMessageDataSet>>(
+                            groupBy(dataSets.LastOrDefault()) ?? "default",
+                            dataSets);
+                    });
+            }
+
+            var report = ReportCreator.Create(listsWithRows, "temp" + chatId, columnNames);
+            using (var fileStream = new FileStream(report.Name, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                var fileToSend = new InputOnlineFile(fileStream, caption + ".xls");
+                await client.SendDocumentAsync(new ChatId(chatId), fileToSend, caption).ConfigureAwait(false);
+            }
         }
     }
 
