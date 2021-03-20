@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Telegram.Bot;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.InputFiles;
+using Telegram.Bot.Types.Enums;
 using TelegramBotTry1.Domain;
 using TelegramBotTry1.Dto;
 using TelegramBotTry1.Enums;
@@ -25,26 +24,26 @@ namespace TelegramBotTry1
             if (message.Text.StartsWith("/help"))
             {
                 const string helperMsg =
-                        "Получить историю:"
-                        + "\r\n/history: \"Название чата\" \"Дата начала\" \"Кол-во дней\""
-                        + "\r\n/historyall: \"Дата начала\" \"Кол-во дней\""
-                        + "\r\n/historyof: \"id аккаунта\" \"Дата начала\" \"Кол-во дней\""
-                        + "Работа с админами:"
-                        + "\r\n/addadmin: \"username\""
-                        + "\r\n/removeadmin: \"username\""
-                        + "\r\n/viewadmins"
-                        + "Работа с бухгалтерами:"
-                        + "\r\n/addbk: \"username\""
-                        + "\r\n/removebk: \"username\""
-                        + "\r\n/viewbk"
-                        + "\r\n/viewwaiters"
-                        + "Работа с чатами:"
-                        + "\r\n/addonetimechat: \"chatname\""
-                        + "\r\n/removeonetimechat: \"chatname\""
-                        + "\r\n/viewonetimechats"
-                        + "\r\n/viewinactivechats"
+                        "*Получить историю:*"
+                        + "\r\n/history: \"Название чата\" \"Дата начала\" \"Кол-во дней\" — _выдает в Эксель-файл историю переписки в указанном чате с даты начала на количество дней вперед_"
+                        + "\r\n/historyall: \"Дата начала\" \"Кол-во дней\" — _выдает выдает в Эксель-файл историю переписки всех частов, где есть бот с даты начала на количество дней вперед_"
+                        + "\r\n/historyof: \"id аккаунта\" \"Дата начала\" \"Кол-во дней\" — _выдает в Эксель-файл историю переписки по чатам бухгалтера с указанным id аккаунта с даты начала на количество дней вперед_"
+                        + "\r\n\r\n*Работа с админами:*"
+                        + "\r\n/addadmin: \"username\" — _добавить пользователя телеграмм в админы чат-бота - добавляем по юзернейм, могут запускать только админы_"
+                        + "\r\n/removeadmin: \"username\" — _убрать пользователя телеграмм из админов чат-бота, убрать по юзернейм, могут запускать только админы_"
+                        + "\r\n/viewadmins — _выводит список пользователей телеграмм, которые являются админами чат-бота, могут запускать только админы_"
+                        + "\r\n\r\n*Работа с бухгалтерами:*"
+                        + "\r\n/addbk: \"username\" — _добавить пользователя телеграмм в бухгалтеры для  чат-бота - добавляем по юзернейм, команду запускает админ. Нужно обозначить бухгалтеров, чтоб неотвеченные сообщения только от директоров проверять_"
+                        + "\r\n/removebk: \"username\" — _убрать пользователя телеграмм из бухгалтеров для  чат-бота - добавляем по юзернейм, команду запускает админ_"
+                        + "\r\n/viewbk — _выводит список пользователей телеграмм, которые помеченные  бухгалтерами для чат-бота, могут запускать только админы_"
+                        + "\r\n/viewwaiters — _выдает в чат список чатов, где есть неотвеченные больше 2 часов сообщения от директора_"
+                        + "\r\n\r\n*Работа с чатами:*"
+                        + "\r\n/addonetimechat: \"chatname\" — _пометить чат как неактивный, по которому не надо контролировать молчание директора в течении недели_"
+                        + "\r\n/removeonetimechat: \"chatname\" — _убрать пометку неактивности с чата_"
+                        + "\r\n/viewonetimechats — _вывести список чатов, помеченными неактивными_"
+                        + "\r\n/viewinactivechats — _вывести в Эксель список чатов, в которых не было сообщений от директора больше недели_"
                     ;
-                await bot.SendTextMessageAsync(message.Chat.Id, helperMsg);
+                await bot.SendTextMessageAsync(message.Chat.Id, helperMsg, ParseMode.Markdown);
             }
             else if (message.Text.StartsWith("/history"))
             {
