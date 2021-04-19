@@ -129,6 +129,7 @@
   <ItemGroup>
     <Compile Include="AdminDataSetExtensions.cs" />
     <Compile Include="BotClientWrapper.cs" />
+    <Compile Include="DbRepository.cs" />
     <Compile Include="Reporters\BotStateReporter.cs" />
     <Compile Include="ChatIds.cs" />
     <Compile Include="CommandMessageProcessor.cs" />

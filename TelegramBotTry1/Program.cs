@@ -2,7 +2,6 @@
 using System.Net.Sockets;
 using Telegram.Bot;
 using Telegram.Bot.Args;
-using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using TelegramBotTry1.Domain;
 using TelegramBotTry1.Reporters;
@@ -10,7 +9,8 @@ using TelegramBotTry1.Reporters;
 namespace TelegramBotTry1
 {
     static class Program
-    { 
+    {
+        //todo hide and change tokens
         private static readonly TelegramBotClient Bot =
             new TelegramBotClient("361040811:AAGQlsM84JwDIRtcztbMMboKLXWqbPwW4VI");  //kontakt bot
             //new TelegramBotClient("245135166:AAEYEEsWjQmN_wLENwnA84Wb9xkgQJ-TLFE");   //my bot
@@ -21,7 +21,6 @@ namespace TelegramBotTry1
             Bot.OnMessageEdited += BotOnMessageReceived;
             Bot.OnReceiveError += BotOnReceiveError;
             Bot.OnReceiveGeneralError += BotOnOnReceiveGeneralError;
-            Bot.OnUpdate += BotOnUpdate;
             Bot.OnCallbackQuery += BotOnOnCallbackQuery;
 
             Console.Title = "Secretary bot " + Bot.BotId;
@@ -46,22 +45,17 @@ namespace TelegramBotTry1
 
         private static void BotOnOnCallbackQuery(object sender, CallbackQueryEventArgs e)
         {
-            Console.WriteLine(DateTime.Now + " " + e.CallbackQuery.Message);
+            Bot.SendTextMessageAsync(ChatIds.Test125, e.CallbackQuery.Message.Text);
         }
 
         private static void BotOnOnReceiveGeneralError(object sender, ReceiveGeneralErrorEventArgs e)
         {
-            Console.WriteLine(DateTime.Now + " " + e.Exception.Message + " \r\n" + e.Exception.InnerException + " \r\n" + e.Exception.StackTrace);
-        }
-
-        private static void BotOnUpdate(object sender, UpdateEventArgs updateEventArgs)
-        {
-            //Console.WriteLine(updateEventArgs.Update.Type.ToString());
+            Bot.SendTextMessageAsync(ChatIds.Test125, e.Exception.Message + " \r\n" + e.Exception.InnerException);
         }
 
         private static void BotOnReceiveError(object sender, ReceiveErrorEventArgs receiveErrorEventArgs)
         {
-            Console.WriteLine(DateTime.Now + " " + receiveErrorEventArgs.ApiRequestException.Message);
+            Bot.SendTextMessageAsync(ChatIds.Test125, receiveErrorEventArgs.ApiRequestException.Message);
         }
 
         private static void BotOnMessageReceived(object sender, MessageEventArgs messageEventArgs)
@@ -74,10 +68,10 @@ namespace TelegramBotTry1
             try
             {
                 var recievedDataSet = new MessageDataSet(message);
-
-                ProcessIfCommand(message);
-
-                SaveToDatabase(recievedDataSet);
+                if (message.Type == MessageType.Text)
+                    CommandMessageProcessor.ProcessTextMessage(Bot, message);
+                DbRepository.SaveToDatabase(recievedDataSet); //todo sql injection protection
+                Console.WriteLine(recievedDataSet.ToString());
             }
             catch (Exception exception)
             {
@@ -93,22 +87,6 @@ namespace TelegramBotTry1
                         Bot.SendTextMessageAsync(ChatIds.Test125, exception.ToString());
                         break;
                 }
-            }
-        }
-
-        private static void ProcessIfCommand(Message message)
-        {
-            if (message.Type == MessageType.Text)
-                CommandMessageProcessor.ProcessTextMessage(Bot, message);
-        }
-
-        private static void SaveToDatabase(MessageDataSet messageDataSet)
-        {
-            using (var context = new MsgContext())
-            {
-                context.MessageDataSets.Add(messageDataSet);
-                context.SaveChanges();
-                Console.WriteLine(messageDataSet.ToString());
             }
         }
     }

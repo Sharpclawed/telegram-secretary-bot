@@ -7,6 +7,7 @@ namespace TelegramBotTry1
     [DbConfigurationType(typeof(NpgsqlConfiguration))]
     public class MsgContext : DbContext
     {
+        //todo hide ConnectionString
         private static string ConnectionString => "Database=TelegramHistory2;Password=postgres;User ID=postgres;Server=localhost";
 
         public MsgContext() : base(ConnectionString)
