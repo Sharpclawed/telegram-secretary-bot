@@ -49,46 +49,16 @@ namespace TelegramBotTry1
             {
                 try
                 {
-                    using (var context = new MsgContext())
-                    {
-                        var command = new HistoryCommand(message.Text);
+                    var command = new HistoryCommand(message.Text);
+                    var isAdminAsking = DbRepository.IsAdmin(message.From.Id);
+                    var historyResult = HistoryProvider.GetRows(command, isAdminAsking);
 
-                        if (command.Type == HistoryCommandType.Unknown)
-                        {
-                            await bot.SendTextMessageAsync(message.Chat.Id, "Неизвестная команда");
-                            return;
-                        }
-
-                        if (!IsUserDatabaseAbsoluteAdmin(context, message.From.Id))
-                        {
-                            await bot.SendTextMessageAsync(message.Chat.Id, "У вас не хватает прав");
-                            return;
-                        }
-
-                        var messageDataSets = context.Set<MessageDataSet>().AsNoTracking().GetActualDates(command);
-                        if (!messageDataSets.Any())
-                        {
-                            await bot.SendTextMessageAsync(message.Chat.Id, "В данном периоде нет сообщений");
-                            return;
-                        }
-
-                        messageDataSets = messageDataSets.GetActualChats(command);
-                        if (messageDataSets == null || !messageDataSets.Any())
-                        {
-                            await bot.SendTextMessageAsync(message.Chat.Id, "В выбранных чатах нет сообщений");
-                            return;
-                        }
-
-                        messageDataSets = messageDataSets.GetActualUser(command);
-                        if (!messageDataSets.Any())
-                        {
-                            await bot.SendTextMessageAsync(message.Chat.Id, "По данному пользователю нет сообщений");
-                            return;
-                        }
-
+                    if (historyResult.Error != null)
+                        await bot.SendTextMessageAsync(message.Chat.Id, historyResult.Error);
+                    else
                         await botClientWrapper.SendTextMessagesAsExcelReportAsync(
                             message.Chat.Id,
-                            messageDataSets.ToList(),
+                            historyResult.Records,
                             "История сообщений",
                             new[]
                             {
@@ -99,8 +69,7 @@ namespace TelegramBotTry1
                                 nameof(IMessageDataSet.UserName),
                                 nameof(IMessageDataSet.UserId)
                             },
-                            msg => msg.ChatName).ConfigureAwait(false);
-                    }
+                            msg => msg.ChatName);
                 }
                 catch (Exception ex)
                 {
@@ -308,11 +277,6 @@ namespace TelegramBotTry1
                     await bot.SendTextMessageAsync(message.Chat.Id, ex.Message);
                 }
             }
-        }
-
-        private static bool IsUserDatabaseAbsoluteAdmin(MsgContext context, int askerId)
-        {
-            return context.Set<AdminDataSet>().AsNoTracking().IsAdmin(askerId);
         }
     }
 }

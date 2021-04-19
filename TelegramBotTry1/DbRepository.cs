@@ -12,5 +12,13 @@ namespace TelegramBotTry1
                 context.SaveChanges();
             }
         }
+
+        public static bool IsAdmin(int askerId)
+        {
+            using (var context = new MsgContext())
+            {
+                return context.Set<AdminDataSet>().AsNoTracking().IsAdmin(askerId);
+            }
+        }
     }
 }
