@@ -75,7 +75,8 @@ namespace TelegramBotTry1
             }
             catch (Exception exception)
             {
-                Console.WriteLine(exception.ToString());
+                Console.WriteLine(exception.Message);
+                Console.WriteLine(exception.InnerException);
                 switch (exception)
                 {
                     case SocketException _:
