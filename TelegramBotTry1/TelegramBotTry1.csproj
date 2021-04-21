@@ -162,6 +162,7 @@
     <Compile Include="Reporters\IReporter.cs" />
     <Compile Include="StringExtentions.cs" />
     <Compile Include="BotStatusProvider.cs" />
+    <Compile Include="TipProvider.cs" />
     <Compile Include="ViewInactiveChatsProvider.cs" />
     <Compile Include="ViewWaitersProvider.cs" />
     <Compile Include="Reporters\WaitersReporter.cs" />
