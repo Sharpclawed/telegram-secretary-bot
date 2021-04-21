@@ -32,7 +32,7 @@ namespace TelegramBotTry1.Reporters
             timer.Start();
         }
 
-        private void ShowASign(object sender, ElapsedEventArgs e)
+        private async void ShowASign(object sender, ElapsedEventArgs e)
         {
             try
             {
@@ -42,7 +42,7 @@ namespace TelegramBotTry1.Reporters
                     && scheduledRunUtc.DayOfWeek == DayOfWeek.Saturday)
                 {
                     var iAmAliveMessage = BotStatusProvider.GetIAmAliveMessage();
-                    botClient.SendTextMessageAsync(ChatIds.Unanswered, iAmAliveMessage);
+                    await botClient.SendTextMessageAsync(ChatIds.Unanswered, iAmAliveMessage);
                     lastIAmAliveCheckUtc = DateTime.UtcNow;
                 }
             }
@@ -53,11 +53,11 @@ namespace TelegramBotTry1.Reporters
                 {
                     case SocketException _:
                     case ObjectDisposedException _:
-                        botClient.SendTextMessageAsync(ChatIds.Botva, "Пропала коннекция к базе. Отключаюсь, чтобы не потерялись данные. sas\r\n"
+                        await botClient.SendTextMessageAsync(ChatIds.Botva, "Пропала коннекция к базе. Отключаюсь, чтобы не потерялись данные. sas\r\n"
                                                                       + "Пожалуйста, включите меня в течение суток");
                         throw;
                     default:
-                        botClient.SendTextMessageAsync(ChatIds.Test125, exception.ToString());
+                        await botClient.SendTextMessageAsync(ChatIds.Test125, exception.ToString());
                         break;
                 }
             }

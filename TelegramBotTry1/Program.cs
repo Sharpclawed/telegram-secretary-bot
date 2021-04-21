@@ -43,22 +43,22 @@ namespace TelegramBotTry1
             Bot.StopReceiving();
         }
 
-        private static void BotOnOnCallbackQuery(object sender, CallbackQueryEventArgs e)
+        private static async void BotOnOnCallbackQuery(object sender, CallbackQueryEventArgs e)
         {
-            Bot.SendTextMessageAsync(ChatIds.Test125, e.CallbackQuery.Message.Text);
+            await Bot.SendTextMessageAsync(ChatIds.Test125, e.CallbackQuery.Message.Text);
         }
 
-        private static void BotOnOnReceiveGeneralError(object sender, ReceiveGeneralErrorEventArgs e)
+        private static async void BotOnOnReceiveGeneralError(object sender, ReceiveGeneralErrorEventArgs e)
         {
-            Bot.SendTextMessageAsync(ChatIds.Test125, e.Exception.Message + " \r\n" + e.Exception.InnerException);
+            await Bot.SendTextMessageAsync(ChatIds.Test125, e.Exception.Message + " \r\n" + e.Exception.InnerException);
         }
 
-        private static void BotOnReceiveError(object sender, ReceiveErrorEventArgs receiveErrorEventArgs)
+        private static async void BotOnReceiveError(object sender, ReceiveErrorEventArgs receiveErrorEventArgs)
         {
-            Bot.SendTextMessageAsync(ChatIds.Test125, receiveErrorEventArgs.ApiRequestException.Message);
+            await Bot.SendTextMessageAsync(ChatIds.Test125, receiveErrorEventArgs.ApiRequestException.Message);
         }
 
-        private static void BotOnMessageReceived(object sender, MessageEventArgs messageEventArgs)
+        private static async void BotOnMessageReceived(object sender, MessageEventArgs messageEventArgs)
         {
             var message = messageEventArgs.Message;
 
@@ -69,7 +69,7 @@ namespace TelegramBotTry1
             {
                 var recievedDataSet = new MessageDataSet(message);
                 if (message.Type == MessageType.Text)
-                    CommandMessageProcessor.ProcessTextMessage(Bot, message);
+                    await CommandMessageProcessor.ProcessTextMessage(Bot, message);
                 DbRepository.SaveToDatabase(recievedDataSet); //todo sql injection protection
                 Console.WriteLine(recievedDataSet.ToString());
             }
@@ -81,11 +81,11 @@ namespace TelegramBotTry1
                 {
                     case SocketException _:
                     case ObjectDisposedException _:
-                        Bot.SendTextMessageAsync(ChatIds.Botva, "Пропала коннекция к базе. Отключаюсь, чтобы не потерялись данные. mr\r\n"
+                        await Bot.SendTextMessageAsync(ChatIds.Botva, "Пропала коннекция к базе. Отключаюсь, чтобы не потерялись данные. mr\r\n"
                                                                           + "Пожалуйста, включите меня в течение суток");
                         throw;
                     default:
-                        Bot.SendTextMessageAsync(ChatIds.Test125, exception.ToString());
+                        await Bot.SendTextMessageAsync(ChatIds.Test125, exception.ToString());
                         break;
                 }
             }

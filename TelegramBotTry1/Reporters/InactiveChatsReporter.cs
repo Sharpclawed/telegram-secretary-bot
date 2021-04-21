@@ -60,7 +60,7 @@ namespace TelegramBotTry1.Reporters
                             nameof(IMessageDataSet.UserLastName),
                             nameof(IMessageDataSet.UserName),
                             nameof(IMessageDataSet.UserId)
-                        }).ConfigureAwait(false);
+                        });
                     lastInactiveChatCheckUtc = scheduledRunUtc;
                 }
             }
@@ -72,10 +72,10 @@ namespace TelegramBotTry1.Reporters
                     case SocketException _:
                     case ObjectDisposedException _:
                         await botClient.SendTextMessageAsync(ChatIds.Botva, "Пропала коннекция к базе. Отключаюсь, чтобы не потерялись данные. vic\r\n"
-                                                                    + "Пожалуйста, включите меня в течение суток").ConfigureAwait(false);
+                                                                    + "Пожалуйста, включите меня в течение суток");
                         throw;
                     default:
-                        await botClient.SendTextMessageAsync(ChatIds.Test125, exception.ToString()).ConfigureAwait(false);
+                        await botClient.SendTextMessageAsync(ChatIds.Test125, exception.ToString());
                         break;
                 }
             }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -12,7 +13,7 @@ namespace TelegramBotTry1
 {
     public static class CommandMessageProcessor
     {
-        public static async void ProcessTextMessage(TelegramBotClient bot, Message message)
+        public static async Task ProcessTextMessage(TelegramBotClient bot, Message message)
         {
             var botClientWrapper = new BotClientWrapper(bot);
 
@@ -245,7 +246,7 @@ namespace TelegramBotTry1
                                     nameof(IMessageDataSet.UserLastName),
                                     nameof(IMessageDataSet.UserName),
                                     nameof(IMessageDataSet.UserId)
-                                }).ConfigureAwait(false);
+                                });
 
                             break;
                         }
