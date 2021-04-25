@@ -4,11 +4,11 @@ using System.Linq;
 using Telegram.Bot.Types.Enums;
 using TelegramBotTry1.Domain;
 
-namespace TelegramBotTry1
+namespace TelegramBotTry1.DataProviders
 {
     public static class ViewWaitersProvider
     {
-        public static List<MessageDataSet> GetUnanswered(DateTime sinceDate, DateTime untilDate)
+        public static List<IMessageDataSet> GetUnanswered(DateTime sinceDate, DateTime untilDate)
         {
             using (var context = new MsgContext())
             {
@@ -51,11 +51,11 @@ namespace TelegramBotTry1
                     .Select(msgExt => msgExt.msg)
                     .OrderBy(msg => msg.Date);
 
-                return lastMessagesFromDirectors.ToList();
+                return new List<IMessageDataSet>(lastMessagesFromDirectors);
             }
         }
 
-        public static List<MessageDataSet> GetWaiters(DateTime sinceDate, DateTime untilDate)
+        public static List<IMessageDataSet> GetWaiters(DateTime sinceDate, DateTime untilDate)
         {
             return GetUnanswered(sinceDate, untilDate)
                 .FilterObviouslySuperfluous()

@@ -75,7 +75,7 @@ namespace TelegramBotTry1
             };
         }
 
-        public static IEnumerable<MessageDataSet> FilterObviouslySuperfluous(this IEnumerable<MessageDataSet> dataSets)
+        public static IEnumerable<IMessageDataSet> FilterObviouslySuperfluous(this IEnumerable<IMessageDataSet> dataSets)
         {
             var ignoreUnanswered = new List<string>
             {

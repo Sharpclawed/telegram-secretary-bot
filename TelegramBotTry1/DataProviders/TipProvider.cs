@@ -1,4 +1,4 @@
-﻿namespace TelegramBotTry1
+﻿namespace TelegramBotTry1.DataProviders
 {
     public static class TipProvider
     {

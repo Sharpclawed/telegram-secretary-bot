@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net.Sockets;
 using Telegram.Bot;
 using Telegram.Bot.Args;
@@ -68,7 +69,7 @@ namespace TelegramBotTry1
             try
             {
                 var recievedDataSet = new MessageDataSet(message);
-                if (message.Type == MessageType.Text)
+                if (message.Type == MessageType.Text && message.Text.First() == '/')
                     await CommandMessageProcessor.ProcessTextMessage(Bot, message);
                 DbRepository.SaveToDatabase(recievedDataSet); //todo sql injection protection
                 Console.WriteLine(recievedDataSet.ToString());
