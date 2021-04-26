@@ -58,7 +58,21 @@ namespace TelegramBotTry1
             }
             else if (message.Text.StartsWith("/add") || message.Text.StartsWith("/remove"))
             {
-                var processResult = CommandProcessor.ProcessSetDataCommand(message);
+                var command = new ManagingCommand(message.Text, message.From.Id, message.From.Username);
+                if (command.ManagingType == ManagingType.Unknown || command.EntityType == EntityType.Unknown)
+                {
+                    await bot.SendTextMessageAsync(message.Chat.Id, "Неизвестная команда");
+                    return;
+                }
+
+                var isAdminAsking = DbRepository.IsAdmin(message.From.Id);
+                if (!isAdminAsking)
+                {
+                    await bot.SendTextMessageAsync(message.Chat.Id, "У вас не хватает прав");
+                    return;
+                }
+
+                var processResult = CommandProcessor.ProcessSetDataCommand(command);
                 if (processResult.Error != null)
                     await bot.SendTextMessageAsync(message.Chat.Id, processResult.Error);
                 else

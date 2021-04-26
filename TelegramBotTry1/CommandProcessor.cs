@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using Telegram.Bot.Types;
 using TelegramBotTry1.DataProviders;
 using TelegramBotTry1.Domain;
 using TelegramBotTry1.Dto;
@@ -11,7 +10,7 @@ namespace TelegramBotTry1
     //returns dto for bot or whatever while providers return result data only
     public static class CommandProcessor
     {
-        //todo Command на вход, а не пустота или Message
+        //todo Command на вход, а не пустота
         public static ViewReportResult ProcessHistoryCommand(HistoryCommand command)
         {
             return HistoryProvider.GetRows(command);
@@ -51,16 +50,8 @@ namespace TelegramBotTry1
             return new ViewReportResult {Records = report, Caption = "Отчет по неактивным чатам"};
         }
 
-        public static ViewActionResult ProcessSetDataCommand(Message message)
+        public static ViewActionResult ProcessSetDataCommand(ManagingCommand command)
         {
-            var command = new ManagingCommand(message.Text);
-            if (command.ManagingType == ManagingType.Unknown || command.EntityType == EntityType.Unknown)
-                return new ViewActionResult {Error = "Неизвестная команда"};
-            var isAdminAsking = DbRepository.IsAdmin(message.From.Id);
-
-            if (!isAdminAsking)
-                return new ViewActionResult {Error = "У вас не хватает прав"};
-
             using (var context = new MsgContext())
             {
                 var adminDataSets = context.Set<AdminDataSet>();
@@ -75,8 +66,8 @@ namespace TelegramBotTry1
                             adminDataSets.Add(new AdminDataSet
                             {
                                 AddTime = DateTime.UtcNow,
-                                AddedUserId = message.From.Id,
-                                AddedUserName = message.From.Username,
+                                AddedUserId = command.UserId.Value,
+                                AddedUserName = command.UserName,
                                 UserId = user.UserId,
                                 UserName = command.EntityName
                             });
@@ -86,8 +77,8 @@ namespace TelegramBotTry1
                             var adminDataSet = adminDataSets.Single(x =>
                                 x.UserId == user.UserId && x.DeleteTime == null);
                             adminDataSet.DeleteTime = DateTime.UtcNow;
-                            adminDataSet.DeletedUserId = message.From.Id;
-                            adminDataSet.DeletedUserName = message.From.Username;
+                            adminDataSet.DeletedUserId = command.UserId.Value;
+                            adminDataSet.DeletedUserName = command.UserName;
                         }
 
                         break;
