@@ -31,21 +31,19 @@ namespace TelegramBotTry1
             return IgnoreChatsListProvider.GetRows();
         }
 
-        public static ViewEntitiesResult ProcessViewWaiters()
+        public static ViewReportResult ProcessViewWaiters(DateTime? sinceDate = null, DateTime? untilDate = null)
         {
-            var sinceDate = DateTime.UtcNow.Date.AddMonths(-1);
-            var untilDate = DateTime.UtcNow.Date.AddMinutes(-30);
-            //todo must return GetWaiters and use formatting wrap later choosing type of result call
-            //var waitersReport = ViewWaitersProvider.GetWaiters(sinceDate, untilDate);
-            var waitersReport = ViewWaitersProvider.GetWaitersFormatted(sinceDate, untilDate);
-            return new ViewEntitiesResult { Records = waitersReport };
+            var sinceDateValue = sinceDate ?? DateTime.UtcNow.Date.AddMonths(-1);
+            var untilDateValue = untilDate ?? DateTime.UtcNow.Date.AddMinutes(-30);
+            var waitersReport = ViewWaitersProvider.GetWaiters(sinceDateValue, untilDateValue);
+            return new ViewReportResult { Records = waitersReport, Caption = "Отчет по неотвеченным сообщениям" };
         }
 
-        public static ViewReportResult ProcessViewInactiveChats()
+        public static ViewReportResult ProcessViewInactiveChats(DateTime? sinceDate = null, DateTime? untilDate = null)
         {
-            var sinceDate = DateTime.UtcNow.AddDays(-365);
-            var untilDate = DateTime.UtcNow;
-            var report = ViewInactiveChatsProvider.GetInactive(sinceDate, untilDate, TimeSpan.FromDays(7));
+            var sinceDateValue = sinceDate ?? DateTime.UtcNow.AddDays(-365);
+            var untilDateValue = untilDate ?? DateTime.UtcNow;
+            var report = ViewInactiveChatsProvider.GetInactive(sinceDateValue, untilDateValue, TimeSpan.FromDays(7));
 
             return new ViewReportResult {Records = report, Caption = "Отчет по неактивным чатам"};
         }

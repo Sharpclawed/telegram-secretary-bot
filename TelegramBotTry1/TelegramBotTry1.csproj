@@ -132,6 +132,7 @@
     <Compile Include="CommandProcessor.cs" />
     <Compile Include="DataProviders\AdminsListProvider.cs" />
     <Compile Include="DataProviders\BookkeepersListProvider.cs" />
+    <Compile Include="DataProviders\Formatter.cs" />
     <Compile Include="DataProviders\HistoryProvider.cs" />
     <Compile Include="DataProviders\IgnoreChatsListProvider.cs" />
     <Compile Include="DbRepository.cs" />

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -120,7 +121,10 @@ namespace TelegramBotTry1
                         if (result.Error != null)
                             await bot.SendTextMessageAsync(message.Chat.Id, result.Error);
                         else
-                            await botClientWrapper.SendTextMessagesAsListAsync(message.Chat.Id, result.Records, ChatType.Personal);
+                        {
+                            var formattedRecords = result.Records.Select(Formatter.Waiters).ToList();
+                            await botClientWrapper.SendTextMessagesAsListAsync(message.Chat.Id, formattedRecords, ChatType.Personal);
+                        }
                         break;
                     }
                     case EntityType.InactiveChatException:
@@ -139,22 +143,20 @@ namespace TelegramBotTry1
                         if (result.Error != null)
                             await bot.SendTextMessageAsync(message.Chat.Id, result.Error);
                         else
-
-                        await botClientWrapper.SendTextMessagesAsExcelReportAsync(
-                            message.Chat.Id,
-                            result.Records,
-                            result.Caption,
-                            new[]
-                            {
-                                nameof(IMessageDataSet.Date),
-                                nameof(IMessageDataSet.ChatName),
-                                nameof(IMessageDataSet.Message),
-                                nameof(IMessageDataSet.UserFirstName),
-                                nameof(IMessageDataSet.UserLastName),
-                                nameof(IMessageDataSet.UserName),
-                                nameof(IMessageDataSet.UserId)
-                            });
-
+                            await botClientWrapper.SendTextMessagesAsExcelReportAsync(
+                                message.Chat.Id,
+                                result.Records,
+                                result.Caption,
+                                new[]
+                                {
+                                    nameof(IMessageDataSet.Date),
+                                    nameof(IMessageDataSet.ChatName),
+                                    nameof(IMessageDataSet.Message),
+                                    nameof(IMessageDataSet.UserFirstName),
+                                    nameof(IMessageDataSet.UserLastName),
+                                    nameof(IMessageDataSet.UserName),
+                                    nameof(IMessageDataSet.UserId)
+                                });
                         break;
                     }
                 }
