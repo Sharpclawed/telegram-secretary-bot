@@ -1,22 +1,19 @@
 ﻿using System;
 using System.Net.Sockets;
 using System.Timers;
-using Telegram.Bot;
 using TelegramBotTry1.Domain;
 
 namespace TelegramBotTry1.Reporters
 {
     public class InactiveChatsReporter : IReporter
     {
-        private readonly ITelegramBotClient botClient;
-        private readonly BotClientWrapper botClientWrapper;
+        private readonly ITelegramBotClientAdapter botClient;
         private Timer timer;
         private DateTime lastInactiveChatCheckUtc = DateTime.UtcNow.Date;
 
-        public InactiveChatsReporter(ITelegramBotClient botClient)
+        public InactiveChatsReporter(ITelegramBotClientAdapter botClient)
         {
             this.botClient = botClient;
-            botClientWrapper = new BotClientWrapper(botClient);
             Init();
         }
 
@@ -48,7 +45,7 @@ namespace TelegramBotTry1.Reporters
                     var untilDate = scheduledRunUtc;
                     var result = CommandProcessor.ProcessViewInactiveChats(sinceDate, untilDate);
 
-                    await botClientWrapper.SendTextMessagesAsExcelReportAsync(
+                    await botClient.SendTextMessagesAsExcelReportAsync(
                         ChatIds.Unanswered,
                         result.Records,
                         result.Caption,

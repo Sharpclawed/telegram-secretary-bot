@@ -1,7 +1,7 @@
 ﻿using System;
 using TelegramBotTry1.Domain;
 
-namespace TelegramBotTry1.DataProviders
+namespace TelegramBotTry1
 {
     public static class Formatter
     {

@@ -2,24 +2,18 @@
 using System.Linq;
 using System.Net.Sockets;
 using System.Timers;
-using Telegram.Bot;
-using TelegramBotTry1.DataProviders;
 using TelegramBotTry1.Domain;
-using TelegramBotTry1.Dto;
-using TelegramBotTry1.Enums;
 
 namespace TelegramBotTry1.Reporters
 {
     public class WaitersReporter : IReporter
     {
-        private readonly ITelegramBotClient botClient;
-        private readonly BotClientWrapper botClientWrapper;
+        private readonly ITelegramBotClientAdapter botClient;
         private Timer viewWaitersTimer;
 
-        public WaitersReporter(ITelegramBotClient botClient)
+        public WaitersReporter(ITelegramBotClientAdapter botClient)
         {
             this.botClient = botClient;
-            botClientWrapper = new BotClientWrapper(botClient);
             Init();
         }
 
@@ -50,7 +44,7 @@ namespace TelegramBotTry1.Reporters
                     var untilDate = DateTime.UtcNow.AddMinutes(-120);
                     var waitersReport = CommandProcessor.ProcessViewWaiters(sinceDate, untilDate);
 
-                    await botClientWrapper.SendTextMessagesAsExcelReportAsync(
+                    await botClient.SendTextMessagesAsExcelReportAsync(
                         ChatIds.Unanswered,
                         waitersReport.Records,
                         waitersReport.Caption,
@@ -73,7 +67,7 @@ namespace TelegramBotTry1.Reporters
                     var untilDate = DateTime.UtcNow.AddMinutes(-120);
                     var waitersReport = CommandProcessor.ProcessViewWaiters(sinceDate, untilDate);
                     var formattedRecords = waitersReport.Records.Select(Formatter.Waiters).ToList();
-                    await botClientWrapper.SendTextMessagesAsListAsync(ChatIds.Unanswered, formattedRecords, ChatType.Chat);
+                    await botClient.SendTextMessagesAsListAsync(ChatIds.Unanswered, formattedRecords, ChatType.Chat);
                 }
             }
             catch (Exception exception)
