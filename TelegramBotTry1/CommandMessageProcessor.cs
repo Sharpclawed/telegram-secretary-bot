@@ -11,7 +11,7 @@ namespace TelegramBotTry1
 {
     public static class CommandMessageProcessor
     {
-        public static async Task ProcessTextMessage(ITelegramBotClientAdapter botClient, Message message)
+        public static async Task ProcessTextMessageAsync(ITelegramBotClientAdapter botClient, Message message)
         {
             var isMessagePersonal = message.Chat.Title == null;
             if (!isMessagePersonal)

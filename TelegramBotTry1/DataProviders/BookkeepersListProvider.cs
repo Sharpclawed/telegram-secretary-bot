@@ -16,6 +16,7 @@ namespace TelegramBotTry1.DataProviders
                     .Select(x => x.UserFirstName + " " + x.UserLastName).ToList();
             }
 
+            //TODO should return data only
             if (result.Records.Any())
                 result.Caption = "Список бухгалтеров:\r\n";
             else

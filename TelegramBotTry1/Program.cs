@@ -69,7 +69,7 @@ namespace TelegramBotTry1
             {
                 var recievedDataSet = new MessageDataSet(message);
                 if (message.Type == MessageType.Text && message.Text.First() == '/')
-                    await CommandMessageProcessor.ProcessTextMessage(BotClient, message);
+                    await CommandMessageProcessor.ProcessTextMessageAsync(BotClient, message);
                 DbRepository.SaveToDatabase(recievedDataSet); //todo sql injection protection
                 Console.WriteLine(recievedDataSet.ToString());
             }

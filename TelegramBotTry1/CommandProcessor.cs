@@ -10,7 +10,6 @@ namespace TelegramBotTry1
     //returns dto for bot or whatever while providers return result data only
     public static class CommandProcessor
     {
-        //todo Command на вход, а не пустота
         public static ViewReportResult ProcessHistoryCommand(HistoryCommand command)
         {
             return HistoryProvider.GetRows(command);
