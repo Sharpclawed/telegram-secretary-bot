@@ -3,14 +3,16 @@ using TelegramBotTry1.Enums;
 
 namespace TelegramBotTry1.Dto
 {
-    //TODO Парсить автоматом, не по словам
+    //TODO Should be different commands
     public class ManagingCommand
     {
         public ManagingType ManagingType { get; }
         public EntityType EntityType { get; }
         public string EntityName { get; }
+        public int? UserId { get; }
+        public string UserName { get; }
 
-        public ManagingCommand(string messageText)
+        public ManagingCommand(string messageText, int? userId = null, string userName = null)
         {
             //двоеточие не обязательное
             var regex = new Regex(@"^[/](add|remove|delete|view)(admins|admin|bk|waiters|inactivechats|onetimechats|onetimechat)\s*(.*)$");
@@ -63,6 +65,8 @@ namespace TelegramBotTry1.Dto
             }
 
             EntityName = match.Groups[3].Value.TrimStart(':', ' ');
+            UserId = userId;
+            UserName = userName;
         }
     }
 }

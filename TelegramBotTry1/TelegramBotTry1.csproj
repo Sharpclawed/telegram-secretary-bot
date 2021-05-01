@@ -128,10 +128,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AdminDataSetExtensions.cs" />
-    <Compile Include="BotClientWrapper.cs" />
-    <Compile Include="HistoryProvider.cs" />
+    <Compile Include="BotClientAdapter.cs" />
+    <Compile Include="CommandProcessor.cs" />
+    <Compile Include="DataProviders\AdminsListProvider.cs" />
+    <Compile Include="DataProviders\BookkeepersListProvider.cs" />
+    <Compile Include="Formatter.cs" />
+    <Compile Include="DataProviders\HistoryProvider.cs" />
+    <Compile Include="DataProviders\IgnoreChatsListProvider.cs" />
     <Compile Include="DbRepository.cs" />
-    <Compile Include="Dto\HistoryResult.cs" />
+    <Compile Include="Dto\ICommandResult.cs" />
+    <Compile Include="Dto\ViewActionResult.cs" />
+    <Compile Include="Dto\ViewEntitiesResult.cs" />
+    <Compile Include="Dto\ViewReportResult.cs" />
     <Compile Include="Reporters\BotStateReporter.cs" />
     <Compile Include="ChatIds.cs" />
     <Compile Include="CommandMessageProcessor.cs" />
@@ -161,10 +169,10 @@
     <Compile Include="Reporters\InactiveChatsReporter.cs" />
     <Compile Include="Reporters\IReporter.cs" />
     <Compile Include="StringExtentions.cs" />
-    <Compile Include="BotStatusProvider.cs" />
-    <Compile Include="TipProvider.cs" />
-    <Compile Include="ViewInactiveChatsProvider.cs" />
-    <Compile Include="ViewWaitersProvider.cs" />
+    <Compile Include="DataProviders\BotStatusProvider.cs" />
+    <Compile Include="DataProviders\TipProvider.cs" />
+    <Compile Include="DataProviders\ViewInactiveChatsProvider.cs" />
+    <Compile Include="DataProviders\ViewWaitersProvider.cs" />
     <Compile Include="Reporters\WaitersReporter.cs" />
   </ItemGroup>
   <ItemGroup>
