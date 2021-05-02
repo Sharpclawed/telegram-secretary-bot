@@ -5,15 +5,13 @@ using Telegram.Bot.Args;
 using Telegram.Bot.Types.Enums;
 using TelegramBotTry1.Domain;
 using TelegramBotTry1.Reporters;
+using TelegramBotTry1.SecretsStore;
 
 namespace TelegramBotTry1
 {
     static class Program
     {
-        //todo hide and change tokens
-        private static readonly ITelegramBotClientAdapter BotClient =
-            new BotClientAdapter("361040811:AAGQlsM84JwDIRtcztbMMboKLXWqbPwW4VI");  //kontakt bot
-          //new BotClientAdapter("245135166:AAEYEEsWjQmN_wLENwnA84Wb9xkgQJ-TLFE");   //my bot
+        private static readonly ITelegramBotClientAdapter BotClient = new BotClientAdapter(Secrets.MainBotToken);
 
         static void Main()
         {
@@ -23,7 +21,7 @@ namespace TelegramBotTry1
             BotClient.OnReceiveGeneralError += BotOnOnReceiveGeneralError;
             BotClient.OnCallbackQuery += BotOnOnCallbackQuery;
 
-            Console.Title = "Secretary bot " + BotClient.BotId;
+            Console.Title = BotClient.GetMeAsync().Result.Username;
 
             using (var context = new MsgContext())
             {
@@ -61,10 +59,6 @@ namespace TelegramBotTry1
         private static async void BotOnMessageReceived(object sender, MessageEventArgs messageEventArgs)
         {
             var message = messageEventArgs.Message;
-
-            if (message == null)
-                return;
-
             try
             {
                 var recievedDataSet = new MessageDataSet(message);
