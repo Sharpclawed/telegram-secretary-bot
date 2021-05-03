@@ -23,15 +23,16 @@ namespace TelegramBotTry1
                 return;
             }
 
+            var isAdminAsking = DbRepository.IsAdmin(message.From.Id);
+            if (!isAdminAsking)
+            {
+                await botClient.SendTextMessageAsync(message.Chat.Id, "У вас не хватает прав");
+                return;
+            }
+
             if (message.Text.StartsWith("/history"))
             {
                 var command = new HistoryCommand(message.Text);
-                var isAdminAsking = DbRepository.IsAdmin(message.From.Id);
-                if (!isAdminAsking)
-                {
-                    await botClient.SendTextMessageAsync(message.Chat.Id, "У вас не хватает прав");
-                    return;
-                }
 
                 var historyResult = CommandProcessor.ProcessHistoryCommand(command);
 
@@ -62,13 +63,6 @@ namespace TelegramBotTry1
                     return;
                 }
 
-                var isAdminAsking = DbRepository.IsAdmin(message.From.Id);
-                if (!isAdminAsking)
-                {
-                    await botClient.SendTextMessageAsync(message.Chat.Id, "У вас не хватает прав");
-                    return;
-                }
-
                 var processResult = CommandProcessor.ProcessSetDataCommand(command);
                 if (processResult.Error != null)
                     await botClient.SendTextMessageAsync(message.Chat.Id, processResult.Error);
@@ -81,13 +75,6 @@ namespace TelegramBotTry1
                 if (command.ManagingType == ManagingType.Unknown || command.EntityType == EntityType.Unknown)
                 {
                     await botClient.SendTextMessageAsync(message.Chat.Id, "Неизвестная команда");
-                    return;
-                }
-
-                var isAdminAsking = DbRepository.IsAdmin(message.From.Id);
-                if (!isAdminAsking)
-                {
-                    await botClient.SendTextMessageAsync(message.Chat.Id, "У вас не хватает прав");
                     return;
                 }
 
