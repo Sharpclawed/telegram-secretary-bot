@@ -8,6 +8,8 @@
         public static string TestBotToken { get; }
 
         public static long Test125Id { get; }
+        public static long Test125HWBId { get; }
+        public static long Test126HWBId { get; }
         public static long BotvaId { get; }
         public static long UnasweredId { get; }
     }
