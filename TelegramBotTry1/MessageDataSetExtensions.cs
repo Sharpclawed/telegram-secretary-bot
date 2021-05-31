@@ -22,7 +22,6 @@ namespace TelegramBotTry1
             switch (command.Type)
             {
                 case HistoryCommandType.SingleChat:
-                    //TODO по названию могут определяться разные чаты в разные моменты времени. Нам нужен актуальный или все?
                     return dataSets
                         .Where(x => x.ChatName.Equals(command.NameOrId, StringComparison.InvariantCultureIgnoreCase));
                 case HistoryCommandType.AllChats:

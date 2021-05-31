@@ -20,7 +20,6 @@ namespace TelegramBotTry1
             {
                 ClearSheets(xlPackage);
 
-                //TODO выводить всю информацию в один лист с группировками
                 var sheetNameCounts = new Dictionary<string, int>();
                 colNames = NormilizeColNames(colNames);
                 var colNamesWithIndexes = SetColumnSortNumbers(colNames);
