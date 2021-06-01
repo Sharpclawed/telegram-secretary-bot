@@ -75,8 +75,7 @@ namespace TelegramBotTry1
                     });
             }
 
-            var report = ReportCreator.Create(listsWithRows, "temp" + chatId.Identifier, columnNames);
-            using (var fileStream = new FileStream(report.Name, FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (var fileStream = ReportCreator.Create(listsWithRows, columnNames))
             {
                 var fileToSend = new InputOnlineFile(fileStream, caption + ".xls");
                 await SendDocumentAsync(chatId, fileToSend, caption);

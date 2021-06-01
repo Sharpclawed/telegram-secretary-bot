@@ -11,12 +11,12 @@ namespace TelegramBotTry1
 {
     public static class ReportCreator
     {
-        //TODO чистилку сделать для темп файла. Плюс учесть многопоточность. МБ помечать файлы, что используются, пока не отправили
-        //todo userId - дичь
-        public static FileInfo Create(IEnumerable<KeyValuePair<string, List<IMessageDataSet>>> sheetsData, string fileName, string[] colNames)
+        public static FileStream Create(IEnumerable<KeyValuePair<string, List<IMessageDataSet>>> sheetsData, string[] colNames)
         {
-            var tempFile = new FileInfo((fileName ?? "temp" + Guid.NewGuid()) + ".xls");
-            using (var xlPackage = new ExcelPackage(tempFile))
+            var tempFileName = "temp-" + Guid.NewGuid() + ".xls";
+            var fileStream = new FileStream(tempFileName, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read, 4096,
+                FileOptions.RandomAccess | FileOptions.DeleteOnClose);
+            using (var xlPackage = new ExcelPackage(fileStream))
             {
                 ClearSheets(xlPackage);
 
@@ -72,9 +72,11 @@ namespace TelegramBotTry1
                     }
                     worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
                 }
-                xlPackage.SaveAs(tempFile);
-                return xlPackage.File;
+                xlPackage.Save();
             }
+
+            fileStream.Position = 0;
+            return fileStream;
         }
 
         private static void ClearSheets(ExcelPackage xlPackage)
