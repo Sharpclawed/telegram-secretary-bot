@@ -13,9 +13,9 @@ namespace FunctionalTests
         public void HistoryofTest()
         {
             var sut = new HistoryCommand("/historyof: 118274261 28.03.2020 3");
-            sut.Begin.ShouldBeEquivalentTo(new DateTime(2020, 3, 28));
-            sut.End.ShouldBeEquivalentTo(new DateTime(2020, 3, 31));
-            sut.NameOrId.ShouldBeEquivalentTo("118274261");
+            sut.Begin.Should().BeSameDateAs(new DateTime(2020, 3, 28));
+            sut.End.Should().BeSameDateAs(new DateTime(2020, 3, 31));
+            sut.NameOrId.Should().BeEquivalentTo("118274261");
             sut.Type.Should().Be(HistoryCommandType.SingleUser);
         }
 
@@ -23,8 +23,8 @@ namespace FunctionalTests
         public void HistoryallTest()
         {
             var sut = new HistoryCommand("/historyall: 28.03.2020 3");
-            sut.Begin.ShouldBeEquivalentTo(new DateTime(2020, 3, 28));
-            sut.End.ShouldBeEquivalentTo(new DateTime(2020, 3, 31));
+            sut.Begin.Should().BeSameDateAs(new DateTime(2020, 3, 28));
+            sut.End.Should().BeSameDateAs(new DateTime(2020, 3, 31));
             sut.Type.Should().Be(HistoryCommandType.AllChats);
         }
 
@@ -32,9 +32,9 @@ namespace FunctionalTests
         public void HistoryTest()
         {
             var sut = new HistoryCommand("/history: bazinga 28.03.2020 3");
-            sut.Begin.ShouldBeEquivalentTo(new DateTime(2020, 3, 28));
-            sut.End.ShouldBeEquivalentTo(new DateTime(2020, 3, 31));
-            sut.NameOrId.ShouldBeEquivalentTo("bazinga");
+            sut.Begin.Should().BeSameDateAs(new DateTime(2020, 3, 28));
+            sut.End.Should().BeSameDateAs(new DateTime(2020, 3, 31));
+            sut.NameOrId.Should().BeEquivalentTo("bazinga");
             sut.Type.Should().Be(HistoryCommandType.SingleChat);
         }
 

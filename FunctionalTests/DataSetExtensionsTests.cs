@@ -37,7 +37,7 @@ namespace FunctionalTests
             var sut = dataSet.AsQueryable()
                 .GetActualDates(config)
                 .Select(x => x.Date).ToArray();
-            sut.ShouldBeEquivalentTo(new[] {new DateTime(2017, 1, 3), new DateTime(2017, 1, 5)});
+            sut.Should().BeEquivalentTo(new[] {new DateTime(2017, 1, 3), new DateTime(2017, 1, 5)});
         }
 
         [Test]
@@ -47,7 +47,7 @@ namespace FunctionalTests
             var sut = dataSet.AsQueryable()
                 .GetActualDates(config)
                 .Select(x => x.Date).ToArray();
-            sut.ShouldBeEquivalentTo(new[] { new DateTime(2017, 1, 3), new DateTime(2017, 1, 5) });
+            sut.Should().BeEquivalentTo(new[] { new DateTime(2017, 1, 3), new DateTime(2017, 1, 5) });
         }
 
         [Test]
@@ -61,7 +61,7 @@ namespace FunctionalTests
                 .GetActualChats(config)
                 .Select(x => x.Message).ToArray();
             //sut.ShouldBeEquivalentTo(new[] { "Message 1.1", "Message 1.2", "Message 1.3", "Message 1.4" });
-            sut.ShouldBeEquivalentTo(new[] { "Message 1.1", "Message 1.2", "Message 1.3", "Message 4.1" });
+            sut.Should().BeEquivalentTo(new[] { "Message 1.1", "Message 1.2", "Message 1.3", "Message 4.1" });
         }
 
         [Test]
@@ -159,7 +159,7 @@ namespace FunctionalTests
             var set = testCases.Select(z => new MessageDataSet(new Message {Text = z, From = new Telegram.Bot.Types.User(), Chat = new Telegram.Bot.Types.Chat()})).ToList();
             var sut = set.FilterObviouslySuperfluous();
 
-            sut.ShouldBeEquivalentTo(new List<MessageDataSet>());
+            sut.Should().BeEquivalentTo(new List<MessageDataSet>());
         }
     }
 }
