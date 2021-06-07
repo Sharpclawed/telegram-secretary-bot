@@ -3,10 +3,12 @@ using TelegramBotTry1.Domain;
 
 namespace TelegramBotTry1.Dto
 {
-    public class ViewReportResult: ICommandResult<IMessageDataSet>
+    //todo rename
+    public class ViewReportResult: ICommandResult
     {
-        //todo implicit operators
-        public List<IMessageDataSet> Records { get; set; }
+        //todo implicit operators?
+        public List<IMessageDataSet> Messages { get; set; }
+        public List<string> Records { get; set; }
         public string Error { get; set; }
         public string Caption { get; set; }
         public string Message { get; set; }

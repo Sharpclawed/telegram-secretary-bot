@@ -6,9 +6,9 @@ namespace TelegramBotTry1.DataProviders
 {
     public static class AdminsListProvider
     {
-        public static ViewEntitiesResult GetRows()
+        public static ViewReportResult GetRows()
         {
-            var result = new ViewEntitiesResult();
+            var result = new ViewReportResult();
             using (var context = new MsgContext())
             {
                 result.Records = context.Set<AdminDataSet>().AsNoTracking()

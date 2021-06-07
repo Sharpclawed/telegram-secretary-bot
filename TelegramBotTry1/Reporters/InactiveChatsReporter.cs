@@ -2,6 +2,7 @@
 using System.Net.Sockets;
 using System.Timers;
 using TelegramBotTry1.Domain;
+using TelegramBotTry1.Dto;
 
 namespace TelegramBotTry1.Reporters
 {
@@ -43,11 +44,12 @@ namespace TelegramBotTry1.Reporters
                 {
                     var sinceDate = scheduledRunUtc.AddDays(-28);
                     var untilDate = scheduledRunUtc;
-                    var result = CommandProcessor.ProcessViewInactiveChats(sinceDate, untilDate);
+                    var command = new ViewInactiveChatsCommand(sinceDate, untilDate);
+                    var result = command.Process();
 
                     await botClient.SendTextMessagesAsExcelReportAsync(
                         ChatIds.Unanswered,
-                        result.Records,
+                        result.Messages,
                         result.Caption,
                         new[]
                         {

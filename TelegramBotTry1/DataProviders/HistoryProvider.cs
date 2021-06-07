@@ -26,7 +26,7 @@ namespace TelegramBotTry1.DataProviders
                 if (!messageDataSets.Any())
                     return new ViewReportResult { Error = "По данному пользователю нет сообщений" };
 
-                return new ViewReportResult {Records = messageDataSets.ToList(), Caption = "История сообщений" };
+                return new ViewReportResult {Messages = messageDataSets.ToList(), Caption = "История сообщений" };
             }
         }
     }

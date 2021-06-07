@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Timers;
 using TelegramBotTry1.Domain;
+using TelegramBotTry1.Dto;
 
 namespace TelegramBotTry1.Reporters
 {
@@ -42,11 +43,12 @@ namespace TelegramBotTry1.Reporters
                 {
                     var sinceDate = DateTime.UtcNow.AddHours(-61).AddMinutes(-125);
                     var untilDate = DateTime.UtcNow.AddMinutes(-120);
-                    var waitersReport = CommandProcessor.ProcessViewWaiters(sinceDate, untilDate);
+                    var command = new ViewWaitersCommand(sinceDate, untilDate);
+                    var waitersReport = command.Process();
 
                     await botClient.SendTextMessagesAsExcelReportAsync(
                         ChatIds.Unanswered,
-                        waitersReport.Records,
+                        waitersReport.Messages,
                         waitersReport.Caption,
                         new[]
                         {
@@ -65,8 +67,9 @@ namespace TelegramBotTry1.Reporters
                         ? DateTime.UtcNow.AddHours(-13).AddMinutes(-125)
                         : DateTime.UtcNow.AddMinutes(-125);
                     var untilDate = DateTime.UtcNow.AddMinutes(-120);
-                    var waitersReport = CommandProcessor.ProcessViewWaiters(sinceDate, untilDate);
-                    var formattedRecords = waitersReport.Records.Select(Formatter.Waiters).ToList();
+                    var command = new ViewWaitersCommand(sinceDate, untilDate);
+                    var waitersReport = command.Process();
+                    var formattedRecords = waitersReport.Messages.Select(Formatter.Waiters).ToList();
                     await botClient.SendTextMessagesAsListAsync(ChatIds.Unanswered, formattedRecords, ChatType.Chat);
                 }
             }

@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using TelegramBotTry1.DataProviders;
 using TelegramBotTry1.Enums;
 
 namespace TelegramBotTry1.Dto
 {
-    public class HistoryCommand
+    public class HistoryCommand : IBotCommand
     {
+        public EntityType EntityType => EntityType.History;
         public DateTime Begin { get; }
         public DateTime End { get; }
         public HistoryCommandType Type { get; }
@@ -41,5 +43,16 @@ namespace TelegramBotTry1.Dto
                     break;
             }
         }
+
+        public ViewReportResult Process()
+        {
+            return HistoryProvider.GetRows(this);
+        }
+    }
+
+    public interface IBotCommand
+    {
+        EntityType EntityType { get; }
+        ViewReportResult Process();
     }
 }

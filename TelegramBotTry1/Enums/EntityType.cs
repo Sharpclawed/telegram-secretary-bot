@@ -1,5 +1,6 @@
 ﻿namespace TelegramBotTry1.Enums
 {
+    //todo он нужен?
     public enum EntityType
     {
         Unknown,
@@ -7,6 +8,7 @@
         Bookkeeper,
         Waiter,
         InactiveChat,
-        InactiveChatException
+        InactiveChatException,
+        History
     }
 }

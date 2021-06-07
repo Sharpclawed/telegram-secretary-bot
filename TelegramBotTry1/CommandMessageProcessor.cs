@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -34,14 +35,14 @@ namespace TelegramBotTry1
             {
                 var command = new HistoryCommand(message.Text);
 
-                var historyResult = CommandProcessor.ProcessHistoryCommand(command);
+                var historyResult = command.Process();
 
                 if (historyResult.Error != null)
                     await botClient.SendTextMessageAsync(message.Chat.Id, historyResult.Error);
                 else
                     await botClient.SendTextMessagesAsExcelReportAsync(
                         message.Chat.Id,
-                        historyResult.Records,
+                        historyResult.Messages,
                         historyResult.Caption,
                         new[]
                         {
@@ -56,14 +57,18 @@ namespace TelegramBotTry1
             }
             else if (message.Text.StartsWith("/add") || message.Text.StartsWith("/remove"))
             {
-                var command = new ManagingCommand(message.Text, message.From.Id, message.From.Username);
-                if (command.ManagingType == ManagingType.Unknown || command.EntityType == EntityType.Unknown)
+                IBotCommand command;
+                try
+                {
+                    command = CommandDetector.Parse(message.Text);
+                }
+                catch (InvalidCastException)
                 {
                     await botClient.SendTextMessageAsync(message.Chat.Id, "Неизвестная команда");
                     return;
                 }
 
-                var processResult = CommandProcessor.ProcessSetDataCommand(command);
+                var processResult = command.Process();
                 if (processResult.Error != null)
                     await botClient.SendTextMessageAsync(message.Chat.Id, processResult.Error);
                 else
@@ -71,8 +76,12 @@ namespace TelegramBotTry1
             }
             else if (message.Text.StartsWith("/view"))
             {
-                var command = new ManagingCommand(message.Text);
-                if (command.ManagingType == ManagingType.Unknown || command.EntityType == EntityType.Unknown)
+                IBotCommand command;
+                try
+                {
+                    command = CommandDetector.Parse(message.Text);
+                }
+                catch (InvalidCastException)
                 {
                     await botClient.SendTextMessageAsync(message.Chat.Id, "Неизвестная команда");
                     return;
@@ -82,7 +91,7 @@ namespace TelegramBotTry1
                 {
                     case EntityType.Admin:
                     {
-                        var result = CommandProcessor.ProcessViewAdminsList();
+                        var result = command.Process();
                         if (result.Error != null)
                             await botClient.SendTextMessageAsync(message.Chat.Id, result.Error);
                         else
@@ -91,7 +100,7 @@ namespace TelegramBotTry1
                     }
                     case EntityType.Bookkeeper:
                     {
-                        var result = CommandProcessor.ProcessViewBookkeepersList();
+                        var result = command.Process();
                         if (result.Error != null)
                             await botClient.SendTextMessageAsync(message.Chat.Id, result.Error);
                         else
@@ -100,19 +109,19 @@ namespace TelegramBotTry1
                     }
                     case EntityType.Waiter:
                     {
-                        var result = CommandProcessor.ProcessViewWaiters();
+                        var result = command.Process();
                         if (result.Error != null)
                             await botClient.SendTextMessageAsync(message.Chat.Id, result.Error);
                         else
                         {
-                            var formattedRecords = result.Records.Select(Formatter.Waiters).ToList();
+                            var formattedRecords = result.Messages.Select(Formatter.Waiters).ToList();
                             await botClient.SendTextMessagesAsListAsync(message.Chat.Id, formattedRecords, ChatType.Personal);
                         }
                         break;
                     }
                     case EntityType.InactiveChatException:
                     {
-                        var result = CommandProcessor.ProcessViewInactiveChatExceptions();
+                        var result = command.Process();
                         if (result.Error != null)
                             await botClient.SendTextMessageAsync(message.Chat.Id, result.Error);
                         else
@@ -121,14 +130,14 @@ namespace TelegramBotTry1
                     }
                     case EntityType.InactiveChat:
                     {
-                        var result = CommandProcessor.ProcessViewInactiveChats();
+                        var result = command.Process();
 
                         if (result.Error != null)
                             await botClient.SendTextMessageAsync(message.Chat.Id, result.Error);
                         else
                             await botClient.SendTextMessagesAsExcelReportAsync(
                                 message.Chat.Id,
-                                result.Records,
+                                result.Messages,
                                 result.Caption,
                                 new[]
                                 {

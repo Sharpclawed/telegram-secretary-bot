@@ -1,6 +1,7 @@
 ﻿using System;
 using FluentAssertions;
 using NUnit.Framework;
+using TelegramBotTry1;
 using TelegramBotTry1.Dto;
 using TelegramBotTry1.Enums;
 
@@ -41,100 +42,95 @@ namespace FunctionalTests
         [Test]
         public void AddAdminTest()
         {
-            var sut = new ManagingCommand("/addadmin: bazinga");
-            sut.ManagingType.Should().Be(ManagingType.Add);
+            var sut = CommandDetector.Parse("/addadmin: bazinga", 0, "");
+            sut.Should().BeOfType(typeof(AddAdminCommand));
             sut.EntityType.Should().Be(EntityType.Admin);
-            sut.EntityName.Should().Be("bazinga");
+            ((AddAdminCommand)sut).AdminName.Should().Be("bazinga");
         }
 
         [Test]
         public void RemoveAdminTest()
         {
-            var sut = new ManagingCommand("/removeadmin: bazinga");
-            sut.ManagingType.Should().Be(ManagingType.Remove);
+            var sut = CommandDetector.Parse("/removeadmin: bazinga", 0, "");
+            sut.Should().BeOfType(typeof(RemoveAdminCommand));
             sut.EntityType.Should().Be(EntityType.Admin);
-            sut.EntityName.Should().Be("bazinga");
+            ((RemoveAdminCommand)sut).AdminName.Should().Be("bazinga");
         }
 
         [Test]
         public void ViewAdminsTest()
         {
-            var sut = new ManagingCommand("/viewadmins");
-            sut.ManagingType.Should().Be(ManagingType.ViewList);
+            var sut = CommandDetector.Parse("/viewadmins");
+            sut.Should().BeOfType(typeof(ViewAdminsCommand));
             sut.EntityType.Should().Be(EntityType.Admin);
-            sut.EntityName.Should().Be(string.Empty);
         }
 
         [Test]
         public void AddBkTest()
         {
-            var sut = new ManagingCommand("/addbk: bazinga");
-            sut.ManagingType.Should().Be(ManagingType.Add);
+            var sut = CommandDetector.Parse("/addbk: bazinga");
+            sut.Should().BeOfType(typeof(AddBkCommand));
             sut.EntityType.Should().Be(EntityType.Bookkeeper);
-            sut.EntityName.Should().Be("bazinga");
+            ((AddBkCommand)sut).BkName.Should().Be("bazinga");
         }
 
         [Test]
         public void RemoveBkTest()
         {
-            var sut = new ManagingCommand("/removebk: bazinga");
-            sut.ManagingType.Should().Be(ManagingType.Remove);
+            var sut = CommandDetector.Parse("/removebk: bazinga");
+            sut.Should().BeOfType(typeof(RemoveBkCommand));
             sut.EntityType.Should().Be(EntityType.Bookkeeper);
-            sut.EntityName.Should().Be("bazinga");
+            ((RemoveBkCommand)sut).BkName.Should().Be("bazinga");
         }
 
         [Test]
         public void ViewBkTest()
         {
-            var sut = new ManagingCommand("/viewbk");
+            var sut = CommandDetector.Parse("/viewbk");
+            sut.Should().BeOfType(typeof(ViewBkCommand));
             sut.EntityType.Should().Be(EntityType.Bookkeeper);
-            sut.ManagingType.Should().Be(ManagingType.ViewList);
-            sut.EntityName.Should().Be(string.Empty);
         }
 
         [Test]
         public void ViewWaiterTest()
         {
-            var sut = new ManagingCommand("/viewwaiters");
-            sut.ManagingType.Should().Be(ManagingType.ViewList);
+            var sut = CommandDetector.Parse("/viewwaiters");
+            sut.Should().BeOfType(typeof(ViewWaitersCommand));
             sut.EntityType.Should().Be(EntityType.Waiter);
-            sut.EntityName.Should().Be(string.Empty);
         }
 
         [Test]
         public void AddInactiveChatExceptionsTest()
         {
-            var sut = new ManagingCommand("/addonetimechat: bazinga");
-            sut.ManagingType.Should().Be(ManagingType.Add);
+            var sut = CommandDetector.Parse("/addonetimechat: bazinga");
+            sut.Should().BeOfType(typeof(AddOnetimeChatCommand));
             sut.EntityType.Should().Be(EntityType.InactiveChatException);
-            sut.EntityName.Should().Be("bazinga");
+            ((AddOnetimeChatCommand)sut).ChatName.Should().Be("bazinga");
         }
 
         [Test]
         public void RemoveInactiveChatExceptionsTest()
         {
-            var sut = new ManagingCommand("/removeonetimechat: bazinga");
-            sut.ManagingType.Should().Be(ManagingType.Remove);
+            var sut = CommandDetector.Parse("/removeonetimechat: bazinga");
+            sut.Should().BeOfType(typeof(RemoveOnetimeChatCommand));
             sut.EntityType.Should().Be(EntityType.InactiveChatException);
-            sut.EntityName.Should().Be("bazinga");
+            ((RemoveOnetimeChatCommand)sut).ChatName.Should().Be("bazinga");
         }
 
         [Test]
         public void ViewInactiveChatExceptionsTest()
         {
-            var sut = new ManagingCommand("/viewonetimechats");
-            sut.ManagingType.Should().Be(ManagingType.ViewList);
+            var sut = CommandDetector.Parse("/viewonetimechats");
+            sut.Should().BeOfType(typeof(ViewOneTimeChatsCommand));
             sut.EntityType.Should().Be(EntityType.InactiveChatException);
-            sut.EntityName.Should().Be(string.Empty);
         }
 
         [Test]
         public void ViewInactiveChatsTest()
         {
-            var sut = new ManagingCommand("/viewinactivechats");
-            sut.ManagingType.Should().Be(ManagingType.ViewList);
+            var sut = CommandDetector.Parse("/viewinactivechats");
+            sut.Should().BeOfType(typeof(ViewInactiveChatsCommand));
             sut.EntityType.Should().Be(EntityType.InactiveChat);
-            sut.EntityName.Should().Be(string.Empty);
         }
     }
 }
