@@ -6,7 +6,6 @@ using TelegramBotTry1;
 using FluentAssertions;
 using Telegram.Bot.Types;
 using TelegramBotTry1.Domain;
-using TelegramBotTry1.Dto;
 
 namespace FunctionalTests
 {
@@ -33,9 +32,8 @@ namespace FunctionalTests
         [Test]
         public void GetActualDatesTest()
         {
-            var config = new HistoryCommand("/historyof: 118274261 03.01.2017 3");
             var sut = dataSet.AsQueryable()
-                .GetActualDates(config)
+                .GetActualDates(DateTime.Parse("03.01.2017"), DateTime.Parse("06.01.2017"))
                 .Select(x => x.Date).ToArray();
             sut.Should().BeEquivalentTo(new[] {new DateTime(2017, 1, 3), new DateTime(2017, 1, 5)});
         }
@@ -43,9 +41,8 @@ namespace FunctionalTests
         [Test]
         public void GetActualDatesTest2()
         {
-            var config = new HistoryCommand("/historyall: 03.01.2017 3");
             var sut = dataSet.AsQueryable()
-                .GetActualDates(config)
+                .GetActualDates(DateTime.Parse("03.01.2017"), DateTime.Parse("06.01.2017"))
                 .Select(x => x.Date).ToArray();
             sut.Should().BeEquivalentTo(new[] { new DateTime(2017, 1, 3), new DateTime(2017, 1, 5) });
         }
@@ -56,9 +53,8 @@ namespace FunctionalTests
             dataSet.Add(GetMessage(4, "Чат^1", new DateTime(2017, 1, 1), 1, 4, "Message 4.1"));
             dataSet.Add(GetMessage(1, "Чат^4", new DateTime(2017, 1, 11), 1, 7, "Message 1.4"));
 
-            var config = new HistoryCommand("/history: Чат^1 01.01.2017 12");
             var sut = dataSet.AsQueryable()
-                .GetActualChats(config)
+                .GetActualChats("Чат^1")
                 .Select(x => x.Message).ToArray();
             //sut.ShouldBeEquivalentTo(new[] { "Message 1.1", "Message 1.2", "Message 1.3", "Message 1.4" });
             sut.Should().BeEquivalentTo(new[] { "Message 1.1", "Message 1.2", "Message 1.3", "Message 4.1" });
@@ -67,9 +63,8 @@ namespace FunctionalTests
         [Test]
         public void GetActualUserTest()
         {
-            var config = new HistoryCommand("/historyof: 2 01.01.2017 10");
             var sut = dataSet.AsQueryable()
-                .GetActualUser(config);
+                .GetActualUser("2");
             sut.All(x => new long[] {1, 2}.Contains(x.ChatId)).Should().BeTrue();
             sut.Count(x => x.ChatId == 2).Should().Be(2);
         }

@@ -32,7 +32,16 @@ namespace TelegramBotTry1
 
             if (message.Text.StartsWith("/history"))
             {
-                var command = new HistoryCommand(message.Text);
+                IBotCommand command;
+                try
+                {
+                    command = CommandDetector.Parse(message.Text);
+                }
+                catch (InvalidCastException)
+                {
+                    await botClient.SendTextMessageAsync(message.Chat.Id, "Неизвестная команда");
+                    return;
+                }
 
                 var historyResult = command.Process();
 

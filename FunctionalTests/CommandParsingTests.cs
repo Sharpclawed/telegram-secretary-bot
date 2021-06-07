@@ -13,30 +13,33 @@ namespace FunctionalTests
         [Test]
         public void HistoryofTest()
         {
-            var sut = new HistoryCommand("/historyof: 118274261 28.03.2020 3");
-            sut.Begin.Should().BeSameDateAs(new DateTime(2020, 3, 28));
-            sut.End.Should().BeSameDateAs(new DateTime(2020, 3, 31));
-            sut.NameOrId.Should().BeEquivalentTo("118274261");
-            sut.Type.Should().Be(HistoryCommandType.SingleUser);
+            var sut = CommandDetector.Parse("/historyof: 118274261 28.03.2020 3");
+            sut.Should().BeOfType(typeof(ViewHistoryOfCommand));
+            ((ViewHistoryOfCommand)sut).Begin.Should().BeSameDateAs(new DateTime(2020, 3, 28));
+            ((ViewHistoryOfCommand)sut).End.Should().BeSameDateAs(new DateTime(2020, 3, 31));
+            ((ViewHistoryOfCommand)sut).UserId.Should().BeEquivalentTo("118274261");
+            ((ViewHistoryOfCommand)sut).Type.Should().Be(HistoryCommandType.SingleUser);
         }
 
         [Test]
         public void HistoryallTest()
         {
-            var sut = new HistoryCommand("/historyall: 28.03.2020 3");
-            sut.Begin.Should().BeSameDateAs(new DateTime(2020, 3, 28));
-            sut.End.Should().BeSameDateAs(new DateTime(2020, 3, 31));
-            sut.Type.Should().Be(HistoryCommandType.AllChats);
+            var sut = CommandDetector.Parse("/historyall: 28.03.2020 3");
+            sut.Should().BeOfType(typeof(ViewHistoryAllCommand));
+            ((ViewHistoryAllCommand)sut).Begin.Should().BeSameDateAs(new DateTime(2020, 3, 28));
+            ((ViewHistoryAllCommand)sut).End.Should().BeSameDateAs(new DateTime(2020, 3, 31));
+            ((ViewHistoryAllCommand)sut).Type.Should().Be(HistoryCommandType.AllChats);
         }
 
         [Test]
         public void HistoryTest()
         {
-            var sut = new HistoryCommand("/history: bazinga 28.03.2020 3");
-            sut.Begin.Should().BeSameDateAs(new DateTime(2020, 3, 28));
-            sut.End.Should().BeSameDateAs(new DateTime(2020, 3, 31));
-            sut.NameOrId.Should().BeEquivalentTo("bazinga");
-            sut.Type.Should().Be(HistoryCommandType.SingleChat);
+            var sut = CommandDetector.Parse("/history: bazinga 28.03.2020 3");
+            sut.Should().BeOfType(typeof(ViewHistoryCommand));
+            ((ViewHistoryCommand)sut).Begin.Should().BeSameDateAs(new DateTime(2020, 3, 28));
+            ((ViewHistoryCommand)sut).End.Should().BeSameDateAs(new DateTime(2020, 3, 31));
+            ((ViewHistoryCommand)sut).ChatName.Should().BeEquivalentTo("bazinga");
+            ((ViewHistoryCommand)sut).Type.Should().Be(HistoryCommandType.SingleChat);
         }
 
         [Test]

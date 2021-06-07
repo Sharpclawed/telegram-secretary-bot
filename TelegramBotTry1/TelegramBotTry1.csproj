@@ -74,7 +74,7 @@
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ReportCreator.cs" />
-    <Compile Include="Dto\HistoryCommand.cs" />
+    <Compile Include="Dto\ViewHistoryCommand.cs" />
     <Compile Include="Enums\HistoryCommandType.cs" />
     <Compile Include="Domain\IMessageDataSet.cs" />
     <Compile Include="Domain\MessageDataSet.cs" />
