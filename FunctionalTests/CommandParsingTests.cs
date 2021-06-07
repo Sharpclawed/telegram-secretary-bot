@@ -132,5 +132,11 @@ namespace FunctionalTests
             sut.Should().BeOfType(typeof(ViewInactiveChatsCommand));
             sut.EntityType.Should().Be(EntityType.InactiveChat);
         }
+
+        [Test]
+        public void WrongCommandTest()
+        {
+            Assert.Throws<InvalidCastException>(() => CommandDetector.Parse("WrongCommand"));
+        }
     }
 }
