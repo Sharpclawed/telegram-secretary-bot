@@ -66,8 +66,6 @@
     <Compile Include="Domain\AdminDataSet.cs" />
     <Compile Include="Domain\BookkeeperDataSet.cs" />
     <Compile Include="Dto\ManagingCommand.cs" />
-    <Compile Include="Enums\ManagingType.cs" />
-    <Compile Include="Enums\EntityType.cs" />
     <Compile Include="Migrations\202002171859206_InitialCreate.cs" />
     <Compile Include="Migrations\202002171859206_InitialCreate.designer.cs">
       <DependentUpon>202002171859206_InitialCreate.cs</DependentUpon>
@@ -75,7 +73,6 @@
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ReportCreator.cs" />
     <Compile Include="Dto\ViewHistoryCommand.cs" />
-    <Compile Include="Enums\HistoryCommandType.cs" />
     <Compile Include="Domain\IMessageDataSet.cs" />
     <Compile Include="Domain\MessageDataSet.cs" />
     <Compile Include="MsgContext.cs" />

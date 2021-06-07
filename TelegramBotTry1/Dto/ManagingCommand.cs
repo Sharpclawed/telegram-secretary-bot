@@ -2,13 +2,11 @@
 using System.Linq;
 using TelegramBotTry1.DataProviders;
 using TelegramBotTry1.Domain;
-using TelegramBotTry1.Enums;
 
 namespace TelegramBotTry1.Dto
 {
     public class AddAdminCommand : IBotCommand
     {
-        public EntityType EntityType => EntityType.Admin;
         public string AdminName { get; }
         public long UserId { get; }
         public string UserName { get; }
@@ -46,7 +44,6 @@ namespace TelegramBotTry1.Dto
 
     public class AddBkCommand : IBotCommand
     {
-        public EntityType EntityType => EntityType.Bookkeeper;
         public string BkName { get; }
 
         public AddBkCommand(string bkName)
@@ -80,7 +77,6 @@ namespace TelegramBotTry1.Dto
     public class AddOnetimeChatCommand : IBotCommand
     {
         public string ChatName { get; }
-        public EntityType EntityType => EntityType.InactiveChatException;
 
         public AddOnetimeChatCommand(string chatName)
         {
@@ -111,8 +107,6 @@ namespace TelegramBotTry1.Dto
 
     public class ViewAdminsCommand : IBotCommand
     {
-        public EntityType EntityType => EntityType.Admin;
-
         public ViewReportResult Process()
         {
             return AdminsListProvider.GetRows();
@@ -121,8 +115,6 @@ namespace TelegramBotTry1.Dto
 
     public class ViewBkCommand : IBotCommand
     {
-        public EntityType EntityType => EntityType.Bookkeeper;
-
         public ViewReportResult Process()
         {
             return BookkeepersListProvider.GetRows();
@@ -133,7 +125,6 @@ namespace TelegramBotTry1.Dto
     {
         public DateTime? SinceDate { get; }
         public DateTime? UntilDate { get; }
-        public EntityType EntityType => EntityType.Waiter;
 
         public ViewWaitersCommand()
         {
@@ -159,7 +150,6 @@ namespace TelegramBotTry1.Dto
     {
         public DateTime? SinceDate { get; }
         public DateTime? UntilDate { get; }
-        public EntityType EntityType => EntityType.InactiveChat;
 
         public ViewInactiveChatsCommand()
         {
@@ -183,8 +173,6 @@ namespace TelegramBotTry1.Dto
 
     public class ViewOneTimeChatsCommand : IBotCommand
     {
-        public EntityType EntityType => EntityType.InactiveChatException;
-
         public ViewReportResult Process()
         {
             return IgnoreChatsListProvider.GetRows();
@@ -193,7 +181,6 @@ namespace TelegramBotTry1.Dto
 
     public class RemoveAdminCommand : IBotCommand
     {
-        public EntityType EntityType => EntityType.Admin;
         public string AdminName { get; }
         public long UserId { get; }
         public string UserName { get; }
@@ -228,7 +215,6 @@ namespace TelegramBotTry1.Dto
 
     public class RemoveBkCommand : IBotCommand
     {
-        public EntityType EntityType => EntityType.Bookkeeper;
         public string BkName { get; }
 
         public RemoveBkCommand(string bkName)
@@ -253,7 +239,6 @@ namespace TelegramBotTry1.Dto
     public class RemoveOnetimeChatCommand : IBotCommand
     {
         public string ChatName { get; }
-        public EntityType EntityType => EntityType.InactiveChatException;
 
         public RemoveOnetimeChatCommand(string chatName)
         {
