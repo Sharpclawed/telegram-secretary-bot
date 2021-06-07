@@ -6,7 +6,6 @@ using Telegram.Bot.Types.Enums;
 using TelegramBotTry1.DataProviders;
 using TelegramBotTry1.Domain;
 using TelegramBotTry1.Dto;
-using TelegramBotTry1.Enums;
 
 namespace TelegramBotTry1
 {
@@ -55,7 +54,7 @@ namespace TelegramBotTry1
                         },
                         msg => msg.ChatName);
             }
-            else if (message.Text.StartsWith("/add") || message.Text.StartsWith("/remove"))
+            else if (message.Text.StartsWith("/view") || message.Text.StartsWith("/add") || message.Text.StartsWith("/remove"))
             {
                 IBotCommand command;
                 try
@@ -68,89 +67,54 @@ namespace TelegramBotTry1
                     return;
                 }
 
-                var processResult = command.Process();
-                if (processResult.Error != null)
-                    await botClient.SendTextMessageAsync(message.Chat.Id, processResult.Error);
-                else
-                    await botClient.SendTextMessageAsync(message.Chat.Id, processResult.Message);
-            }
-            else if (message.Text.StartsWith("/view"))
-            {
-                IBotCommand command;
-                try
+                var result = command.Process();
+                if (result.Error != null)
                 {
-                    command = CommandDetector.Parse(message.Text);
-                }
-                catch (InvalidCastException)
-                {
-                    await botClient.SendTextMessageAsync(message.Chat.Id, "Неизвестная команда");
+                    await botClient.SendTextMessageAsync(message.Chat.Id, result.Error);
                     return;
                 }
 
-                switch (command.EntityType)
+                switch (command)
                 {
-                    case EntityType.Admin:
+                    case ViewAdminsCommand _:
+                    case ViewBkCommand _:
+                    case ViewOneTimeChatsCommand _:
                     {
-                        var result = command.Process();
-                        if (result.Error != null)
-                            await botClient.SendTextMessageAsync(message.Chat.Id, result.Error);
-                        else
-                            await botClient.SendTextMessagesAsSingleTextAsync(message.Chat.Id, result.Records, result.Caption);
+                        await botClient.SendTextMessagesAsSingleTextAsync(message.Chat.Id, result.Records, result.Caption);
                         break;
                     }
-                    case EntityType.Bookkeeper:
+                    case ViewWaitersCommand _:
                     {
-                        var result = command.Process();
-                        if (result.Error != null)
-                            await botClient.SendTextMessageAsync(message.Chat.Id, result.Error);
-                        else
-                            await botClient.SendTextMessagesAsSingleTextAsync(message.Chat.Id, result.Records, result.Caption);
+                        var formattedRecords = result.Messages.Select(Formatter.Waiters).ToList();
+                        await botClient.SendTextMessagesAsListAsync(message.Chat.Id, formattedRecords, ChatType.Personal);
                         break;
                     }
-                    case EntityType.Waiter:
+                    case ViewInactiveChatsCommand _:
                     {
-                        var result = command.Process();
-                        if (result.Error != null)
-                            await botClient.SendTextMessageAsync(message.Chat.Id, result.Error);
-                        else
-                        {
-                            var formattedRecords = result.Messages.Select(Formatter.Waiters).ToList();
-                            await botClient.SendTextMessagesAsListAsync(message.Chat.Id, formattedRecords, ChatType.Personal);
-                        }
+                        await botClient.SendTextMessagesAsExcelReportAsync(
+                            message.Chat.Id,
+                            result.Messages,
+                            result.Caption,
+                            new[]
+                            {
+                                nameof(IMessageDataSet.Date),
+                                nameof(IMessageDataSet.ChatName),
+                                nameof(IMessageDataSet.Message),
+                                nameof(IMessageDataSet.UserFirstName),
+                                nameof(IMessageDataSet.UserLastName),
+                                nameof(IMessageDataSet.UserName),
+                                nameof(IMessageDataSet.UserId)
+                            });
                         break;
                     }
-                    case EntityType.InactiveChatException:
-                    {
-                        var result = command.Process();
-                        if (result.Error != null)
-                            await botClient.SendTextMessageAsync(message.Chat.Id, result.Error);
-                        else
-                            await botClient.SendTextMessagesAsSingleTextAsync(message.Chat.Id, result.Records, result.Caption);
+                    case AddAdminCommand _:
+                    case AddBkCommand _:
+                    case AddOnetimeChatCommand _:
+                    case RemoveAdminCommand _:
+                    case RemoveBkCommand _:
+                    case RemoveOnetimeChatCommand _:
+                        await botClient.SendTextMessageAsync(message.Chat.Id, result.Message);
                         break;
-                    }
-                    case EntityType.InactiveChat:
-                    {
-                        var result = command.Process();
-
-                        if (result.Error != null)
-                            await botClient.SendTextMessageAsync(message.Chat.Id, result.Error);
-                        else
-                            await botClient.SendTextMessagesAsExcelReportAsync(
-                                message.Chat.Id,
-                                result.Messages,
-                                result.Caption,
-                                new[]
-                                {
-                                    nameof(IMessageDataSet.Date),
-                                    nameof(IMessageDataSet.ChatName),
-                                    nameof(IMessageDataSet.Message),
-                                    nameof(IMessageDataSet.UserFirstName),
-                                    nameof(IMessageDataSet.UserLastName),
-                                    nameof(IMessageDataSet.UserName),
-                                    nameof(IMessageDataSet.UserId)
-                                });
-                        break;
-                    }
                 }
             }
         }
