@@ -23,15 +23,16 @@ namespace TelegramBotTry1
                 .Where(x => x.ChatName.Equals(exactChatName, StringComparison.InvariantCultureIgnoreCase));
         }
 
-        public static IQueryable<IMessageDataSet> GetActualUser(this IQueryable<IMessageDataSet> dataSets, string exactUserId = null)
+        public static IQueryable<IMessageDataSet> GetActualUser(this IQueryable<IMessageDataSet> dataSets, long? exactUserId = null)
         {
             if (exactUserId == null)
                 return dataSets;
 
-            return from dataset in dataSets
-                join chatId in dataSets.Where(x => x.UserId.ToString() == exactUserId)
+            var messageDataSets = from dataset in dataSets
+                join chatId in dataSets.Where(x => x.UserId == exactUserId)
                     .Select(x => x.ChatId).Distinct() on dataset.ChatId equals chatId
                 select dataset;
+            return messageDataSets;
         }
 
         //todo test it

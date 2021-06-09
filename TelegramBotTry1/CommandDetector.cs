@@ -75,10 +75,10 @@ namespace TelegramBotTry1
                     var historyEnd = historyBegin.AddDays(double.Parse(match.Groups[patternPosition + 3].Value));
                     return new ViewHistoryCommand(historyBegin, historyEnd, historyChatName);
                 case "historyof":
-                    var historyUserName = match.Groups[patternPosition + 1].Value;
+                    var historyUserId = match.Groups[patternPosition + 1].Value;
                     var historyofBegin = DateTime.ParseExact(match.Groups[patternPosition + 2].Value, "dd.MM.yyyy", CultureInfo.InvariantCulture);
                     var historyofEnd = historyofBegin.AddDays(double.Parse(match.Groups[patternPosition + 3].Value));
-                    return new ViewHistoryOfCommand(historyofBegin, historyofEnd, historyUserName);
+                    return new ViewHistoryOfCommand(historyofBegin, historyofEnd, long.Parse(historyUserId));
                 case "historyall":
                     var historyallBegin = DateTime.ParseExact(match.Groups[patternPosition + 1].Value, "dd.MM.yyyy", CultureInfo.InvariantCulture);
                     var historyallEnd = historyallBegin.AddDays(double.Parse(match.Groups[patternPosition + 2].Value));

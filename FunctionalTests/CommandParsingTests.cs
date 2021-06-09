@@ -16,7 +16,7 @@ namespace FunctionalTests
             sut.Should().BeOfType(typeof(ViewHistoryOfCommand));
             ((ViewHistoryOfCommand)sut).Begin.Should().BeSameDateAs(new DateTime(2020, 3, 28));
             ((ViewHistoryOfCommand)sut).End.Should().BeSameDateAs(new DateTime(2020, 3, 31));
-            ((ViewHistoryOfCommand)sut).UserId.Should().BeEquivalentTo("118274261");
+            ((ViewHistoryOfCommand)sut).UserId.Should().Be(118274261);
         }
 
         [Test]

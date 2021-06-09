@@ -8,13 +8,13 @@ namespace TelegramBotTry1.Commands
     {
         public DateTime Begin { get; }
         public DateTime End { get; }
-        public string UserId { get; }
+        public long UserId { get; }
 
-        public ViewHistoryOfCommand(DateTime begin, DateTime end, string userName)
+        public ViewHistoryOfCommand(DateTime begin, DateTime end, long userId)
         {
             Begin = begin;
             End = end;
-            UserId = userName;
+            UserId = userId;
         }
 
         public CommandResult Process()

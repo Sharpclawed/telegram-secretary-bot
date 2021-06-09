@@ -64,7 +64,7 @@ namespace FunctionalTests
         public void GetActualUserTest()
         {
             var sut = dataSet.AsQueryable()
-                .GetActualUser("2");
+                .GetActualUser(2);
             sut.All(x => new long[] {1, 2}.Contains(x.ChatId)).Should().BeTrue();
             sut.Count(x => x.ChatId == 2).Should().Be(2);
         }

@@ -7,7 +7,7 @@ namespace TelegramBotTry1.DataProviders
 {
     public static class HistoryProvider
     {
-        public static CommandResult GetRows(DateTime begin, DateTime end, string exactChatName, string exactUserId)
+        public static CommandResult GetRows(DateTime begin, DateTime end, string exactChatName, long? exactUserId)
         {
             using (var context = new MsgContext())
             {
