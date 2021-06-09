@@ -2,7 +2,7 @@
 using FluentAssertions;
 using NUnit.Framework;
 using TelegramBotTry1;
-using TelegramBotTry1.Dto;
+using TelegramBotTry1.Commands;
 
 namespace FunctionalTests
 {

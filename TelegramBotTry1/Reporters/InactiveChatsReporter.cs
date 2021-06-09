@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Net.Sockets;
 using System.Timers;
+using TelegramBotTry1.Commands;
 using TelegramBotTry1.Domain;
-using TelegramBotTry1.Dto;
 
 namespace TelegramBotTry1.Reporters
 {

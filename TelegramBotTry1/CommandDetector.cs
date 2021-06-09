@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
-using TelegramBotTry1.Dto;
+using TelegramBotTry1.Commands;
 
 namespace TelegramBotTry1
 {

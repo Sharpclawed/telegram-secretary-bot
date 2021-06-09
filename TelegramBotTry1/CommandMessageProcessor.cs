@@ -3,9 +3,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using TelegramBotTry1.Commands;
 using TelegramBotTry1.DataProviders;
 using TelegramBotTry1.Domain;
-using TelegramBotTry1.Dto;
 
 namespace TelegramBotTry1
 {
