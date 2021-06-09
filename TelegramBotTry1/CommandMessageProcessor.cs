@@ -33,7 +33,7 @@ namespace TelegramBotTry1
             IBotCommand command;
             try
             {
-                command = CommandDetector.Parse(message.Text);
+                command = CommandDetector.Parse(message.Text, message.From.Id, message.From.Username);
             }
             catch (InvalidCastException)
             {

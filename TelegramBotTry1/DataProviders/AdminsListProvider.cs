@@ -13,7 +13,7 @@ namespace TelegramBotTry1.DataProviders
             {
                 result.Records = context.Set<AdminDataSet>().AsNoTracking()
                     .Where(x => x.DeleteTime == null).ToList()
-                    .Select(x => x.UserName + " " + x.AddTime.ToShortDateString())
+                    .Select(x => x.UserName + " добавлен " + x.AddTime.ToShortDateString() + " " + x.AddedUserName)
                     .ToList();
             }
             //Packing result is another responsibility
