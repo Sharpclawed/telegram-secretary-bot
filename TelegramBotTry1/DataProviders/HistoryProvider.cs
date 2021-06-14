@@ -1,32 +1,29 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using TelegramBotTry1.Domain;
 using TelegramBotTry1.Dto;
-using TelegramBotTry1.Enums;
 
 namespace TelegramBotTry1.DataProviders
 {
     public static class HistoryProvider
     {
-        public static ViewReportResult GetRows(HistoryCommand command)
+        public static CommandResult GetRows(DateTime begin, DateTime end, string exactChatName, long? exactUserId)
         {
             using (var context = new MsgContext())
             {
-                if (command.Type == HistoryCommandType.Unknown)
-                    return new ViewReportResult {Error = "Неизвестная команда"};//todo help for history case
-                
-                var messageDataSets = context.Set<MessageDataSet>().AsNoTracking().GetActualDates(command);
+                var messageDataSets = context.Set<MessageDataSet>().AsNoTracking().GetActualDates(begin, end);
                 if (!messageDataSets.Any())
-                    return new ViewReportResult { Error = "В данном периоде нет сообщений" };
+                    return new CommandResult { Error = "В данном периоде нет сообщений" };
 
-                messageDataSets = messageDataSets.GetActualChats(command);
+                messageDataSets = messageDataSets.GetActualChats(exactChatName);
                 if (messageDataSets == null || !messageDataSets.Any())
-                    return new ViewReportResult { Error = "В выбранных чатах нет сообщений" };
+                    return new CommandResult { Error = "В выбранных чатах нет сообщений" };
 
-                messageDataSets = messageDataSets.GetActualUser(command);
+                messageDataSets = messageDataSets.GetActualUser(exactUserId);
                 if (!messageDataSets.Any())
-                    return new ViewReportResult { Error = "По данному пользователю нет сообщений" };
+                    return new CommandResult { Error = "По данному пользователю нет сообщений" };
 
-                return new ViewReportResult {Records = messageDataSets.ToList(), Caption = "История сообщений" };
+                return new CommandResult {Messages = messageDataSets.ToList(), Caption = "История сообщений" };
             }
         }
     }

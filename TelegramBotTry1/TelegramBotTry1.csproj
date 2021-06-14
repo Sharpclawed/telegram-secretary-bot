@@ -47,17 +47,27 @@
   <ItemGroup>
     <Compile Include="AdminDataSetExtensions.cs" />
     <Compile Include="BotClientAdapter.cs" />
-    <Compile Include="CommandProcessor.cs" />
+    <Compile Include="CommandDetector.cs" />
+    <Compile Include="Commands\AddAdminCommand.cs" />
+    <Compile Include="Commands\AddBkCommand.cs" />
+    <Compile Include="Commands\AddOnetimeChatCommand.cs" />
+    <Compile Include="Commands\IBotCommand.cs" />
+    <Compile Include="Commands\RemoveAdminCommand.cs" />
+    <Compile Include="Commands\RemoveBkCommand.cs" />
+    <Compile Include="Commands\ViewAdminsCommand.cs" />
+    <Compile Include="Commands\ViewBkCommand.cs" />
+    <Compile Include="Commands\ViewHistoryAllCommand.cs" />
+    <Compile Include="Commands\ViewHistoryOfCommand.cs" />
+    <Compile Include="Commands\ViewInactiveChatsCommand.cs" />
+    <Compile Include="Commands\ViewOneTimeChatsCommand.cs" />
+    <Compile Include="Commands\ViewWaitersCommand.cs" />
     <Compile Include="DataProviders\AdminsListProvider.cs" />
     <Compile Include="DataProviders\BookkeepersListProvider.cs" />
     <Compile Include="Formatter.cs" />
     <Compile Include="DataProviders\HistoryProvider.cs" />
     <Compile Include="DataProviders\IgnoreChatsListProvider.cs" />
     <Compile Include="DbRepository.cs" />
-    <Compile Include="Dto\ICommandResult.cs" />
-    <Compile Include="Dto\ViewActionResult.cs" />
-    <Compile Include="Dto\ViewEntitiesResult.cs" />
-    <Compile Include="Dto\ViewReportResult.cs" />
+    <Compile Include="Dto\CommandResult.cs" />
     <Compile Include="Reporters\BotStateReporter.cs" />
     <Compile Include="ChatIds.cs" />
     <Compile Include="CommandMessageProcessor.cs" />
@@ -67,17 +77,14 @@
     <Compile Include="MessageDataSetExtensions.cs" />
     <Compile Include="Domain\AdminDataSet.cs" />
     <Compile Include="Domain\BookkeeperDataSet.cs" />
-    <Compile Include="Dto\ManagingCommand.cs" />
-    <Compile Include="Enums\ManagingType.cs" />
-    <Compile Include="Enums\EntityType.cs" />
+    <Compile Include="Commands\RemoveOnetimeChatCommand.cs" />
     <Compile Include="Migrations\202002171859206_InitialCreate.cs" />
     <Compile Include="Migrations\202002171859206_InitialCreate.designer.cs">
       <DependentUpon>202002171859206_InitialCreate.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ReportCreator.cs" />
-    <Compile Include="Dto\HistoryCommand.cs" />
-    <Compile Include="Enums\HistoryCommandType.cs" />
+    <Compile Include="Commands\ViewHistoryCommand.cs" />
     <Compile Include="Domain\IMessageDataSet.cs" />
     <Compile Include="Domain\MessageDataSet.cs" />
     <Compile Include="MsgContext.cs" />

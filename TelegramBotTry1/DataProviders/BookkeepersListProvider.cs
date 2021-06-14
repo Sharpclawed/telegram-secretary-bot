@@ -6,9 +6,9 @@ namespace TelegramBotTry1.DataProviders
 {
     public static class BookkeepersListProvider
     {
-        public static ViewEntitiesResult GetRows()
+        public static CommandResult GetRows()
         {
-            var result = new ViewEntitiesResult();
+            var result = new CommandResult();
             using (var context = new MsgContext())
             {
                 var bkDataSets = context.Set<BookkeeperDataSet>().AsNoTracking();

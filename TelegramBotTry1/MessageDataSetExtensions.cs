@@ -4,46 +4,35 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using TelegramBotTry1.Domain;
 using TelegramBotTry1.Dto;
-using TelegramBotTry1.Enums;
 
 namespace TelegramBotTry1
 {
     public static class MessageDataSetExtensions
     {
-        public static IQueryable<IMessageDataSet> GetActualDates(this IQueryable<IMessageDataSet> dataSets,
-            HistoryCommand command)
+        public static IQueryable<IMessageDataSet> GetActualDates(this IQueryable<IMessageDataSet> dataSets, DateTime begin, DateTime end)
         {
-            return dataSets.Where(x => x.Date >= command.Begin && x.Date < command.End);
+            return dataSets.Where(x => x.Date >= begin && x.Date < end);
         }
 
-        public static IQueryable<IMessageDataSet> GetActualChats(this IQueryable<IMessageDataSet> dataSets,
-            HistoryCommand command)
+        public static IQueryable<IMessageDataSet> GetActualChats(this IQueryable<IMessageDataSet> dataSets, string exactChatName = null)
         {
-            switch (command.Type)
-            {
-                case HistoryCommandType.SingleChat:
-                    return dataSets
-                        .Where(x => x.ChatName.Equals(command.NameOrId, StringComparison.InvariantCultureIgnoreCase));
-                case HistoryCommandType.AllChats:
-                case HistoryCommandType.SingleUser:
-                    return dataSets.Where(x => x.ChatName != null);
-                default:
-                    return null;
-            }
+            if (exactChatName == null)
+                return dataSets.Where(x => x.ChatName != null);
+
+            return dataSets
+                .Where(x => x.ChatName.Equals(exactChatName, StringComparison.InvariantCultureIgnoreCase));
         }
 
-        public static IQueryable<IMessageDataSet> GetActualUser(this IQueryable<IMessageDataSet> dataSets, HistoryCommand command)
+        public static IQueryable<IMessageDataSet> GetActualUser(this IQueryable<IMessageDataSet> dataSets, long? exactUserId = null)
         {
-            switch (command.Type)
-            {
-                case HistoryCommandType.SingleUser:
-                    return from dataset in dataSets
-                        join chatId in dataSets.Where(x => x.UserId.ToString() == command.NameOrId)
-                            .Select(x => x.ChatId).Distinct() on dataset.ChatId equals chatId
-                        select dataset;
-                default:
-                    return dataSets;
-            }
+            if (exactUserId == null)
+                return dataSets;
+
+            var messageDataSets = from dataset in dataSets
+                join chatId in dataSets.Where(x => x.UserId == exactUserId)
+                    .Select(x => x.ChatId).Distinct() on dataset.ChatId equals chatId
+                select dataset;
+            return messageDataSets;
         }
 
         //todo test it
