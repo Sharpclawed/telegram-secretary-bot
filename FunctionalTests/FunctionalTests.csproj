@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFramework>net471</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <Optimize>false</Optimize>
@@ -15,12 +15,6 @@
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
@@ -30,12 +24,14 @@
     <PackageReference Include="FluentAssertions">
       <Version>5.10.3</Version>
     </PackageReference>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.10.0" />
     <PackageReference Include="Moq">
       <Version>4.16.1</Version>
     </PackageReference>
     <PackageReference Include="NUnit">
       <Version>3.13.2</Version>
     </PackageReference>
+    <PackageReference Include="NUnit3TestAdapter" Version="4.0.0" />
     <PackageReference Include="Telegram.Bot">
       <Version>15.7.1</Version>
     </PackageReference>
