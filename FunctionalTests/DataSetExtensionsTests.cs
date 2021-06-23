@@ -69,6 +69,38 @@ namespace FunctionalTests
             sut.Count(x => x.ChatId == 2).Should().Be(2);
         }
 
+        [Test]
+        public void GetUserByUserName_getsIfExists()
+        {
+            var sut = dataSet.AsQueryable()
+                .GetUserByUserName("user 2 user name");
+
+            sut.UserId.Should().Be(2);
+        }
+
+        [Test]
+        public void GetUserByUserName_throwsIfNotExists()
+        {
+            Assert.Throws<ArgumentException>(() => dataSet.AsQueryable()
+                .GetUserByUserName("incorrect name"));
+        }
+
+        [Test]
+        public void GetChatByChatName_getsIfExists()
+        {
+            var sut = dataSet.AsQueryable()
+                .GetChatByChatName("Chat2");
+
+            sut.Id.Should().Be(2);
+        }
+
+        [Test]
+        public void GetChatByChatName_throwsIfNotExists()
+        {
+            Assert.Throws<ArgumentException>(() => dataSet.AsQueryable()
+                .GetChatByChatName("incorrect name"));
+        }
+
         private IMessageDataSet GetMessage(long chatId, string chatName, DateTime date, long userId, long messageId, string message)
         {
             return new MessageDataSet
@@ -78,6 +110,9 @@ namespace FunctionalTests
                 ChatName = chatName,
                 Date = date,
                 UserId = userId,
+                UserFirstName = "user " + userId + " first name",
+                UserLastName = "user " + userId + " last name",
+                UserName = "user " + userId + " user name",
                 MessageId = messageId,
                 Message = message
             };

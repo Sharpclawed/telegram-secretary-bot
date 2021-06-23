@@ -39,10 +39,10 @@ namespace TelegramBotTry1
             await SendTextMessageAsync(chatId, caption + result);
         }
 
-        //todo maybe all these methods should take List<IMessageDataSet> and lambda or maybe fileInfoInstead
+        //todo maybe all these methods should take List<IMessageDataSet> and lambda or maybe fileInfo instead
         public async Task SendTextMessagesAsExcelReportAsync(ChatId chatId, List<IMessageDataSet> msgs, string caption, string[] columnNames, Func<IMessageDataSet, string> groupBy = null)
         {
-            //todo put to IMessageDataSetExtensions and add tests
+            //todo put to IMessageDataSetExtensions and add tests. But there's a problem - order and set of columns
             IEnumerable<KeyValuePair<string, List<IMessageDataSet>>> listsWithRows;
             if (groupBy == null)
                 listsWithRows = new Dictionary<string, List<IMessageDataSet>>
