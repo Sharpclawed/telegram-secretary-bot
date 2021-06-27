@@ -61,7 +61,26 @@ namespace TelegramBotTry1
             var message = messageEventArgs.Message;
             try
             {
-                var recievedDataSet = new MessageDataSet(message);
+                //todo automapper
+                var recievedDataSet = new MessageDataSet
+                {
+                    MessageId = message.MessageId,
+                    Date = message.Date,
+                    UserName = message.From.Username,
+                    UserFirstName = message.From.FirstName,
+                    UserLastName = message.From.LastName,
+                    UserId = message.From.Id,
+                    ChatId = message.Chat.Id,
+                    ChatName = message.Chat.Title,
+                    Message = message.Type switch
+                    {
+                        MessageType.Text => message.Text,
+                        MessageType.Sticker => message.Sticker.Emoji,
+                        MessageType.Contact => message.Contact.FirstName + " " + message.Contact.LastName + " (" +
+                                               message.Contact.UserId + "): " + message.Contact.PhoneNumber,
+                        _ => "MessageType: " + message.Type
+                    }
+                };
                 if (message.Type == MessageType.Text && message.Text.First() == '/')
                     await CommandMessageProcessor.ProcessTextMessageAsync(BotClient, message);
                 DbRepository.SaveToDatabase(recievedDataSet); //todo sql injection protection

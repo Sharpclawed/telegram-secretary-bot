@@ -4,7 +4,6 @@ using System.Linq;
 using NUnit.Framework;
 using TelegramBotTry1;
 using FluentAssertions;
-using Telegram.Bot.Types;
 using TelegramBotTry1.Domain;
 
 namespace FunctionalTests
@@ -186,7 +185,7 @@ namespace FunctionalTests
                 "🌸🌸🌸",
                 "✅",
             };
-            var set = testCases.Select(z => new MessageDataSet(new Message {Text = z, From = new Telegram.Bot.Types.User(), Chat = new Telegram.Bot.Types.Chat()})).ToList();
+            var set = testCases.Select(z => new MessageDataSet{Message =  z}).ToList();
             var sut = set.FilterObviouslySuperfluous();
 
             sut.Should().BeEquivalentTo(new List<MessageDataSet>());

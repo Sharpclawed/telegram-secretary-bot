@@ -1,7 +1,5 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
-using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
 
 namespace TelegramBotTry1.Domain
 {
@@ -27,29 +25,6 @@ namespace TelegramBotTry1.Domain
                     UserName + "| " +
                     Date + " " +
                     Message;
-        }
-
-        public MessageDataSet()
-        {
-        }
-
-        public MessageDataSet(Message message)
-        {
-            MessageId = message.MessageId;
-            Date = message.Date;
-            UserName = message.From.Username;
-            UserFirstName = message.From.FirstName;
-            UserLastName = message.From.LastName;
-            UserId = message.From.Id;
-            ChatId = message.Chat.Id;
-            ChatName = message.Chat.Title;
-            Message = message.Type switch
-            {
-                MessageType.Text => message.Text,
-                MessageType.Sticker => message.Sticker.Emoji,
-                MessageType.Contact => message.Contact.FirstName + " " + message.Contact.LastName + " (" + message.Contact.UserId + "): " + message.Contact.PhoneNumber,
-                _ => "MessageType: " + message.Type
-            };
         }
     }
 }
