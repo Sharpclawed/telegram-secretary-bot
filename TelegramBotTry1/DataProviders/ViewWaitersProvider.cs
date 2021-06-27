@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Telegram.Bot.Types.Enums;
 using TelegramBotTry1.Domain;
 
 namespace TelegramBotTry1.DataProviders
@@ -26,20 +25,6 @@ namespace TelegramBotTry1.DataProviders
                             let isByDir = bookkeeper.BookkeeperDataSetId == null && admin.AdminDataSetId == null
                             where msg.ChatName != null
                                   && msg.Date > sinceDate
-                                  && !(msg.Message == "MessageType: " + MessageType.SuccessfulPayment ||
-                                       msg.Message == "MessageType: " + MessageType.WebsiteConnected ||
-                                       msg.Message == "MessageType: " + MessageType.ChatMembersAdded ||
-                                       msg.Message == "MessageType: " + MessageType.ChatMemberLeft ||
-                                       msg.Message == "MessageType: " + MessageType.ChatTitleChanged ||
-                                       msg.Message == "MessageType: " + MessageType.ChatPhotoChanged ||
-                                       msg.Message == "MessageType: " + MessageType.MessagePinned ||
-                                       msg.Message == "MessageType: " + MessageType.ChatPhotoDeleted ||
-                                       msg.Message == "MessageType: " + MessageType.GroupCreated ||
-                                       msg.Message == "MessageType: " + MessageType.SupergroupCreated ||
-                                       msg.Message == "MessageType: " + MessageType.ChannelCreated ||
-                                       msg.Message == "MessageType: " + MessageType.MigratedToSupergroup ||
-                                       msg.Message == "MessageType: " + MessageType.MigratedFromGroup ||
-                                       msg.Message == "MessageType: " + MessageType.Unknown)
                                   && (!isByDir || !msg.Message.StartsWith("MessageType: "))
                             select new {msg, isByDir}
                         ).ToArray()
