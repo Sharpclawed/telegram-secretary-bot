@@ -11,7 +11,7 @@ namespace TelegramBotTry1
 {
     public static class CommandMessageProcessor
     {
-        public static async Task ProcessTextMessageAsync(ITelegramBotClientAdapter botClient, Message message)
+        public static async Task ProcessTextMessageAsync(ITgBotClientEx botClient, Message message)
         {
             var isMessagePersonal = message.Chat.Title == null;
             if (!isMessagePersonal)
@@ -60,7 +60,7 @@ namespace TelegramBotTry1
                 case ViewWaitersCommand _:
                 {
                     var formattedRecords = result.Messages.Select(Formatter.Waiters).ToList();
-                    await botClient.SendTextMessagesAsListAsync(message.Chat.Id, formattedRecords, ChatType.Personal);
+                    await botClient.SendTextMessagesAsListAsync(message.Chat.Id, formattedRecords, СorrespondenceType.Personal);
                     break;
                 }
                 case ViewInactiveChatsCommand _:

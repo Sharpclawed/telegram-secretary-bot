@@ -11,49 +11,49 @@ namespace TelegramBotTry1
 {
     static class Program
     {
-        private static readonly ITelegramBotClientAdapter BotClient = new BotClientAdapter(Secrets.MainBotToken);
+        private static readonly ITgBotClientEx TgClient = new TgBotClientEx(Secrets.MainBotToken);
 
         static void Main()
         {
-            BotClient.OnMessage += BotOnMessageReceived;
-            BotClient.OnMessageEdited += BotOnMessageReceived;
-            BotClient.OnReceiveError += BotOnReceiveError;
-            BotClient.OnReceiveGeneralError += BotOnOnReceiveGeneralError;
-            BotClient.OnCallbackQuery += BotOnOnCallbackQuery;
+            TgClient.OnMessage += BotOnMessageReceived;
+            TgClient.OnMessageEdited += BotOnMessageReceived;
+            TgClient.OnReceiveError += BotOnReceiveError;
+            TgClient.OnReceiveGeneralError += BotOnOnReceiveGeneralError;
+            TgClient.OnCallbackQuery += BotOnOnCallbackQuery;
 
-            Console.Title = BotClient.GetMeAsync().Result.Username;
+            Console.Title = TgClient.GetMeAsync().Result.Username;
 
             using (var context = new MsgContext())
             {
                 context.Database.CreateIfNotExists();
             }
-            var botStateReporter = new BotStateReporter(BotClient);
-            var waitersViewReporter = new WaitersReporter(BotClient);
-            var inactiveChatsReporter = new InactiveChatsReporter(BotClient);
+            var botStateReporter = new BotStateReporter(TgClient);
+            var waitersViewReporter = new WaitersReporter(TgClient);
+            var inactiveChatsReporter = new InactiveChatsReporter(TgClient);
 
             Console.WriteLine(DateTime.Now + " Start working");
             botStateReporter.Start();
             waitersViewReporter.Start();
             inactiveChatsReporter.Start();
 
-            BotClient.StartReceiving();
+            TgClient.StartReceiving();
             Console.ReadLine();
-            BotClient.StopReceiving();
+            TgClient.StopReceiving();
         }
 
         private static async void BotOnOnCallbackQuery(object sender, CallbackQueryEventArgs e)
         {
-            await BotClient.SendTextMessageAsync(ChatIds.Test125, e.CallbackQuery.Message.Text);
+            await TgClient.SendTextMessageAsync(ChatIds.Test125, e.CallbackQuery.Message.Text);
         }
 
         private static async void BotOnOnReceiveGeneralError(object sender, ReceiveGeneralErrorEventArgs e)
         {
-            await BotClient.SendTextMessageAsync(ChatIds.Test125, e.Exception.Message + " \r\n" + e.Exception.InnerException);
+            await TgClient.SendTextMessageAsync(ChatIds.Test125, e.Exception.Message + " \r\n" + e.Exception.InnerException);
         }
 
         private static async void BotOnReceiveError(object sender, ReceiveErrorEventArgs receiveErrorEventArgs)
         {
-            await BotClient.SendTextMessageAsync(ChatIds.Test125, receiveErrorEventArgs.ApiRequestException.Message);
+            await TgClient.SendTextMessageAsync(ChatIds.Test125, receiveErrorEventArgs.ApiRequestException.Message);
         }
 
         private static async void BotOnMessageReceived(object sender, MessageEventArgs messageEventArgs)
@@ -82,7 +82,7 @@ namespace TelegramBotTry1
                     }
                 };
                 if (message.Type == MessageType.Text && message.Text.First() == '/')
-                    await CommandMessageProcessor.ProcessTextMessageAsync(BotClient, message);
+                    await CommandMessageProcessor.ProcessTextMessageAsync(TgClient, message);
                 DbRepository.SaveToDatabase(recievedDataSet); //todo sql injection protection
                 Console.WriteLine(recievedDataSet.ToString());
             }
@@ -94,11 +94,11 @@ namespace TelegramBotTry1
                 {
                     case SocketException _:
                     case ObjectDisposedException _:
-                        await BotClient.SendTextMessageAsync(ChatIds.Botva, "Пропала коннекция к базе. Отключаюсь, чтобы не потерялись данные. mr\r\n"
+                        await TgClient.SendTextMessageAsync(ChatIds.Botva, "Пропала коннекция к базе. Отключаюсь, чтобы не потерялись данные. mr\r\n"
                                                                           + "Пожалуйста, включите меня в течение суток");
                         throw;
                     default:
-                        await BotClient.SendTextMessageAsync(ChatIds.Test125, exception.ToString());
+                        await TgClient.SendTextMessageAsync(ChatIds.Test125, exception.ToString());
                         break;
                 }
             }

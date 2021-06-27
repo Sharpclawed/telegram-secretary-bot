@@ -9,10 +9,10 @@ namespace TelegramBotTry1.Reporters
 {
     public class WaitersReporter : IReporter
     {
-        private readonly ITelegramBotClientAdapter botClient;
+        private readonly ITgBotClientEx botClient;
         private Timer viewWaitersTimer;
 
-        public WaitersReporter(ITelegramBotClientAdapter botClient)
+        public WaitersReporter(ITgBotClientEx botClient)
         {
             this.botClient = botClient;
             Init();
@@ -70,7 +70,7 @@ namespace TelegramBotTry1.Reporters
                     var command = new ViewWaitersCommand(sinceDate, untilDate);
                     var waitersReport = command.Process();
                     var formattedRecords = waitersReport.Messages.Select(Formatter.Waiters).ToList();
-                    await botClient.SendTextMessagesAsListAsync(ChatIds.Unanswered, formattedRecords, ChatType.Chat);
+                    await botClient.SendTextMessagesAsListAsync(ChatIds.Unanswered, formattedRecords, СorrespondenceType.Chat);
                 }
             }
             catch (Exception exception)

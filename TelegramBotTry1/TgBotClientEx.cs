@@ -11,23 +11,20 @@ using TelegramBotTry1.Domain;
 
 namespace TelegramBotTry1
 {
-    public class BotClientAdapter : TelegramBotClient, ITelegramBotClientAdapter
+    public class TgBotClientEx : TelegramBotClient, ITgBotClientEx
     {
-        public BotClientAdapter(string token, HttpClient httpClient = null) : base(token, httpClient)
+        public TgBotClientEx(string token, HttpClient httpClient = null) : base(token, httpClient)
         {
         }
 
-        public BotClientAdapter(string token, IWebProxy webProxy) : base(token, webProxy)
+        public TgBotClientEx(string token, IWebProxy webProxy) : base(token, webProxy)
         {
         }
 
-        public async Task SendTextMessagesAsListAsync(ChatId chatId, IList<string> msgs, ChatType destinationChatType)
+        public async Task SendTextMessagesAsListAsync(ChatId chatId, IList<string> msgs, СorrespondenceType сorrespondenceType)
         {
-            var config = destinationChatType == ChatType.Personal
-                ? defaultConfigPersonal
-                : defaultConfigChat;
-
-            var preparedSet = msgs.Take(config.TotalMessagesLimit);
+            var totalMessagesLimit = сorrespondenceType == СorrespondenceType.Personal ? 34 : 20;
+            var preparedSet = msgs.Take(totalMessagesLimit);
 
             foreach (var msg in preparedSet)
                 await SendTextMessageAsync(chatId, msg);
@@ -68,31 +65,17 @@ namespace TelegramBotTry1
                 await SendDocumentAsync(chatId, fileToSend, caption);
             }
         }
-
-        private readonly ListSenderConfig defaultConfigPersonal = new()
-        {
-            TotalMessagesLimit = 34
-        };
-        private readonly ListSenderConfig defaultConfigChat = new()
-        {
-            TotalMessagesLimit = 20
-        };
     }
 
-    public class ListSenderConfig
-    {
-        public int TotalMessagesLimit { get; set; }
-    }
-
-    public enum ChatType
+    public enum СorrespondenceType
     {
         Chat,
         Personal
     }
 
-    public interface ITelegramBotClientAdapter : ITelegramBotClient
+    public interface ITgBotClientEx : ITelegramBotClient
     {
-        Task SendTextMessagesAsListAsync(ChatId chatId, IList<string> msgs, ChatType destinationChatType);
+        Task SendTextMessagesAsListAsync(ChatId chatId, IList<string> msgs, СorrespondenceType сorrespondenceType);
         Task SendTextMessagesAsSingleTextAsync(ChatId chatId, IEnumerable<string> msgs, string caption);
         Task SendTextMessagesAsExcelReportAsync(ChatId chatId, List<IMessageDataSet> msgs, string caption,
             string[] columnNames, Func<IMessageDataSet, string> groupBy = null);

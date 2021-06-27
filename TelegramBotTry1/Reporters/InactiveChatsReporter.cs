@@ -8,11 +8,11 @@ namespace TelegramBotTry1.Reporters
 {
     public class InactiveChatsReporter : IReporter
     {
-        private readonly ITelegramBotClientAdapter botClient;
+        private readonly ITgBotClientEx botClient;
         private Timer timer;
         private DateTime lastInactiveChatCheckUtc = DateTime.UtcNow.Date;
 
-        public InactiveChatsReporter(ITelegramBotClientAdapter botClient)
+        public InactiveChatsReporter(ITgBotClientEx botClient)
         {
             this.botClient = botClient;
             Init();
