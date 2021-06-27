@@ -35,12 +35,12 @@ namespace TelegramBotTry1
             return messageDataSets;
         }
 
-        //todo test it
         public static User GetUserByUserName(this IQueryable<IMessageDataSet> dataSets, string userName)
         {
             var message = dataSets.Where(x => x.UserName.ToLower() == userName.ToLower()).OrderByDescending(x => x.Date).FirstOrDefault();
             if (message == null)
                 throw new ArgumentException("Пользователь не найден");
+
             return new User
             {
                 UserId = message.UserId,
@@ -50,12 +50,12 @@ namespace TelegramBotTry1
             };
         }
 
-        //todo test it
         public static Chat GetChatByChatName(this IQueryable<IMessageDataSet> dataSets, string chatName)
         {
             var message = dataSets.Where(x => x.ChatName.ToLower() == chatName.ToLower()).OrderByDescending(x => x.Date).FirstOrDefault();
             if (message == null)
                 throw new ArgumentException("Чат не найден");
+
             return new Chat
             {
                 Id = message.ChatId,

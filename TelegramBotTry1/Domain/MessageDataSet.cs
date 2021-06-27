@@ -18,7 +18,6 @@ namespace TelegramBotTry1.Domain
         public long UserId { get; set; }
         public long ChatId { get; set; }
         public string ChatName { get; set; }
-        //public MessageType MessageType { get; set; }
 
         public override string ToString()
         {
@@ -44,50 +43,13 @@ namespace TelegramBotTry1.Domain
             UserId = message.From.Id;
             ChatId = message.Chat.Id;
             ChatName = message.Chat.Title;
-            switch (message.Type)
+            Message = message.Type switch
             {
-                case MessageType.Text:
-                    Message = message.Text;
-                    break;
-                case MessageType.Sticker:
-                    Message = message.Sticker.Emoji;
-                    break;
-                case MessageType.Contact:
-                    Message = message.Contact.FirstName + " " +
-                              message.Contact.LastName + " (" +
-                              message.Contact.UserId + "): " +
-                              message.Contact.PhoneNumber;
-                    break;
-
-                case MessageType.Document:
-                case MessageType.Voice:
-                case MessageType.Photo:
-                case MessageType.Unknown:
-                case MessageType.Audio:
-                case MessageType.Video:
-                case MessageType.Location:
-                case MessageType.Venue:
-                case MessageType.Game:
-                case MessageType.VideoNote:
-                case MessageType.Invoice:
-                case MessageType.SuccessfulPayment:
-                case MessageType.WebsiteConnected:
-                case MessageType.ChatMembersAdded:
-                case MessageType.ChatMemberLeft:
-                case MessageType.ChatTitleChanged:
-                case MessageType.ChatPhotoChanged:
-                case MessageType.MessagePinned:
-                case MessageType.ChatPhotoDeleted:
-                case MessageType.GroupCreated:
-                case MessageType.SupergroupCreated:
-                case MessageType.ChannelCreated:
-                case MessageType.MigratedToSupergroup:
-                case MessageType.MigratedFromGroup:
-                case MessageType.Poll:
-                    Message = "MessageType: " + message.Type; //TODO Разделить на MessageType и Action
-                    break;
-            }
-            //MessageType = message.Type;
+                MessageType.Text => message.Text,
+                MessageType.Sticker => message.Sticker.Emoji,
+                MessageType.Contact => message.Contact.FirstName + " " + message.Contact.LastName + " (" + message.Contact.UserId + "): " + message.Contact.PhoneNumber,
+                _ => "MessageType: " + message.Type
+            };
         }
     }
 }

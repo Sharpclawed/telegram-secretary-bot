@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -14,7 +13,6 @@ namespace TelegramBotTry1
 {
     public class BotClientAdapter : TelegramBotClient, ITelegramBotClientAdapter
     {
-
         public BotClientAdapter(string token, HttpClient httpClient = null) : base(token, httpClient)
         {
         }
@@ -29,20 +27,10 @@ namespace TelegramBotTry1
                 ? defaultConfigPersonal
                 : defaultConfigChat;
 
-            var preparedSet = msgs.Count <= config.TotalMessagesLimit
-                ? msgs
-                : msgs.Take(config.TotalMessagesLimit);
+            var preparedSet = msgs.Take(config.TotalMessagesLimit);
 
-            var i = 0;
             foreach (var msg in preparedSet)
-            {
-                i++;
-                //todo is Thread.Sleep bad in this case?
-                if (i % config.MessagesPerPackage == 0)
-                    Thread.Sleep((int)config.IntervalBetweenPackages.TotalMilliseconds);
-
                 await SendTextMessageAsync(chatId, msg);
-            }
         }
 
         public async Task SendTextMessagesAsSingleTextAsync(ChatId chatId, IEnumerable<string> msgs, string caption)
@@ -51,10 +39,10 @@ namespace TelegramBotTry1
             await SendTextMessageAsync(chatId, caption + result);
         }
 
-        //todo maybe all these methods should take List<IMessageDataSet> and lambda or maybe fileInfoInstead
+        //todo maybe all these methods should take List<IMessageDataSet> and lambda or maybe fileInfo instead
         public async Task SendTextMessagesAsExcelReportAsync(ChatId chatId, List<IMessageDataSet> msgs, string caption, string[] columnNames, Func<IMessageDataSet, string> groupBy = null)
         {
-            //todo put to IMessageDataSetExtensions and add tests
+            //todo put to IMessageDataSetExtensions and add tests. But there's a problem - order and set of columns
             IEnumerable<KeyValuePair<string, List<IMessageDataSet>>> listsWithRows;
             if (groupBy == null)
                 listsWithRows = new Dictionary<string, List<IMessageDataSet>>
@@ -81,25 +69,19 @@ namespace TelegramBotTry1
             }
         }
 
-        private readonly ListSenderConfig defaultConfigPersonal = new ListSenderConfig
+        private readonly ListSenderConfig defaultConfigPersonal = new()
         {
-            TotalMessagesLimit = 34,
-            MessagesPerPackage = 17,
-            IntervalBetweenPackages = TimeSpan.FromSeconds(5)
+            TotalMessagesLimit = 34
         };
-        private readonly ListSenderConfig defaultConfigChat = new ListSenderConfig
+        private readonly ListSenderConfig defaultConfigChat = new()
         {
-            TotalMessagesLimit = 20,
-            MessagesPerPackage = 4,
-            IntervalBetweenPackages = TimeSpan.FromSeconds(3)
+            TotalMessagesLimit = 20
         };
     }
 
     public class ListSenderConfig
     {
-        public int MessagesPerPackage { get; set; }
         public int TotalMessagesLimit { get; set; }
-        public TimeSpan IntervalBetweenPackages { get; set; }
     }
 
     public enum ChatType
