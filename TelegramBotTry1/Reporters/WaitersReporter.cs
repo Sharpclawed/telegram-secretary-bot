@@ -1,20 +1,18 @@
 ﻿using System;
-using System.Linq;
 using System.Net.Sockets;
 using System.Timers;
 using TelegramBotTry1.Commands;
-using TelegramBotTry1.Domain;
 
 namespace TelegramBotTry1.Reporters
 {
     public class WaitersReporter : IReporter
     {
-        private readonly ITgBotClientEx botClient;
+        private readonly ITgBotClientEx tgClient;
         private Timer viewWaitersTimer;
 
-        public WaitersReporter(ITgBotClientEx botClient)
+        public WaitersReporter(ITgBotClientEx tgClient)
         {
-            this.botClient = botClient;
+            this.tgClient = tgClient;
             Init();
         }
 
@@ -43,23 +41,8 @@ namespace TelegramBotTry1.Reporters
                 {
                     var sinceDate = DateTime.UtcNow.AddHours(-61).AddMinutes(-125);
                     var untilDate = DateTime.UtcNow.AddMinutes(-120);
-                    var command = new ViewWaitersCommand(sinceDate, untilDate);
-                    var waitersReport = command.Process();
-
-                    await botClient.SendTextMessagesAsExcelReportAsync(
-                        ChatIds.Unanswered,
-                        waitersReport.Messages,
-                        waitersReport.Caption,
-                        new[]
-                        {
-                            nameof(IMessageDataSet.Date),
-                            nameof(IMessageDataSet.ChatName),
-                            nameof(IMessageDataSet.Message),
-                            nameof(IMessageDataSet.UserFirstName),
-                            nameof(IMessageDataSet.UserLastName),
-                            nameof(IMessageDataSet.UserName),
-                            nameof(IMessageDataSet.UserId)
-                        });
+                    var command = new ViewWaitersCommand(tgClient, ChatIds.Unanswered, sinceDate, untilDate);
+                    await command.Process2Async();
                 }
                 else if (signalTime.Hour >= 7 && signalTime.Hour < 18 && signalTime.DayOfWeek != DayOfWeek.Saturday && signalTime.DayOfWeek != DayOfWeek.Sunday)
                 {
@@ -67,10 +50,8 @@ namespace TelegramBotTry1.Reporters
                         ? DateTime.UtcNow.AddHours(-13).AddMinutes(-125)
                         : DateTime.UtcNow.AddMinutes(-125);
                     var untilDate = DateTime.UtcNow.AddMinutes(-120);
-                    var command = new ViewWaitersCommand(sinceDate, untilDate);
-                    var waitersReport = command.Process();
-                    var formattedRecords = waitersReport.Messages.Select(Formatter.Waiters).ToList();
-                    await botClient.SendTextMessagesAsListAsync(ChatIds.Unanswered, formattedRecords, СorrespondenceType.Chat);
+                    var command = new ViewWaitersCommand(tgClient, ChatIds.Unanswered, sinceDate, untilDate);
+                    await command.ProcessAsync();
                 }
             }
             catch (Exception exception)
@@ -80,11 +61,11 @@ namespace TelegramBotTry1.Reporters
                 {
                     case SocketException _:
                     case ObjectDisposedException _:
-                        await botClient.SendTextMessageAsync(ChatIds.Botva, "Пропала коннекция к базе. Отключаюсь, чтобы не потерялись данные. vw\r\n"
-                                                                                + "Пожалуйста, включите меня в течение суток");
+                        await tgClient.SendTextMessageAsync(ChatIds.Botva, "Пропала коннекция к базе. Отключаюсь, чтобы не потерялись данные. vw\r\n"
+                                                                           + "Пожалуйста, включите меня в течение суток");
                         throw;
                     default:
-                        await botClient.SendTextMessageAsync(ChatIds.Test125, exception.ToString());
+                        await tgClient.SendTextMessageAsync(ChatIds.Test125, exception.ToString());
                         break;
                 }
             }

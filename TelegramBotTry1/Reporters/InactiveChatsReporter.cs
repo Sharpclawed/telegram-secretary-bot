@@ -2,19 +2,18 @@
 using System.Net.Sockets;
 using System.Timers;
 using TelegramBotTry1.Commands;
-using TelegramBotTry1.Domain;
 
 namespace TelegramBotTry1.Reporters
 {
     public class InactiveChatsReporter : IReporter
     {
-        private readonly ITgBotClientEx botClient;
+        private readonly ITgBotClientEx tgClient;
         private Timer timer;
         private DateTime lastInactiveChatCheckUtc = DateTime.UtcNow.Date;
 
-        public InactiveChatsReporter(ITgBotClientEx botClient)
+        public InactiveChatsReporter(ITgBotClientEx tgClient)
         {
-            this.botClient = botClient;
+            this.tgClient = tgClient;
             Init();
         }
 
@@ -44,23 +43,9 @@ namespace TelegramBotTry1.Reporters
                 {
                     var sinceDate = scheduledRunUtc.AddDays(-28);
                     var untilDate = scheduledRunUtc;
-                    var command = new ViewInactiveChatsCommand(sinceDate, untilDate);
-                    var result = command.Process();
+                    var command = new ViewInactiveChatsCommand(tgClient, ChatIds.Unanswered, sinceDate, untilDate);
+                    await command.ProcessAsync();
 
-                    await botClient.SendTextMessagesAsExcelReportAsync(
-                        ChatIds.Unanswered,
-                        result.Messages,
-                        result.Caption,
-                        new[]
-                        {
-                            nameof(IMessageDataSet.Date),
-                            nameof(IMessageDataSet.ChatName),
-                            nameof(IMessageDataSet.Message),
-                            nameof(IMessageDataSet.UserFirstName),
-                            nameof(IMessageDataSet.UserLastName),
-                            nameof(IMessageDataSet.UserName),
-                            nameof(IMessageDataSet.UserId)
-                        });
                     lastInactiveChatCheckUtc = scheduledRunUtc;
                 }
             }
@@ -71,11 +56,11 @@ namespace TelegramBotTry1.Reporters
                 {
                     case SocketException _:
                     case ObjectDisposedException _:
-                        await botClient.SendTextMessageAsync(ChatIds.Botva, "Пропала коннекция к базе. Отключаюсь, чтобы не потерялись данные. vic\r\n"
+                        await tgClient.SendTextMessageAsync(ChatIds.Botva, "Пропала коннекция к базе. Отключаюсь, чтобы не потерялись данные. vic\r\n"
                                                                     + "Пожалуйста, включите меня в течение суток");
                         throw;
                     default:
-                        await botClient.SendTextMessageAsync(ChatIds.Test125, exception.ToString());
+                        await tgClient.SendTextMessageAsync(ChatIds.Test125, exception.ToString());
                         break;
                 }
             }

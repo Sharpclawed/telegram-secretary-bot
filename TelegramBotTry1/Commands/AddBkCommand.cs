@@ -1,19 +1,24 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
+using Telegram.Bot.Types;
 using TelegramBotTry1.Domain;
-using TelegramBotTry1.Dto;
 
 namespace TelegramBotTry1.Commands
 {
     public class AddBkCommand : IBotCommand
     {
+        private readonly ITgBotClientEx tgClient;
+        private readonly ChatId chatId;
         public string BkName { get; }
 
-        public AddBkCommand(string bkName)
+        public AddBkCommand(ITgBotClientEx tgClient, ChatId chatId, string bkName)
         {
+            this.tgClient = tgClient;
+            this.chatId = chatId;
             BkName = bkName;
         }
 
-        public CommandResult Process()
+        public async Task ProcessAsync()
         {
             using (var context = new MsgContext())
             {
@@ -32,7 +37,9 @@ namespace TelegramBotTry1.Commands
                     context.SaveChanges();
                 }
             }
-            return new CommandResult { Message = "Команда обработана" };
+
+            var result = "Команда обработана";
+            await tgClient.SendTextMessageAsync(chatId, result);
         }
     }
 }

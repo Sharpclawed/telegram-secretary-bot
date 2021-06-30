@@ -1,24 +1,29 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
+using Telegram.Bot.Types;
 using TelegramBotTry1.Domain;
-using TelegramBotTry1.Dto;
 
 namespace TelegramBotTry1.Commands
 {
     public class RemoveAdminCommand : IBotCommand
     {
+        private readonly ITgBotClientEx tgClient;
+        private readonly ChatId chatId;
         public string AdminName { get; }
         public long UserId { get; }
         public string UserName { get; }
 
-        public RemoveAdminCommand(string adminName, long addedUserId, string addedUsername)
+        public RemoveAdminCommand(ITgBotClientEx tgClient, ChatId chatId, string adminName, long addedUserId, string addedUsername)
         {
+            this.tgClient = tgClient;
+            this.chatId = chatId;
             AdminName = adminName;
             UserId = addedUserId;
             UserName = addedUsername;
         }
 
-        public CommandResult Process()
+        public async Task ProcessAsync()
         {
             using (var context = new MsgContext())
             {
@@ -35,7 +40,9 @@ namespace TelegramBotTry1.Commands
                     context.SaveChanges();
                 }
             }
-            return new CommandResult { Message = "Команда обработана" };
+
+            var result = "Команда обработана";
+            await tgClient.SendTextMessageAsync(chatId, result);
         }
     }
 }

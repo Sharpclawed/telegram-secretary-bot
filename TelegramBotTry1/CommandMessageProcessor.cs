@@ -1,113 +1,90 @@
 ﻿using System;
 using System.Linq;
+using System.Net.Sockets;
 using System.Threading.Tasks;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
-using TelegramBotTry1.Commands;
-using TelegramBotTry1.DataProviders;
 using TelegramBotTry1.Domain;
 
 namespace TelegramBotTry1
 {
-    public static class CommandMessageProcessor
+    public class CommandMessageProcessor
     {
-        public static async Task ProcessTextMessageAsync(ITgBotClientEx botClient, Message message)
+        private readonly ITgBotClientEx tgClient;
+        private readonly CommandDetector commandDetector;
+
+        public CommandMessageProcessor(ITgBotClientEx tgClient)
         {
-            var isMessagePersonal = message.Chat.Title == null;
-            if (!isMessagePersonal)
-                return;
+            this.tgClient = tgClient;
+            commandDetector = new CommandDetector(tgClient);
+        }
 
-            if (message.Text.StartsWith("/help"))
-            {
-                await botClient.SendTextMessageAsync(message.Chat.Id, TipProvider.GetHelpTip(), ParseMode.Markdown);
-                return;
-            }
-
-            var isAdminAsking = DbRepository.IsAdmin(message.From.Id);
-            if (!isAdminAsking)
-            {
-                await botClient.SendTextMessageAsync(message.Chat.Id, "У вас не хватает прав");
-                return;
-            }
-
-            IBotCommand command;
+        public async Task ProcessTextMessageAsync(Message message)
+        {
             try
             {
-                command = CommandDetector.Parse(message.Text, message.From.Id, message.From.Username);
-            }
-            catch (InvalidCastException)
-            {
-                await botClient.SendTextMessageAsync(message.Chat.Id, "Неизвестная команда");
-                return;
-            }
+                SaveToDatabase(message);
+                if (message.Type != MessageType.Text || message.Text.First() != '/')
+                    return;
 
-            var result = command.Process();
-            if (result.Error != null)
-            {
-                await botClient.SendTextMessageAsync(message.Chat.Id, result.Error);
-                return;
-            }
+                var isMessagePersonal = message.Chat.Title == null;
+                if (!isMessagePersonal)
+                    return;
 
-            switch (command)
-            {
-                case ViewAdminsCommand _:
-                case ViewBkCommand _:
-                case ViewOneTimeChatsCommand _:
+                var isAdminAsking = DbRepository.IsAdmin(message.From.Id);
+                if (!isAdminAsking)
                 {
-                    await botClient.SendTextMessagesAsSingleTextAsync(message.Chat.Id, result.Records, result.Caption);
-                    break;
+                    await tgClient.SendTextMessageAsync(message.Chat.Id, "У вас не хватает прав");
+                    return;
                 }
-                case ViewWaitersCommand _:
-                {
-                    var formattedRecords = result.Messages.Select(Formatter.Waiters).ToList();
-                    await botClient.SendTextMessagesAsListAsync(message.Chat.Id, formattedRecords, СorrespondenceType.Personal);
-                    break;
-                }
-                case ViewInactiveChatsCommand _:
-                {
-                    await botClient.SendTextMessagesAsExcelReportAsync(
-                        message.Chat.Id,
-                        result.Messages,
-                        result.Caption,
-                        new[]
-                        {
-                            nameof(IMessageDataSet.Date),
-                            nameof(IMessageDataSet.ChatName),
-                            nameof(IMessageDataSet.Message),
-                            nameof(IMessageDataSet.UserFirstName),
-                            nameof(IMessageDataSet.UserLastName),
-                            nameof(IMessageDataSet.UserName),
-                            nameof(IMessageDataSet.UserId)
-                        });
-                    break;
-                }
-                case AddAdminCommand _:
-                case AddBkCommand _:
-                case AddOnetimeChatCommand _:
-                case RemoveAdminCommand _:
-                case RemoveBkCommand _:
-                case RemoveOnetimeChatCommand _:
-                    await botClient.SendTextMessageAsync(message.Chat.Id, result.Message);
-                    break;
-                case ViewHistoryCommand _:
-                case ViewHistoryOfCommand _:
-                case ViewHistoryAllCommand _:
-                    await botClient.SendTextMessagesAsExcelReportAsync(
-                        message.Chat.Id,
-                        result.Messages,
-                        result.Caption,
-                        new[]
-                        {
-                            nameof(IMessageDataSet.Date),
-                            nameof(IMessageDataSet.Message),
-                            nameof(IMessageDataSet.UserFirstName),
-                            nameof(IMessageDataSet.UserLastName),
-                            nameof(IMessageDataSet.UserName),
-                            nameof(IMessageDataSet.UserId)
-                        },
-                        msg => msg.ChatName);
-                    break;
+
+                var command = commandDetector.Parse(message);
+                await command.ProcessAsync();
             }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception.Message);
+                Console.WriteLine(exception.InnerException);
+                switch (exception)
+                {
+                    case SocketException _:
+                    case ObjectDisposedException _:
+                        await tgClient.SendTextMessageAsync(ChatIds.Botva,
+                            "Пропала коннекция к базе. Отключаюсь, чтобы не потерялись данные. mr\r\n"
+                            + "Пожалуйста, включите меня в течение суток");
+                        throw;
+                    default:
+                        await tgClient.SendTextMessageAsync(ChatIds.Test125, exception.ToString());
+                        break;
+                }
+            }
+        }
+
+        private void SaveToDatabase(Message message)
+        {
+            //todo automapper
+            var recievedDataSet = new MessageDataSet
+            {
+                MessageId = message.MessageId,
+                Date = message.Date,
+                UserName = message.From.Username,
+                UserFirstName = message.From.FirstName,
+                UserLastName = message.From.LastName,
+                UserId = message.From.Id,
+                ChatId = message.Chat.Id,
+                ChatName = message.Chat.Title,
+                Message = message.Type switch
+                {
+                    MessageType.Text => message.Text,
+                    MessageType.Sticker => message.Sticker.Emoji,
+                    MessageType.Contact => message.Contact.FirstName + " " + message.Contact.LastName + " (" +
+                                           message.Contact.UserId + "): " + message.Contact.PhoneNumber,
+                    _ => "MessageType: " + message.Type
+                }
+            };
+
+            DbRepository.SaveToDatabase(recievedDataSet); //todo sql injection protection
+            Console.WriteLine(recievedDataSet.ToString());
         }
     }
 }
