@@ -7,57 +7,59 @@ namespace TelegramBotTry1
 {
     static class Program
     {
-        private static readonly ITgBotClientEx TgClient = new TgBotClientEx(Secrets.MainBotToken);
-        private static CommandMessageProcessor CommandMessageProcessor;
+        private static readonly ITgBotClientEx tgClient = new TgBotClientEx(Secrets.MainBotToken);
+        private static CommandMessageProcessor commandMessageProcessor;
+        private static BotCommander botCommander;
 
         static void Main()
         {
-            TgClient.OnMessage += BotOnMessageReceived;
-            TgClient.OnMessageEdited += BotOnMessageReceived;
-            TgClient.OnReceiveError += BotOnReceiveError;
-            TgClient.OnReceiveGeneralError += BotOnOnReceiveGeneralError;
-            TgClient.OnCallbackQuery += BotOnOnCallbackQuery;
+            tgClient.OnMessage += BotOnMessageReceived;
+            tgClient.OnMessageEdited += BotOnMessageReceived;
+            tgClient.OnReceiveError += BotOnReceiveError;
+            tgClient.OnReceiveGeneralError += BotOnOnReceiveGeneralError;
+            tgClient.OnCallbackQuery += BotOnOnCallbackQuery;
 
-            Console.Title = TgClient.GetMeAsync().Result.Username;
+            Console.Title = tgClient.GetMeAsync().Result.Username;
 
             using (var context = new MsgContext())
             {
                 context.Database.CreateIfNotExists();
             }
-            CommandMessageProcessor = new CommandMessageProcessor(TgClient);
-            var botStateReporter = new BotStateReporter(TgClient);
-            var waitersViewReporter = new WaitersReporter(TgClient);
-            var inactiveChatsReporter = new InactiveChatsReporter(TgClient);
+            commandMessageProcessor = new CommandMessageProcessor(tgClient);
+            botCommander = new BotCommander(tgClient);
+            var botStateReporter = new BotStateReporter(tgClient, botCommander);
+            var waitersViewReporter = new WaitersReporter(tgClient, botCommander);
+            var inactiveChatsReporter = new InactiveChatsReporter(tgClient, botCommander);
 
             Console.WriteLine(DateTime.Now + " Start working");
             botStateReporter.Start();
             waitersViewReporter.Start();
             inactiveChatsReporter.Start();
 
-            TgClient.StartReceiving();
+            tgClient.StartReceiving();
             Console.ReadLine();
-            TgClient.StopReceiving();
+            tgClient.StopReceiving();
         }
 
         private static async void BotOnOnCallbackQuery(object sender, CallbackQueryEventArgs e)
         {
-            await TgClient.SendTextMessageAsync(ChatIds.Test125, e.CallbackQuery.Message.Text);
+            await botCommander.SendMessageAsync(ChatIds.Test125, e.CallbackQuery.Message.Text);
         }
 
         private static async void BotOnOnReceiveGeneralError(object sender, ReceiveGeneralErrorEventArgs e)
         {
-            await TgClient.SendTextMessageAsync(ChatIds.Test125, e.Exception.Message + " \r\n" + e.Exception.InnerException);
+            await botCommander.SendMessageAsync(ChatIds.Test125, e.Exception.Message + " \r\n" + e.Exception.InnerException);
         }
 
         private static async void BotOnReceiveError(object sender, ReceiveErrorEventArgs receiveErrorEventArgs)
         {
-            await TgClient.SendTextMessageAsync(ChatIds.Test125, receiveErrorEventArgs.ApiRequestException.Message);
+            await botCommander.SendMessageAsync(ChatIds.Test125, receiveErrorEventArgs.ApiRequestException.Message);
         }
 
         private static async void BotOnMessageReceived(object sender, MessageEventArgs messageEventArgs)
         {
             var message = messageEventArgs.Message;
-            await CommandMessageProcessor.ProcessTextMessageAsync(message);
+            await commandMessageProcessor.ProcessTextMessageAsync(message);
         }
     }
 }

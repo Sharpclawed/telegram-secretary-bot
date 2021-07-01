@@ -28,7 +28,7 @@ namespace TelegramBotTry1.Commands
             UntilDate = untilDate;
         }
 
-        //todo generalize or split code
+        //todo generalize code. logic is dependency of messages count
         public async Task ProcessAsync()
         {
             var sinceDateValue = SinceDate ?? DateTime.UtcNow.Date.AddMonths(-1);

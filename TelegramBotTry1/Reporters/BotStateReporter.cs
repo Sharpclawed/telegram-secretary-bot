@@ -1,20 +1,21 @@
 ﻿using System;
 using System.Net.Sockets;
 using System.Timers;
-using Telegram.Bot;
-using TelegramBotTry1.DataProviders;
+using TelegramBotTry1.Commands;
 
 namespace TelegramBotTry1.Reporters
 {
     public class BotStateReporter : IReporter
     {
-        private readonly ITelegramBotClient botClient;
+        private readonly ITgBotClientEx tgClient;
+        private readonly BotCommander botCommander;
         private Timer timer;
         private DateTime lastIAmAliveCheckUtc = DateTime.UtcNow.Date;
 
-        public BotStateReporter(ITelegramBotClient botClient)
+        public BotStateReporter(ITgBotClientEx tgClient, BotCommander botCommander)
         {
-            this.botClient = botClient;
+            this.tgClient = tgClient;
+            this.botCommander = botCommander;
             Init();
         }
 
@@ -42,8 +43,8 @@ namespace TelegramBotTry1.Reporters
                     && scheduledRunUtc.Date > lastIAmAliveCheckUtc.Date
                     && scheduledRunUtc.DayOfWeek == DayOfWeek.Saturday)
                 {
-                    var iAmAliveMessage = BotStatusProvider.GetIAmAliveMessage();
-                    await botClient.SendTextMessageAsync(ChatIds.Unanswered, iAmAliveMessage);
+                    var command = new SendBotStatusCommand(tgClient, ChatIds.Unanswered);
+                    await command.ProcessAsync();
                     lastIAmAliveCheckUtc = DateTime.UtcNow;
                 }
             }
@@ -54,11 +55,11 @@ namespace TelegramBotTry1.Reporters
                 {
                     case SocketException _:
                     case ObjectDisposedException _:
-                        await botClient.SendTextMessageAsync(ChatIds.Botva, "Пропала коннекция к базе. Отключаюсь, чтобы не потерялись данные. sas\r\n"
-                                                                      + "Пожалуйста, включите меня в течение суток");
+                        await botCommander.SendMessageAsync(ChatIds.Botva, "Пропала коннекция к базе. Отключаюсь, чтобы не потерялись данные. sas\r\n"
+                                                                           + "Пожалуйста, включите меня в течение суток");
                         throw;
                     default:
-                        await botClient.SendTextMessageAsync(ChatIds.Test125, exception.ToString());
+                        await botCommander.SendMessageAsync(ChatIds.Test125, exception.ToString());
                         break;
                 }
             }

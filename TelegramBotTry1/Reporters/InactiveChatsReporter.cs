@@ -8,12 +8,14 @@ namespace TelegramBotTry1.Reporters
     public class InactiveChatsReporter : IReporter
     {
         private readonly ITgBotClientEx tgClient;
+        private readonly BotCommander botCommander;
         private Timer timer;
         private DateTime lastInactiveChatCheckUtc = DateTime.UtcNow.Date;
 
-        public InactiveChatsReporter(ITgBotClientEx tgClient)
+        public InactiveChatsReporter(ITgBotClientEx tgClient, BotCommander botCommander)
         {
             this.tgClient = tgClient;
+            this.botCommander = botCommander;
             Init();
         }
 
@@ -56,11 +58,11 @@ namespace TelegramBotTry1.Reporters
                 {
                     case SocketException _:
                     case ObjectDisposedException _:
-                        await tgClient.SendTextMessageAsync(ChatIds.Botva, "Пропала коннекция к базе. Отключаюсь, чтобы не потерялись данные. vic\r\n"
-                                                                    + "Пожалуйста, включите меня в течение суток");
+                        await botCommander.SendMessageAsync(ChatIds.Botva, "Пропала коннекция к базе. Отключаюсь, чтобы не потерялись данные. vic\r\n"
+                                                                           + "Пожалуйста, включите меня в течение суток");
                         throw;
                     default:
-                        await tgClient.SendTextMessageAsync(ChatIds.Test125, exception.ToString());
+                        await botCommander.SendMessageAsync(ChatIds.Test125, exception.ToString());
                         break;
                 }
             }
