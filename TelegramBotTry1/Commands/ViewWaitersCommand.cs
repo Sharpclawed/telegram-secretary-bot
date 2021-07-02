@@ -28,40 +28,31 @@ namespace TelegramBotTry1.Commands
             SinceDate = sinceDate;
             UntilDate = untilDate;
         }
-
-        //todo generalize code. logic is dependency of messages count
+        
         public async Task ProcessAsync()
         {
             var sinceDateValue = SinceDate ?? DateTime.UtcNow.Date.AddMonths(-1);
             var untilDateValue = UntilDate ?? DateTime.UtcNow.Date.AddMinutes(-30);
             var waitersReport = ViewWaitersProvider.GetWaiters(sinceDateValue, untilDateValue);
-
             var formattedRecords = waitersReport.Select(Formatter.Waiters).ToList();
-            await tgClient.SendTextMessagesAsListAsync(chatId, formattedRecords, СorrespondenceType.Personal);
-        }
 
-        public async Task Process2Async()
-        {
-            var sinceDateValue = SinceDate ?? DateTime.UtcNow.Date.AddMonths(-1);
-            var untilDateValue = UntilDate ?? DateTime.UtcNow.Date.AddMinutes(-30);
-            var waitersReport = ViewWaitersProvider.GetWaiters(sinceDateValue, untilDateValue);
-
-            var caption = "Отчет по неотвеченным сообщениям";
-
-            await tgClient.SendTextMessagesAsExcelReportAsync(
-                ChatIds.Unanswered,
-                waitersReport,
-                caption,
-                new[]
-                {
-                    nameof(IMessageDataSet.Date),
-                    nameof(IMessageDataSet.ChatName),
-                    nameof(IMessageDataSet.Message),
-                    nameof(IMessageDataSet.UserFirstName),
-                    nameof(IMessageDataSet.UserLastName),
-                    nameof(IMessageDataSet.UserName),
-                    nameof(IMessageDataSet.UserId)
-                });
+            if (formattedRecords.Count <= TgBotSettings.ReadableCountOfMessages)
+                await tgClient.SendTextMessagesAsListAsync(chatId, formattedRecords, СorrespondenceType.Personal);
+            else
+                await tgClient.SendTextMessagesAsExcelReportAsync(
+                    ChatIds.Unanswered,
+                    waitersReport,
+                    "Отчет по неотвеченным сообщениям",
+                    new[]
+                    {
+                        nameof(IMessageDataSet.Date),
+                        nameof(IMessageDataSet.ChatName),
+                        nameof(IMessageDataSet.Message),
+                        nameof(IMessageDataSet.UserFirstName),
+                        nameof(IMessageDataSet.UserLastName),
+                        nameof(IMessageDataSet.UserName),
+                        nameof(IMessageDataSet.UserId)
+                    });
         }
     }
 }

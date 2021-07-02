@@ -23,7 +23,9 @@ namespace TelegramBotTry1
 
         public async Task SendTextMessagesAsListAsync(ChatId chatId, IList<string> msgs, СorrespondenceType сorrespondenceType)
         {
-            var totalMessagesLimit = сorrespondenceType == СorrespondenceType.Personal ? 34 : 20;
+            var totalMessagesLimit = сorrespondenceType == СorrespondenceType.Personal 
+                ? TgBotSettings.SendLimitForAllChatsPerSecond
+                : TgBotSettings.SendLimitForOneChatPerMinute;
             var preparedSet = msgs.Take(totalMessagesLimit);
 
             foreach (var msg in preparedSet)

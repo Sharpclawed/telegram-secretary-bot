@@ -1,20 +1,17 @@
 ﻿using System;
 using System.Net.Sockets;
 using System.Timers;
-using TelegramBotTry1.Commands;
 
 namespace TelegramBotTry1.Reporters
 {
     public class BotStateReporter : IReporter
     {
-        private readonly ITgBotClientEx tgClient;
         private readonly BotCommander botCommander;
         private Timer timer;
         private DateTime lastIAmAliveCheckUtc = DateTime.UtcNow.Date;
 
-        public BotStateReporter(ITgBotClientEx tgClient, BotCommander botCommander)
+        public BotStateReporter(BotCommander botCommander)
         {
-            this.tgClient = tgClient;
             this.botCommander = botCommander;
             Init();
         }
@@ -43,8 +40,7 @@ namespace TelegramBotTry1.Reporters
                     && scheduledRunUtc.Date > lastIAmAliveCheckUtc.Date
                     && scheduledRunUtc.DayOfWeek == DayOfWeek.Saturday)
                 {
-                    var command = new SendBotStatusCommand(tgClient, ChatIds.Unanswered);
-                    await command.ProcessAsync();
+                    await botCommander.SendBotStatusAsync(ChatIds.Unanswered);
                     lastIAmAliveCheckUtc = DateTime.UtcNow;
                 }
             }

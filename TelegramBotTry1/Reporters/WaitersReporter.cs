@@ -1,19 +1,16 @@
 ﻿using System;
 using System.Net.Sockets;
 using System.Timers;
-using TelegramBotTry1.Commands;
 
 namespace TelegramBotTry1.Reporters
 {
     public class WaitersReporter : IReporter
     {
-        private readonly ITgBotClientEx tgClient;
         private readonly BotCommander botCommander;
         private Timer viewWaitersTimer;
 
-        public WaitersReporter(ITgBotClientEx tgClient, BotCommander botCommander)
+        public WaitersReporter(BotCommander botCommander)
         {
-            this.tgClient = tgClient;
             this.botCommander = botCommander;
             Init();
         }
@@ -43,17 +40,15 @@ namespace TelegramBotTry1.Reporters
                 {
                     var sinceDate = DateTime.UtcNow.AddHours(-61).AddMinutes(-125);
                     var untilDate = DateTime.UtcNow.AddMinutes(-120);
-                    var command = new ViewWaitersCommand(tgClient, ChatIds.Unanswered, sinceDate, untilDate);
-                    await command.Process2Async();
+                    await botCommander.ViewWaitersAsync(ChatIds.Unanswered, sinceDate, untilDate);
                 }
-                else if (signalTime.Hour >= 7 && signalTime.Hour < 18 && signalTime.DayOfWeek != DayOfWeek.Saturday && signalTime.DayOfWeek != DayOfWeek.Sunday)
+                else if (signalTime.Hour is >= 7 and < 18 && signalTime.DayOfWeek != DayOfWeek.Saturday && signalTime.DayOfWeek != DayOfWeek.Sunday)
                 {
                     var sinceDate = signalTime.Hour == 7 && signalTime.Minute < 5
                         ? DateTime.UtcNow.AddHours(-13).AddMinutes(-125)
                         : DateTime.UtcNow.AddMinutes(-125);
                     var untilDate = DateTime.UtcNow.AddMinutes(-120);
-                    var command = new ViewWaitersCommand(tgClient, ChatIds.Unanswered, sinceDate, untilDate);
-                    await command.ProcessAsync();
+                    await botCommander.ViewWaitersAsync(ChatIds.Unanswered, sinceDate, untilDate);
                 }
             }
             catch (Exception exception)

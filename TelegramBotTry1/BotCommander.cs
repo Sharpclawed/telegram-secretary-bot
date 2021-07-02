@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Bot.Types;
 using TelegramBotTry1.Commands;
 
 namespace TelegramBotTry1
 {
-    //TODO take away commands from Program and Reporters
     //TODO take away configuring tgClient
     public class BotCommander
     {
@@ -24,6 +24,21 @@ namespace TelegramBotTry1
         public async Task SendMessagesAsync(IEnumerable<ChatId> chatIds, string text)
         {
             await new DistributeMessageCommand(tgClient, chatIds, text).ProcessAsync();
+        }
+
+        public async Task ViewWaitersAsync(ChatId chatId, DateTime sinceDate, DateTime untilDate)
+        {
+            await new ViewWaitersCommand(tgClient, chatId, sinceDate, untilDate).ProcessAsync();
+        }
+
+        public async Task ViewInactiveChatsAsync(ChatId chatId, DateTime sinceDate, DateTime untilDate)
+        {
+            await new ViewInactiveChatsCommand(tgClient, chatId, sinceDate, untilDate).ProcessAsync();
+        }
+
+        public async Task SendBotStatusAsync(ChatId chatId)
+        {
+            await new SendBotStatusCommand(tgClient, chatId).ProcessAsync();
         }
     }
 }

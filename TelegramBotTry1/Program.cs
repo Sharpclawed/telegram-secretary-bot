@@ -27,9 +27,9 @@ namespace TelegramBotTry1
             }
             commandMessageProcessor = new CommandMessageProcessor(tgClient);
             botCommander = new BotCommander(tgClient);
-            var botStateReporter = new BotStateReporter(tgClient, botCommander);
-            var waitersViewReporter = new WaitersReporter(tgClient, botCommander);
-            var inactiveChatsReporter = new InactiveChatsReporter(tgClient, botCommander);
+            var botStateReporter = new BotStateReporter(botCommander);
+            var waitersViewReporter = new WaitersReporter(botCommander);
+            var inactiveChatsReporter = new InactiveChatsReporter(botCommander);
 
             Console.WriteLine(DateTime.Now + " Start working");
             botStateReporter.Start();
