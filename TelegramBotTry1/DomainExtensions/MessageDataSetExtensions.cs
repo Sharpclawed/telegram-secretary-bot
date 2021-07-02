@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 using TelegramBotTry1.Domain;
 using TelegramBotTry1.Dto;
 
-namespace TelegramBotTry1
+namespace TelegramBotTry1.DomainExtensions
 {
     public static class MessageDataSetExtensions
     {

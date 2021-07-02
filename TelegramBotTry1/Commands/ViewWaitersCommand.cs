@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Telegram.Bot.Types;
 using TelegramBotTry1.DataProviders;
 using TelegramBotTry1.Domain;
+using TelegramBotTry1.DomainExtensions;
 
 namespace TelegramBotTry1.Commands
 {

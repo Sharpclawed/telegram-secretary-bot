@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using TelegramBotTry1.Domain;
 
-namespace TelegramBotTry1
+namespace TelegramBotTry1.DomainExtensions
 {
     public static class AdminDataSetExtensions
     {

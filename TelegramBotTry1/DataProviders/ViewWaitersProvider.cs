@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using TelegramBotTry1.Domain;
+using TelegramBotTry1.DomainExtensions;
 
 namespace TelegramBotTry1.DataProviders
 {

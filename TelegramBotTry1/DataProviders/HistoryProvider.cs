@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using TelegramBotTry1.Domain;
+using TelegramBotTry1.DomainExtensions;
 using TelegramBotTry1.Dto;
 
 namespace TelegramBotTry1.DataProviders

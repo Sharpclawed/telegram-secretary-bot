@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using TelegramBotTry1;
 using FluentAssertions;
 using TelegramBotTry1.Domain;
+using TelegramBotTry1.DomainExtensions;
 
 namespace FunctionalTests
 {
