@@ -21,16 +21,23 @@ namespace TelegramBotTry1.Commands
 
         public async Task ProcessAsync()
         {
+            string result;
             using (var context = new MsgContext())
             {
                 var messageDataSets = context.Set<MessageDataSet>().AsNoTracking();
                 var onetimeChatDataSets = context.Set<OnetimeChatDataSet>();
                 var chat = messageDataSets.GetChatByChatName(ChatName);
-                onetimeChatDataSets.Remove(onetimeChatDataSets.First(x => x.ChatId == chat.Id));
-                context.SaveChanges();
+                var chatToRemove = onetimeChatDataSets.FirstOrDefault(x => x.ChatId == chat.Id);
+                if (chatToRemove != null)
+                {
+                    onetimeChatDataSets.Remove(chatToRemove);
+                    result = "Команда обработана";
+                    context.SaveChanges();
+                }
+                else
+                    result = "Чат не найден";
             }
 
-            var result = "Команда обработана";
             await tgClient.SendTextMessageAsync(chatId, result);
         }
     }

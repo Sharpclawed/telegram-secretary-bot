@@ -26,23 +26,25 @@ namespace TelegramBotTry1.Commands
 
         public async Task ProcessAsync()
         {
+            string result;
             using (var context = new MsgContext())
             {
                 var adminDataSets = context.Set<AdminDataSet>();
                 var messageDataSets = context.Set<MessageDataSet>().AsNoTracking();
                 var user = messageDataSets.GetUserByUserName(AdminName);
-                if (adminDataSets.IsAdmin(user.UserId))
+                var adminToRemove = adminDataSets.FirstOrDefault(x => x.UserId == user.UserId && x.DeleteTime == null);
+                if (adminToRemove != null)
                 {
-                    var adminDataSet = adminDataSets.First(x =>
-                        x.UserId == user.UserId && x.DeleteTime == null);
-                    adminDataSet.DeleteTime = DateTime.UtcNow;
-                    adminDataSet.DeletedUserId = UserId;
-                    adminDataSet.DeletedUserName = UserName;
+                    adminToRemove.DeleteTime = DateTime.UtcNow;
+                    adminToRemove.DeletedUserId = UserId;
+                    adminToRemove.DeletedUserName = UserName;
                     context.SaveChanges();
+                    result = "Команда обработана";
                 }
+                else
+                    result = "Пользователь не найден";
             }
 
-            var result = "Команда обработана";
             await tgClient.SendTextMessageAsync(chatId, result);
         }
     }

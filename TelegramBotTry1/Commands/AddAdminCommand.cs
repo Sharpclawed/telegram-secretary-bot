@@ -30,18 +30,15 @@ namespace TelegramBotTry1.Commands
                 var adminDataSets = context.Set<AdminDataSet>();
                 var messageDataSets = context.Set<MessageDataSet>().AsNoTracking();
                 var user = messageDataSets.GetUserByUserName(AdminName);
-                if (!adminDataSets.IsAdmin(user.UserId))
+                adminDataSets.Add(new AdminDataSet
                 {
-                    adminDataSets.Add(new AdminDataSet
-                    {
-                        AddTime = DateTime.UtcNow,
-                        AddedUserId = UserId,
-                        AddedUserName = UserName,
-                        UserId = user.UserId,
-                        UserName = AdminName
-                    });
-                    context.SaveChanges();
-                }
+                    AddTime = DateTime.UtcNow,
+                    AddedUserId = UserId,
+                    AddedUserName = UserName,
+                    UserId = user.UserId,
+                    UserName = AdminName
+                });
+                context.SaveChanges();
             }
 
             var result = "Команда обработана";
