@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31410.357
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TelegramBotTry1", "TelegramBotTry1\TelegramBotTry1.csproj", "{3B3400A4-911C-426C-8327-D55D3599FDC7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TelegramBotTry1", "TelegramBotTry1\TelegramBotTry1.csproj", "{3B3400A4-911C-426C-8327-D55D3599FDC7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunctionalTests", "FunctionalTests\FunctionalTests.csproj", "{B564826E-E46B-48B7-89CB-68F262F47E73}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunctionalTests", "FunctionalTests\FunctionalTests.csproj", "{B564826E-E46B-48B7-89CB-68F262F47E73}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DAL", "DAL\DAL.csproj", "{8C9A2F1F-01B6-4ED4-AB8C-EEC3388B301F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,8 +23,15 @@ Global
 		{B564826E-E46B-48B7-89CB-68F262F47E73}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B564826E-E46B-48B7-89CB-68F262F47E73}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B564826E-E46B-48B7-89CB-68F262F47E73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C9A2F1F-01B6-4ED4-AB8C-EEC3388B301F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C9A2F1F-01B6-4ED4-AB8C-EEC3388B301F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C9A2F1F-01B6-4ED4-AB8C-EEC3388B301F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C9A2F1F-01B6-4ED4-AB8C-EEC3388B301F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {82FECB43-59B8-4DC0-9650-FD64113672AB}
 	EndGlobalSection
 EndGlobal

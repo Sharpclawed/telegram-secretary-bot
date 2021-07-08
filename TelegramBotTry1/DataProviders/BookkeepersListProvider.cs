@@ -1,5 +1,7 @@
 ﻿using System.Linq;
-using TelegramBotTry1.Domain;
+using DAL;
+using DAL.Models;
+using Microsoft.EntityFrameworkCore;
 using TelegramBotTry1.Dto;
 
 namespace TelegramBotTry1.DataProviders
@@ -9,7 +11,7 @@ namespace TelegramBotTry1.DataProviders
         public static CommandResult GetRows()
         {
             var result = new CommandResult();
-            using (var context = new MsgContext())
+            using (var context = new SecretaryContext())
             {
                 var bkDataSets = context.Set<BookkeeperDataSet>().AsNoTracking();
                 result.Records = bkDataSets.ToList()

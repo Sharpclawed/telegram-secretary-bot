@@ -1,4 +1,6 @@
 ﻿using System;
+using DAL;
+using Microsoft.EntityFrameworkCore;
 using Telegram.Bot.Args;
 using TelegramBotTry1.Reporters;
 using TelegramBotTry1.SecretsStore;
@@ -21,9 +23,9 @@ namespace TelegramBotTry1
 
             Console.Title = tgClient.GetMeAsync().Result.Username;
 
-            using (var context = new MsgContext())
+            using (var context = new SecretaryContext())
             {
-                context.Database.CreateIfNotExists();
+                context.Database.Migrate();
             }
             commandMessageProcessor = new CommandMessageProcessor(tgClient);
             botCommander = new BotCommander(tgClient);

@@ -31,3 +31,4 @@ _ReSharper*/
 #Nuget packages folder
 packages/
 TelegramBotTry1/SecretsStore/SecretsLocal.cs
+DAL/SecretsStore/DbSettingsSecret.cs

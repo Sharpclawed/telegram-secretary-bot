@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
+using DAL.Models;
 using Telegram.Bot.Types;
 using TelegramBotTry1.DataProviders;
-using TelegramBotTry1.Domain;
 
 namespace TelegramBotTry1.Commands
 {
@@ -40,13 +40,13 @@ namespace TelegramBotTry1.Commands
                 caption,
                 new[]
                 {
-                    nameof(IMessageDataSet.Date),
-                    nameof(IMessageDataSet.ChatName),
-                    nameof(IMessageDataSet.Message),
-                    nameof(IMessageDataSet.UserFirstName),
-                    nameof(IMessageDataSet.UserLastName),
-                    nameof(IMessageDataSet.UserName),
-                    nameof(IMessageDataSet.UserId)
+                    nameof(MessageDataSet.Date),
+                    nameof(MessageDataSet.ChatName),
+                    nameof(MessageDataSet.Message),
+                    nameof(MessageDataSet.UserFirstName),
+                    nameof(MessageDataSet.UserLastName),
+                    nameof(MessageDataSet.UserName),
+                    nameof(MessageDataSet.UserId)
                 });
         }
     }

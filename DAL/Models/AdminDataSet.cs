@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace TelegramBotTry1.Domain
+namespace DAL.Models
 {
     public class AdminDataSet
     {

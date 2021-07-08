@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using DAL;
+using DAL.Models;
+using Microsoft.EntityFrameworkCore;
 using Telegram.Bot.Types;
-using TelegramBotTry1.Domain;
 using TelegramBotTry1.DomainExtensions;
 
 namespace TelegramBotTry1.Commands
@@ -27,7 +29,7 @@ namespace TelegramBotTry1.Commands
         public async Task ProcessAsync()
         {
             string result;
-            using (var context = new MsgContext())
+            using (var context = new SecretaryContext())
             {
                 var adminDataSets = context.Set<AdminDataSet>();
                 var messageDataSets = context.Set<MessageDataSet>().AsNoTracking();

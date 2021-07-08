@@ -2,28 +2,28 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using TelegramBotTry1.Domain;
+using DAL.Models;
 using TelegramBotTry1.Dto;
 
 namespace TelegramBotTry1.DomainExtensions
 {
     public static class MessageDataSetExtensions
     {
-        public static IQueryable<IMessageDataSet> GetActualDates(this IQueryable<IMessageDataSet> dataSets, DateTime begin, DateTime end)
+        public static IQueryable<MessageDataSet> GetActualDates(this IQueryable<MessageDataSet> dataSets, DateTime begin, DateTime end)
         {
             return dataSets.Where(x => x.Date >= begin && x.Date < end);
         }
 
-        public static IQueryable<IMessageDataSet> GetActualChats(this IQueryable<IMessageDataSet> dataSets, string exactChatName = null)
+        public static IQueryable<MessageDataSet> GetActualChats(this IQueryable<MessageDataSet> dataSets, string exactChatName = null)
         {
             if (exactChatName == null)
                 return dataSets.Where(x => x.ChatName != null);
 
             return dataSets
-                .Where(x => x.ChatName.Equals(exactChatName, StringComparison.InvariantCultureIgnoreCase));
+                .Where(x => x.ChatName.Equals(exactChatName));
         }
 
-        public static IQueryable<IMessageDataSet> GetActualUser(this IQueryable<IMessageDataSet> dataSets, long? exactUserId = null)
+        public static IQueryable<MessageDataSet> GetActualUser(this IQueryable<MessageDataSet> dataSets, long? exactUserId = null)
         {
             if (exactUserId == null)
                 return dataSets;
@@ -35,7 +35,7 @@ namespace TelegramBotTry1.DomainExtensions
             return messageDataSets;
         }
 
-        public static User GetUserByUserName(this IQueryable<IMessageDataSet> dataSets, string userName)
+        public static User GetUserByUserName(this IQueryable<MessageDataSet> dataSets, string userName)
         {
             var message = dataSets.Where(x => x.UserName.ToLower() == userName.ToLower()).OrderByDescending(x => x.Date).FirstOrDefault();
             if (message == null)
@@ -50,7 +50,7 @@ namespace TelegramBotTry1.DomainExtensions
             };
         }
 
-        public static Chat GetChatByChatName(this IQueryable<IMessageDataSet> dataSets, string chatName)
+        public static Chat GetChatByChatName(this IQueryable<MessageDataSet> dataSets, string chatName)
         {
             var message = dataSets.Where(x => x.ChatName.ToLower() == chatName.ToLower()).OrderByDescending(x => x.Date).FirstOrDefault();
             if (message == null)
@@ -63,7 +63,7 @@ namespace TelegramBotTry1.DomainExtensions
             };
         }
 
-        public static IEnumerable<IMessageDataSet> FilterObviouslySuperfluous(this IEnumerable<IMessageDataSet> dataSets)
+        public static IEnumerable<MessageDataSet> FilterObviouslySuperfluous(this IEnumerable<MessageDataSet> dataSets)
         {
             var ignoreUnanswered = new List<string>
             {

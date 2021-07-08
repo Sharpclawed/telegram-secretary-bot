@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
-using TelegramBotTry1.Domain;
+using DAL;
+using DAL.Models;
+using Microsoft.EntityFrameworkCore;
 using TelegramBotTry1.DomainExtensions;
 using TelegramBotTry1.Dto;
 
@@ -10,21 +12,18 @@ namespace TelegramBotTry1.DataProviders
     {
         public static CommandResult GetRows(DateTime begin, DateTime end, string exactChatName, long? exactUserId)
         {
-            using (var context = new MsgContext())
+            using (var context = new SecretaryContext())
             {
-                var messageDataSets = context.Set<MessageDataSet>().AsNoTracking().GetActualDates(begin, end);
+                var messageDataSets = context.Set<MessageDataSet>().AsNoTracking()
+                    .GetActualDates(begin, end)
+                    .GetActualChats(exactChatName)
+                    .GetActualUser(exactUserId)
+                    .ToList();
+
                 if (!messageDataSets.Any())
-                    return new CommandResult { Error = "В данном периоде нет сообщений" };
+                    return new CommandResult { Error = "За указанный период сообщений не найдено" };
 
-                messageDataSets = messageDataSets.GetActualChats(exactChatName);
-                if (messageDataSets == null || !messageDataSets.Any())
-                    return new CommandResult { Error = "В выбранных чатах нет сообщений" };
-
-                messageDataSets = messageDataSets.GetActualUser(exactUserId);
-                if (!messageDataSets.Any())
-                    return new CommandResult { Error = "По данному пользователю нет сообщений" };
-
-                return new CommandResult {Messages = messageDataSets.ToList(), Caption = "История сообщений" };
+                return new CommandResult { Messages = messageDataSets, Caption = "История сообщений" };
             }
         }
     }

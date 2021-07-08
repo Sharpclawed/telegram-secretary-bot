@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using TelegramBotTry1.Domain;
+using DAL;
+using DAL.Models;
 
 namespace TelegramBotTry1.DataProviders
 {
     public static class ViewInactiveChatsProvider
     {
-        public static List<IMessageDataSet> GetInactive(DateTime sinceDate, DateTime untilDate, TimeSpan checkingPeriod)
+        public static List<MessageDataSet> GetInactive(DateTime sinceDate, DateTime untilDate, TimeSpan checkingPeriod)
         {
-            using (var context = new MsgContext())
+            using (var context = new SecretaryContext())
             {
                 var adminDataSets = context.Set<AdminDataSet>();
                 var bkDataSets = context.Set<BookkeeperDataSet>();
@@ -37,7 +38,7 @@ namespace TelegramBotTry1.DataProviders
                     )
                     .Where(msg => msg.Date <= timeBorder)
                     .OrderByDescending(msg => msg.Date)
-                    .ToList<IMessageDataSet>();
+                    .ToList();
 
                 return lastMessagesFromDirectors;
             }

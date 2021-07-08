@@ -23,21 +23,15 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="EntityFramework">
-      <Version>6.4.4</Version>
-    </PackageReference>
-    <PackageReference Include="EntityFramework6.Npgsql">
-      <Version>6.4.3</Version>
-    </PackageReference>
     <PackageReference Include="EPPlus">
       <Version>4.5.3.3</Version>
-    </PackageReference>
-    <PackageReference Include="Npgsql">
-      <Version>5.0.5</Version>
     </PackageReference>
     <PackageReference Include="Telegram.Bot">
       <Version>15.7.1</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DAL\DAL.csproj" />
   </ItemGroup>
   <PropertyGroup />
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">

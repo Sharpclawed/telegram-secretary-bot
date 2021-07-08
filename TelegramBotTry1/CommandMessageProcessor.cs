@@ -2,9 +2,9 @@
 using System.Linq;
 using System.Net.Sockets;
 using System.Threading.Tasks;
+using DAL.Models;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
-using TelegramBotTry1.Domain;
 
 namespace TelegramBotTry1
 {

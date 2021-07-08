@@ -18,6 +18,7 @@
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
+	<ProjectReference Include="..\DAL\DAL.csproj" />
 	<ProjectReference Include="..\TelegramBotTry1\TelegramBotTry1.csproj" />
   </ItemGroup>
   <ItemGroup>

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using DAL.Models;
 using NUnit.Framework;
 using FluentAssertions;
-using TelegramBotTry1.Domain;
 using TelegramBotTry1.DomainExtensions;
 
 namespace FunctionalTests
@@ -12,12 +12,12 @@ namespace FunctionalTests
     public class DataSetExtensionsTests
     {
         //todo should be isolated
-        private List<IMessageDataSet> dataSet;
+        private List<MessageDataSet> dataSet;
 
         [SetUp]
         public void SetUp()
         {
-            dataSet = new List<IMessageDataSet>
+            dataSet = new List<MessageDataSet>
             {
                 GetMessage(1, "Чат^1", new DateTime(2017, 1, 10), 1, 1, "Message 1.1"),
                 GetMessage(1, "Чат^1", new DateTime(2017, 1, 2), 2, 2, "Message 1.2"),
@@ -100,7 +100,7 @@ namespace FunctionalTests
                 .GetChatByChatName("incorrect name"));
         }
 
-        private IMessageDataSet GetMessage(long chatId, string chatName, DateTime date, long userId, long messageId, string message)
+        private MessageDataSet GetMessage(long chatId, string chatName, DateTime date, long userId, long messageId, string message)
         {
             return new MessageDataSet
             {

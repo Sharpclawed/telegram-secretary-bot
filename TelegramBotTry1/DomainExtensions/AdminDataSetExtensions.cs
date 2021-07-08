@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using TelegramBotTry1.Domain;
+using DAL.Models;
 
 namespace TelegramBotTry1.DomainExtensions
 {

@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using TelegramBotTry1.Domain;
+using DAL;
+using DAL.Models;
 using TelegramBotTry1.DomainExtensions;
 
 namespace TelegramBotTry1.DataProviders
 {
     public static class ViewWaitersProvider
     {
-        public static List<IMessageDataSet> GetUnanswered(DateTime sinceDate, DateTime untilDate)
+        public static List<MessageDataSet> GetUnanswered(DateTime sinceDate, DateTime untilDate)
         {
-            using (var context = new MsgContext())
+            using (var context = new SecretaryContext())
             {
                 var adminDataSets = context.Set<AdminDataSet>();
                 var bkDataSets = context.Set<BookkeeperDataSet>();
@@ -27,7 +28,7 @@ namespace TelegramBotTry1.DataProviders
                             where msg.ChatName != null
                                   && msg.Date > sinceDate
                                   && (!isByDir || !msg.Message.StartsWith("MessageType: "))
-                            select new {msg, isByDir}
+                            select new { msg, isByDir }
                         ).ToArray()
                         group msgExt by msgExt.msg.ChatId
                         into groups
@@ -37,11 +38,11 @@ namespace TelegramBotTry1.DataProviders
                     .Select(msgExt => msgExt.msg)
                     .OrderBy(msg => msg.Date);
 
-                return new List<IMessageDataSet>(lastMessagesFromDirectors);
+                return new List<MessageDataSet>(lastMessagesFromDirectors);
             }
         }
 
-        public static List<IMessageDataSet> GetWaiters(DateTime sinceDate, DateTime untilDate)
+        public static List<MessageDataSet> GetWaiters(DateTime sinceDate, DateTime untilDate)
         {
             return GetUnanswered(sinceDate, untilDate)
                 .FilterObviouslySuperfluous()

@@ -4,10 +4,10 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using DAL.Models;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.InputFiles;
-using TelegramBotTry1.Domain;
 
 namespace TelegramBotTry1
 {
@@ -39,12 +39,12 @@ namespace TelegramBotTry1
         }
 
         //todo maybe all these methods should take List<IMessageDataSet> and lambda or maybe fileInfo instead
-        public async Task SendTextMessagesAsExcelReportAsync(ChatId chatId, List<IMessageDataSet> msgs, string caption, string[] columnNames, Func<IMessageDataSet, string> groupBy = null)
+        public async Task SendTextMessagesAsExcelReportAsync(ChatId chatId, List<MessageDataSet> msgs, string caption, string[] columnNames, Func<MessageDataSet, string> groupBy = null)
         {
             //todo put to IMessageDataSetExtensions and add tests. But there's a problem - order and set of columns
-            IEnumerable<KeyValuePair<string, List<IMessageDataSet>>> listsWithRows;
+            IEnumerable<KeyValuePair<string, List<MessageDataSet>>> listsWithRows;
             if (groupBy == null)
-                listsWithRows = new Dictionary<string, List<IMessageDataSet>>
+                listsWithRows = new Dictionary<string, List<MessageDataSet>>
                 {
                     {caption, msgs}
                 };
@@ -55,7 +55,7 @@ namespace TelegramBotTry1
                     .Select(gdc =>
                     {
                         var dataSets = gdc.OrderBy(z => z.Date).ToList();
-                        return new KeyValuePair<string, List<IMessageDataSet>>(
+                        return new KeyValuePair<string, List<MessageDataSet>>(
                             groupBy(dataSets.LastOrDefault()) ?? "default",
                             dataSets);
                     });
@@ -79,7 +79,7 @@ namespace TelegramBotTry1
     {
         Task SendTextMessagesAsListAsync(ChatId chatId, IList<string> msgs, СorrespondenceType сorrespondenceType);
         Task SendTextMessagesAsSingleTextAsync(ChatId chatId, IEnumerable<string> msgs, string caption);
-        Task SendTextMessagesAsExcelReportAsync(ChatId chatId, List<IMessageDataSet> msgs, string caption,
-            string[] columnNames, Func<IMessageDataSet, string> groupBy = null);
+        Task SendTextMessagesAsExcelReportAsync(ChatId chatId, List<MessageDataSet> msgs, string caption,
+            string[] columnNames, Func<MessageDataSet, string> groupBy = null);
     }
 }

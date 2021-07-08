@@ -1,9 +1,9 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace TelegramBotTry1.Domain
+namespace DAL.Models
 {
-    public class MessageDataSet : IMessageDataSet
+    public class MessageDataSet
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid MessageDataSetId { get; set; }
@@ -19,7 +19,7 @@ namespace TelegramBotTry1.Domain
 
         public override string ToString()
         {
-            return  ChatName + " " +
+            return ChatName + " " +
                     UserFirstName + " " +
                     UserLastName + " " +
                     UserName + "| " +

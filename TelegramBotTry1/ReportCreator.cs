@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using DAL.Models;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
-using TelegramBotTry1.Domain;
 
 namespace TelegramBotTry1
 {
     public static class ReportCreator
     {
-        public static FileStream Create(IEnumerable<KeyValuePair<string, List<IMessageDataSet>>> sheetsData, string[] colNames)
+        public static FileStream Create(IEnumerable<KeyValuePair<string, List<MessageDataSet>>> sheetsData, string[] colNames)
         {
             var tempFileName = "temp-" + Guid.NewGuid() + ".xls";
             var fileStream = new FileStream(tempFileName, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read, 4096,
@@ -106,12 +106,12 @@ namespace TelegramBotTry1
         {
             return new[]
             {
-                nameof(IMessageDataSet.Date),
-                nameof(IMessageDataSet.UserFirstName),
-                nameof(IMessageDataSet.UserLastName),
-                nameof(IMessageDataSet.Message),
-                nameof(IMessageDataSet.UserName),
-                nameof(IMessageDataSet.UserId)
+                nameof(MessageDataSet.Date),
+                nameof(MessageDataSet.UserFirstName),
+                nameof(MessageDataSet.UserLastName),
+                nameof(MessageDataSet.Message),
+                nameof(MessageDataSet.UserName),
+                nameof(MessageDataSet.UserId)
             };
         }
 
@@ -119,14 +119,14 @@ namespace TelegramBotTry1
         {
             return new[]
             {
-                nameof(IMessageDataSet.Date),
-                nameof(IMessageDataSet.UserFirstName),
-                nameof(IMessageDataSet.UserLastName),
-                nameof(IMessageDataSet.UserName),
-                nameof(IMessageDataSet.UserId),
-                nameof(IMessageDataSet.ChatName),
-                nameof(IMessageDataSet.ChatId),
-                nameof(IMessageDataSet.Message)
+                nameof(MessageDataSet.Date),
+                nameof(MessageDataSet.UserFirstName),
+                nameof(MessageDataSet.UserLastName),
+                nameof(MessageDataSet.UserName),
+                nameof(MessageDataSet.UserId),
+                nameof(MessageDataSet.ChatName),
+                nameof(MessageDataSet.ChatId),
+                nameof(MessageDataSet.Message)
             };
         }
 

@@ -1,11 +1,11 @@
 ﻿using System;
-using TelegramBotTry1.Domain;
+using DAL.Models;
 
 namespace TelegramBotTry1.DomainExtensions
 {
     public static class Formatter
     {
-        public static Func<IMessageDataSet, string> Waiters { get; } = msg =>
+        public static Func<MessageDataSet, string> Waiters { get; } = msg =>
         {
             var timeWithoutAnswer = DateTime.UtcNow.Subtract(msg.Date);
             return string.Format(
@@ -17,7 +17,7 @@ namespace TelegramBotTry1.DomainExtensions
                 , msg.Message);
         };
 
-        public static Func<IMessageDataSet, string> InactiveChats { get; } = msg =>
+        public static Func<MessageDataSet, string> InactiveChats { get; } = msg =>
         {
             var untilDate = DateTime.UtcNow;
             var mark = string.Empty;
