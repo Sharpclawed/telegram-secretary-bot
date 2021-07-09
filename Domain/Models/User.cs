@@ -1,4 +1,4 @@
-﻿namespace TelegramBotTry1.Dto
+﻿namespace Domain.Models
 {
     public class User
     {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using DAL.Models;
+using Domain;
 using NUnit.Framework;
 using FluentAssertions;
 using TelegramBotTry1.DomainExtensions;

@@ -16,7 +16,7 @@ namespace FunctionalTests
         public void OneTimeSetUp()
         {
             ITgBotClientEx nullClient = null;
-            commandDetector = new CommandDetector(nullClient);
+            commandDetector = new CommandDetector(nullClient, null, null, null);
         }
 
         [Test]

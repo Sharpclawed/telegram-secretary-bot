@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Domain.Services;
 using Telegram.Bot.Types;
 using TelegramBotTry1.Commands;
 
@@ -11,10 +12,16 @@ namespace TelegramBotTry1
     public class CommandDetector
     {
         private readonly ITgBotClientEx tgClient;
+        private readonly AdminService adminService;
+        private readonly BkService bkService;
+        private readonly OneTimeChatService oneTimeChatService;
 
-        public CommandDetector(ITgBotClientEx tgClient)
+        public CommandDetector(ITgBotClientEx tgClient, AdminService adminService, BkService bkService, OneTimeChatService oneTimeChatService)
         {
             this.tgClient = tgClient;
+            this.adminService = adminService;
+            this.bkService = bkService;
+            this.oneTimeChatService = oneTimeChatService;
         }
 
         public IBotCommand Parse(Message message)
@@ -56,18 +63,18 @@ namespace TelegramBotTry1
                     return new ViewAdminsCommand(tgClient, chatId);
                 case "addadmin":
                     var addAdminName = match.Groups[patternPosition + 1].Value;
-                    return new AddAdminCommand(tgClient, chatId, addAdminName, message.From.Id, message.From.Username);
+                    return new AddAdminCommand(adminService, tgClient, chatId, addAdminName, message.From.Id, message.From.Username);
                 case "removeadmin":
                     var removeAdminName = match.Groups[patternPosition + 1].Value;
-                    return new RemoveAdminCommand(tgClient, chatId, removeAdminName, message.From.Id, message.From.Username);
+                    return new RemoveAdminCommand(adminService, tgClient, chatId, removeAdminName, message.From.Id, message.From.Username);
                 case "viewbk":
                     return new ViewBkCommand(tgClient, chatId);
                 case "addbk":
                     var addBkName = match.Groups[patternPosition + 1].Value;
-                    return new AddBkCommand(tgClient, chatId, addBkName);
+                    return new AddBkCommand(bkService, tgClient, chatId, addBkName);
                 case "removebk":
                     var removeBkName = match.Groups[patternPosition + 1].Value;
-                    return new RemoveBkCommand(tgClient, chatId, removeBkName);
+                    return new RemoveBkCommand(bkService, tgClient, chatId, removeBkName);
                 case "viewwaiters":
                     return new ViewWaitersCommand(tgClient, chatId);
                 case "viewinactivechats":
@@ -76,10 +83,10 @@ namespace TelegramBotTry1
                     return new ViewOneTimeChatsCommand(tgClient, chatId);
                 case "addonetimechat":
                     var addOnetimechatName = match.Groups[patternPosition + 1].Value;
-                    return new AddOnetimeChatCommand(tgClient, chatId, addOnetimechatName);
+                    return new AddOnetimeChatCommand(oneTimeChatService, tgClient, chatId, addOnetimechatName);
                 case "removeonetimechat":
                     var removeOnetimechatName = match.Groups[patternPosition + 1].Value;
-                    return new RemoveOnetimeChatCommand(tgClient, chatId, removeOnetimechatName);
+                    return new RemoveOnetimeChatCommand(oneTimeChatService, tgClient, chatId, removeOnetimechatName);
                 case "history":
                     var historyChatName = match.Groups[patternPosition + 1].Value;
                     var historyBegin = DateTime.ParseExact(match.Groups[patternPosition + 2].Value, "dd.MM.yyyy", CultureInfo.InvariantCulture);

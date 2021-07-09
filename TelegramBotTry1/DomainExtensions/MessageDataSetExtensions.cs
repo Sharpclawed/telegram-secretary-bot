@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using DAL.Models;
-using TelegramBotTry1.Dto;
 
 namespace TelegramBotTry1.DomainExtensions
 {
@@ -33,34 +32,6 @@ namespace TelegramBotTry1.DomainExtensions
                     .Select(x => x.ChatId).Distinct() on dataset.ChatId equals chatId
                 select dataset;
             return messageDataSets;
-        }
-
-        public static User GetUserByUserName(this IQueryable<MessageDataSet> dataSets, string userName)
-        {
-            var message = dataSets.Where(x => x.UserName.ToLower() == userName.ToLower()).OrderByDescending(x => x.Date).FirstOrDefault();
-            if (message == null)
-                throw new ArgumentException("Пользователь не найден");
-
-            return new User
-            {
-                UserId = message.UserId,
-                Username = message.UserName,
-                Name = message.UserFirstName,
-                Surname = message.UserLastName
-            };
-        }
-
-        public static Chat GetChatByChatName(this IQueryable<MessageDataSet> dataSets, string chatName)
-        {
-            var message = dataSets.Where(x => x.ChatName.ToLower() == chatName.ToLower()).OrderByDescending(x => x.Date).FirstOrDefault();
-            if (message == null)
-                throw new ArgumentException("Чат не найден");
-
-            return new Chat
-            {
-                Id = message.ChatId,
-                Name = message.ChatName,
-            };
         }
 
         public static IEnumerable<MessageDataSet> FilterObviouslySuperfluous(this IEnumerable<MessageDataSet> dataSets)

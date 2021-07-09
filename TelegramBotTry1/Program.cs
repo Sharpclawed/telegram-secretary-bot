@@ -1,5 +1,6 @@
 ﻿using System;
 using DAL;
+using Domain.Services;
 using Microsoft.EntityFrameworkCore;
 using Telegram.Bot.Args;
 using TelegramBotTry1.Reporters;
@@ -27,7 +28,12 @@ namespace TelegramBotTry1
             {
                 context.Database.Migrate();
             }
-            commandMessageProcessor = new CommandMessageProcessor(tgClient);
+
+            var adminService = new AdminService();
+            var bkService = new BkService();
+            var oneTimeChatService = new OneTimeChatService();
+            var messageService = new MessageService();
+            commandMessageProcessor = new CommandMessageProcessor(tgClient, adminService, bkService, oneTimeChatService, messageService);
             botCommander = new BotCommander(tgClient);
             var botStateReporter = new BotStateReporter(botCommander);
             var waitersViewReporter = new WaitersReporter(botCommander);

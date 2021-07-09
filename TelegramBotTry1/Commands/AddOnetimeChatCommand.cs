@@ -1,21 +1,19 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using DAL;
-using DAL.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using System.Threading.Tasks;
+using Domain.Services;
 using Telegram.Bot.Types;
-using TelegramBotTry1.DomainExtensions;
 
 namespace TelegramBotTry1.Commands
 {
     public class AddOnetimeChatCommand : IBotCommand
     {
+        private readonly OneTimeChatService oneTimeChatService;
         private readonly ITgBotClientEx tgClient;
         private readonly ChatId chatId;
         public string ChatName { get; }
 
-        public AddOnetimeChatCommand(ITgBotClientEx tgClient, ChatId chatId, string chatName)
+        public AddOnetimeChatCommand(OneTimeChatService oneTimeChatService, ITgBotClientEx tgClient, ChatId chatId, string chatName)
         {
+            this.oneTimeChatService = oneTimeChatService;
             this.tgClient = tgClient;
             this.chatId = chatId;
             ChatName = chatName;
@@ -23,21 +21,7 @@ namespace TelegramBotTry1.Commands
 
         public async Task ProcessAsync()
         {
-            using (var context = new SecretaryContext())
-            {
-                var messageDataSets = context.Set<MessageDataSet>().AsNoTracking();
-                var onetimeChatDataSets = context.Set<OnetimeChatDataSet>();
-                var chat = messageDataSets.GetChatByChatName(ChatName);
-                if (!onetimeChatDataSets.Any(x => x.ChatId == chat.Id))
-                {
-                    onetimeChatDataSets.Add(new OnetimeChatDataSet
-                    {
-                        ChatName = chat.Name,
-                        ChatId = chat.Id
-                    });
-                    context.SaveChanges();
-                }
-            }
+            oneTimeChatService.Make(ChatName);
 
             var result = "Команда обработана";
             await tgClient.SendTextMessageAsync(chatId, result);

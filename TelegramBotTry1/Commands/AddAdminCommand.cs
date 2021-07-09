@@ -1,47 +1,33 @@
-﻿using System;
-using System.Threading.Tasks;
-using DAL;
-using DAL.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using System.Threading.Tasks;
+using Domain.Models;
+using Domain.Services;
 using Telegram.Bot.Types;
-using TelegramBotTry1.DomainExtensions;
 
 namespace TelegramBotTry1.Commands
 {
     public class AddAdminCommand : IBotCommand
     {
+        private readonly AdminService adminService;
         private readonly ITgBotClientEx tgClient;
         private readonly ChatId chatId;
         public string AdminName { get; }
-        public long UserId { get; }
-        public string UserName { get; }
+        public long AddedUserId { get; }
+        public string AddedUserName { get; }
 
-        public AddAdminCommand(ITgBotClientEx tgClient, ChatId chatId, string adminName, long addedUserId, string addedUsername)
+        public AddAdminCommand(AdminService adminService, ITgBotClientEx tgClient, ChatId chatId, string adminName, long addedUserId, string addedUsername)
         {
+            this.adminService = adminService;
             this.tgClient = tgClient;
             this.chatId = chatId;
             AdminName = adminName;
-            UserId = addedUserId;
-            UserName = addedUsername;
+            AddedUserId = addedUserId;
+            AddedUserName = addedUsername;
         }
 
         public async Task ProcessAsync()
         {
-            using (var context = new SecretaryContext())
-            {
-                var adminDataSets = context.Set<AdminDataSet>();
-                var messageDataSets = context.Set<MessageDataSet>().AsNoTracking();
-                var user = messageDataSets.GetUserByUserName(AdminName);
-                adminDataSets.Add(new AdminDataSet
-                {
-                    AddTime = DateTime.UtcNow,
-                    AddedUserId = UserId,
-                    AddedUserName = UserName,
-                    UserId = user.UserId,
-                    UserName = AdminName
-                });
-                context.SaveChanges();
-            }
+            var addedBy = new Admin{UserId = AddedUserId, UserName = AddedUserName };
+            adminService.Make(AdminName, addedBy);
 
             var result = "Команда обработана";
             await tgClient.SendTextMessageAsync(chatId, result);

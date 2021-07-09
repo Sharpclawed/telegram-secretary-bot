@@ -2,7 +2,8 @@
 using System.Linq;
 using System.Net.Sockets;
 using System.Threading.Tasks;
-using DAL.Models;
+using Domain.Models;
+using Domain.Services;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
@@ -11,12 +12,17 @@ namespace TelegramBotTry1
     public class CommandMessageProcessor
     {
         private readonly ITgBotClientEx tgClient;
+        private readonly AdminService adminService;
+        private readonly MessageService messageService;
         private readonly CommandDetector commandDetector;
 
-        public CommandMessageProcessor(ITgBotClientEx tgClient)
+        public CommandMessageProcessor(ITgBotClientEx tgClient, AdminService adminService, BkService bkService,
+            OneTimeChatService oneTimeChatService, MessageService messageService)
         {
             this.tgClient = tgClient;
-            commandDetector = new CommandDetector(tgClient);
+            this.adminService = adminService;
+            this.messageService = messageService;
+            commandDetector = new CommandDetector(tgClient, adminService, bkService, oneTimeChatService);
         }
 
         public async Task ProcessTextMessageAsync(Message message)
@@ -31,7 +37,7 @@ namespace TelegramBotTry1
                 if (!isMessagePersonal)
                     return;
 
-                var isAdminAsking = DbRepository.IsAdmin(message.From.Id);
+                var isAdminAsking = adminService.IfAdmin(message.From.Id);
                 if (!isAdminAsking)
                 {
                     await tgClient.SendTextMessageAsync(message.Chat.Id, "У вас не хватает прав");
@@ -63,7 +69,7 @@ namespace TelegramBotTry1
         private void SaveToDatabase(Message message)
         {
             //todo automapper
-            var recievedDataSet = new MessageDataSet
+            var recievedDataSet = new DomainMessage
             {
                 MessageId = message.MessageId,
                 Date = message.Date,
@@ -83,7 +89,7 @@ namespace TelegramBotTry1
                 }
             };
 
-            DbRepository.SaveToDatabase(recievedDataSet); //todo sql injection protection
+            messageService.Save(recievedDataSet);
             Console.WriteLine(recievedDataSet.ToString());
         }
     }

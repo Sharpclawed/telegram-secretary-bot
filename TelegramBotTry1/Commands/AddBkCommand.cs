@@ -1,21 +1,19 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using DAL;
-using DAL.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using System.Threading.Tasks;
+using Domain.Services;
 using Telegram.Bot.Types;
-using TelegramBotTry1.DomainExtensions;
 
 namespace TelegramBotTry1.Commands
 {
     public class AddBkCommand : IBotCommand
     {
+        private readonly BkService bkService;
         private readonly ITgBotClientEx tgClient;
         private readonly ChatId chatId;
         public string BkName { get; }
 
-        public AddBkCommand(ITgBotClientEx tgClient, ChatId chatId, string bkName)
+        public AddBkCommand(BkService bkService, ITgBotClientEx tgClient, ChatId chatId, string bkName)
         {
+            this.bkService = bkService;
             this.tgClient = tgClient;
             this.chatId = chatId;
             BkName = bkName;
@@ -23,23 +21,7 @@ namespace TelegramBotTry1.Commands
 
         public async Task ProcessAsync()
         {
-            using (var context = new SecretaryContext())
-            {
-                var bkDataSets = context.Set<BookkeeperDataSet>();
-                var messageDataSets = context.Set<MessageDataSet>().AsNoTracking();
-                var user = messageDataSets.GetUserByUserName(BkName);
-                if (!bkDataSets.Any(x => x.UserId == user.UserId))
-                {
-                    bkDataSets.Add(new BookkeeperDataSet
-                    {
-                        UserId = user.UserId,
-                        UserName = user.Username,
-                        UserFirstName = user.Name,
-                        UserLastName = user.Surname
-                    });
-                    context.SaveChanges();
-                }
-            }
+            bkService.Make(BkName);
 
             var result = "Команда обработана";
             await tgClient.SendTextMessageAsync(chatId, result);

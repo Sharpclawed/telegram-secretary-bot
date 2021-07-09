@@ -1,21 +1,19 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using DAL;
-using DAL.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using System.Threading.Tasks;
+using Domain.Services;
 using Telegram.Bot.Types;
-using TelegramBotTry1.DomainExtensions;
 
 namespace TelegramBotTry1.Commands
 {
     public class RemoveBkCommand : IBotCommand
     {
+        private readonly BkService bkService;
         private readonly ITgBotClientEx tgClient;
         private readonly ChatId chatId;
         public string BkName { get; }
 
-        public RemoveBkCommand(ITgBotClientEx tgClient, ChatId chatId, string bkName)
+        public RemoveBkCommand(BkService bkService, ITgBotClientEx tgClient, ChatId chatId, string bkName)
         {
+            this.bkService = bkService;
             this.tgClient = tgClient;
             this.chatId = chatId;
             BkName = bkName;
@@ -23,22 +21,8 @@ namespace TelegramBotTry1.Commands
 
         public async Task ProcessAsync()
         {
-            string result;
-            using (var context = new SecretaryContext())
-            {
-                var bkDataSets = context.Set<BookkeeperDataSet>();
-                var messageDataSets = context.Set<MessageDataSet>().AsNoTracking();
-                var user = messageDataSets.GetUserByUserName(BkName);
-                var bkToRemove = bkDataSets.FirstOrDefault(x => x.UserId == user.UserId);
-                if (bkToRemove != null)
-                {
-                    bkDataSets.Remove(bkToRemove);
-                    context.SaveChanges();
-                    result = "Команда обработана";
-                }
-                else
-                    result = "Пользователь не найден";
-            }
+            var succeeded = bkService.Unmake(BkName);
+            var result = succeeded ? "Команда обработана" : "Пользователь не найден";
 
             await tgClient.SendTextMessageAsync(chatId, result);
         }
