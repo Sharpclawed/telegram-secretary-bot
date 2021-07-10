@@ -6,12 +6,12 @@ namespace TelegramBotTry1.Commands
 {
     public class RemoveBkCommand : IBotCommand
     {
-        private readonly BkService bkService;
+        private readonly IBkService bkService;
         private readonly ITgBotClientEx tgClient;
         private readonly ChatId chatId;
         public string BkName { get; }
 
-        public RemoveBkCommand(BkService bkService, ITgBotClientEx tgClient, ChatId chatId, string bkName)
+        public RemoveBkCommand(IBkService bkService, ITgBotClientEx tgClient, ChatId chatId, string bkName)
         {
             this.bkService = bkService;
             this.tgClient = tgClient;

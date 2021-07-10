@@ -10,21 +10,20 @@ namespace TelegramBotTry1.Commands
 {
     public class ViewWaitersCommand : IBotCommand
     {
-        private readonly MessageService messageService;
+        private readonly IMessageService messageService;
         private readonly ITgBotClientEx tgClient;
         private readonly ChatId chatId;
         public DateTime? SinceDate { get; }
         public DateTime? UntilDate { get; }
 
-        public ViewWaitersCommand(MessageService messageService, ITgBotClientEx tgClient, ChatId chatId)
+        public ViewWaitersCommand(IMessageService messageService, ITgBotClientEx tgClient, ChatId chatId)
         {
             this.messageService = messageService;
             this.tgClient = tgClient;
             this.chatId = chatId;
         }
 
-        public ViewWaitersCommand(MessageService messageService, ITgBotClientEx tgClient, ChatId chatId,
-            DateTime sinceDate, DateTime untilDate)
+        public ViewWaitersCommand(IMessageService messageService, ITgBotClientEx tgClient, ChatId chatId, DateTime sinceDate, DateTime untilDate)
         {
             this.messageService = messageService;
             this.tgClient = tgClient;

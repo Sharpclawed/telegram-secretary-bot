@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Services
 {
-    public class BkService
+    public class BkService : IBkService
     {
         public void Make(string userName)
         {
@@ -57,5 +57,12 @@ namespace Domain.Services
                     Username = z.UserName
                 });
         }
+    }
+
+    public interface IBkService
+    {
+        void Make(string userName);
+        bool Unmake(string userName);
+        IEnumerable<User> GetAll();
     }
 }

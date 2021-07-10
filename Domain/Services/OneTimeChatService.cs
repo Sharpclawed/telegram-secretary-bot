@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Services
 {
-    public class OneTimeChatService
+    public class OneTimeChatService : IOneTimeChatService
     {
         public void Make(string chatName)
         {
@@ -48,5 +48,12 @@ namespace Domain.Services
             using var context = new SecretaryContext();
             return context.OnetimeChatDataSets.AsNoTracking().ToList().Select(z => new Chat{ Id = z.ChatId, Name = z.ChatName});
         }
+    }
+
+    public interface IOneTimeChatService
+    {
+        void Make(string chatName);
+        bool Unmake(string chatName);
+        IEnumerable<Chat> GetAll();
     }
 }

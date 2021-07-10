@@ -8,11 +8,11 @@ namespace TelegramBotTry1.Commands
 {
     public class ViewAdminsCommand : IBotCommand
     {
-        private readonly AdminService adminService;
+        private readonly IAdminService adminService;
         private readonly ITgBotClientEx tgClient;
         private readonly ChatId chatId;
 
-        public ViewAdminsCommand(AdminService adminService, ITgBotClientEx tgClient, ChatId chatId)
+        public ViewAdminsCommand(IAdminService adminService, ITgBotClientEx tgClient, ChatId chatId)
         {
             this.adminService = adminService;
             this.tgClient = tgClient;

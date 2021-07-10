@@ -11,9 +11,9 @@ namespace TelegramBotTry1
     public class BotCommander
     {
         private readonly ITgBotClientEx tgClient;
-        private readonly MessageService messageService;
+        private readonly IMessageService messageService;
 
-        public BotCommander(ITgBotClientEx tgClient, MessageService messageService)
+        public BotCommander(ITgBotClientEx tgClient, IMessageService messageService)
         {
             this.tgClient = tgClient;
             this.messageService = messageService;

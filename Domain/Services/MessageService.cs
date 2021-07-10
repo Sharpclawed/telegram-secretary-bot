@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Services
 {
-    public class MessageService
+    public class MessageService : IMessageService
     {
         public void Save(DomainMessage message)
         {
@@ -159,5 +159,14 @@ namespace Domain.Services
                     MessageId = lastMsg.MessageId
                 };
         }
+    }
+
+    public interface IMessageService
+    {
+        void Save(DomainMessage message);
+        IEnumerable<DomainMessage> GetHistory(DateTime begin, DateTime end, string exactChatName, long? exactUserId);
+        IOrderedEnumerable<DomainMessage> GetLastDirMsgFromInactiveChats(DateTime sinceDate, DateTime untilDate, TimeSpan checkingPeriod);
+        IEnumerable<DomainMessage> GetUnansweredDirMsgs(DateTime sinceDate, DateTime untilDate);
+        DomainMessage GetLastMessage();
     }
 }

@@ -7,14 +7,14 @@ namespace TelegramBotTry1.Commands
 {
     public class AddAdminCommand : IBotCommand
     {
-        private readonly AdminService adminService;
+        private readonly IAdminService adminService;
         private readonly ITgBotClientEx tgClient;
         private readonly ChatId chatId;
         public string AdminName { get; }
         public long AddedUserId { get; }
         public string AddedUserName { get; }
 
-        public AddAdminCommand(AdminService adminService, ITgBotClientEx tgClient, ChatId chatId, string adminName, long addedUserId, string addedUsername)
+        public AddAdminCommand(IAdminService adminService, ITgBotClientEx tgClient, ChatId chatId, string adminName, long addedUserId, string addedUsername)
         {
             this.adminService = adminService;
             this.tgClient = tgClient;

@@ -7,11 +7,11 @@ namespace TelegramBotTry1.Commands
 {
     public class ViewBkCommand : IBotCommand
     {
-        private readonly BkService bkService;
+        private readonly IBkService bkService;
         private readonly ITgBotClientEx tgClient;
         private readonly ChatId chatId;
 
-        public ViewBkCommand(BkService bkService, ITgBotClientEx tgClient, ChatId chatId)
+        public ViewBkCommand(IBkService bkService, ITgBotClientEx tgClient, ChatId chatId)
         {
             this.bkService = bkService;
             this.tgClient = tgClient;

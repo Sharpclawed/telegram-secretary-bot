@@ -7,11 +7,11 @@ namespace TelegramBotTry1.Commands
 {
     public class SendBotStatusCommand : IBotCommand
     {
-        private readonly MessageService messageService;
+        private readonly IMessageService messageService;
         private readonly ITgBotClientEx tgClient;
         private readonly ChatId chatId;
 
-        public SendBotStatusCommand(MessageService messageService, ITgBotClientEx tgClient, ChatId chatId)
+        public SendBotStatusCommand(IMessageService messageService, ITgBotClientEx tgClient, ChatId chatId)
         {
             this.messageService = messageService;
             this.tgClient = tgClient;

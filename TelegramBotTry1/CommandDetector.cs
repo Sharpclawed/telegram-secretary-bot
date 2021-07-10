@@ -12,12 +12,12 @@ namespace TelegramBotTry1
     public class CommandDetector
     {
         private readonly ITgBotClientEx tgClient;
-        private readonly AdminService adminService;
-        private readonly BkService bkService;
-        private readonly OneTimeChatService oneTimeChatService;
-        private readonly MessageService messageService;
+        private readonly IAdminService adminService;
+        private readonly IBkService bkService;
+        private readonly IOneTimeChatService oneTimeChatService;
+        private readonly IMessageService messageService;
 
-        public CommandDetector(ITgBotClientEx tgClient, AdminService adminService, BkService bkService, OneTimeChatService oneTimeChatService, MessageService messageService)
+        public CommandDetector(ITgBotClientEx tgClient, IAdminService adminService, IBkService bkService, IOneTimeChatService oneTimeChatService, IMessageService messageService)
         {
             this.tgClient = tgClient;
             this.adminService = adminService;

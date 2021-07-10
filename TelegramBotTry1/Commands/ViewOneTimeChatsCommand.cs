@@ -7,11 +7,11 @@ namespace TelegramBotTry1.Commands
 {
     public class ViewOneTimeChatsCommand : IBotCommand
     {
-        private readonly OneTimeChatService oneTimeChatService;
+        private readonly IOneTimeChatService oneTimeChatService;
         private readonly ITgBotClientEx tgClient;
         private readonly ChatId chatId;
 
-        public ViewOneTimeChatsCommand(OneTimeChatService oneTimeChatService, ITgBotClientEx tgClient, ChatId chatId)
+        public ViewOneTimeChatsCommand(IOneTimeChatService oneTimeChatService, ITgBotClientEx tgClient, ChatId chatId)
         {
             this.oneTimeChatService = oneTimeChatService;
             this.tgClient = tgClient;

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Services
 {
-    public class AdminService
+    public class AdminService : IAdminService
     {
         public void Make(string userName, Admin addedBy)
         {
@@ -67,5 +67,13 @@ namespace Domain.Services
                 (new Admin {UserId = z.UserId, UserName = z.UserName}
                     , new Admin {UserId = z.AddedUserId, UserName = z.AddedUserName}));
         }
+    }
+
+    public interface IAdminService
+    {
+        void Make(string userName, Admin addedBy);
+        bool Unmake(string userName, Admin removedBy);
+        bool IfAdmin(long userId);
+        IEnumerable<(Admin, Admin)> GetAllActiveWithAddedBy();
     }
 }

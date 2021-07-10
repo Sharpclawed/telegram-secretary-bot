@@ -12,12 +12,12 @@ namespace TelegramBotTry1
     public class CommandMessageProcessor
     {
         private readonly ITgBotClientEx tgClient;
-        private readonly AdminService adminService;
-        private readonly MessageService messageService;
+        private readonly IAdminService adminService;
+        private readonly IMessageService messageService;
         private readonly CommandDetector commandDetector;
 
-        public CommandMessageProcessor(ITgBotClientEx tgClient, AdminService adminService, BkService bkService,
-            OneTimeChatService oneTimeChatService, MessageService messageService)
+        public CommandMessageProcessor(ITgBotClientEx tgClient, IAdminService adminService, IBkService bkService,
+            IOneTimeChatService oneTimeChatService, IMessageService messageService)
         {
             this.tgClient = tgClient;
             this.adminService = adminService;

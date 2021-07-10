@@ -6,12 +6,12 @@ namespace TelegramBotTry1.Commands
 {
     public class RemoveOnetimeChatCommand : IBotCommand
     {
-        private readonly OneTimeChatService oneTimeChatService;
+        private readonly IOneTimeChatService oneTimeChatService;
         private readonly ITgBotClientEx tgClient;
         private readonly ChatId chatId;
         public string ChatName { get; }
 
-        public RemoveOnetimeChatCommand(OneTimeChatService oneTimeChatService, ITgBotClientEx tgClient, ChatId chatId,
+        public RemoveOnetimeChatCommand(IOneTimeChatService oneTimeChatService, ITgBotClientEx tgClient, ChatId chatId,
             string chatName)
         {
             this.oneTimeChatService = oneTimeChatService;

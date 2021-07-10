@@ -7,14 +7,14 @@ namespace TelegramBotTry1.Commands
 {
     public class RemoveAdminCommand : IBotCommand
     {
-        private readonly AdminService adminService;
+        private readonly IAdminService adminService;
         private readonly ITgBotClientEx tgClient;
         private readonly ChatId chatId;
         public string AdminName { get; }
         public long UserId { get; }
         public string UserName { get; }
 
-        public RemoveAdminCommand(AdminService adminService, ITgBotClientEx tgClient, ChatId chatId, string adminName, long removedByUserId, string removedByUsername)
+        public RemoveAdminCommand(IAdminService adminService, ITgBotClientEx tgClient, ChatId chatId, string adminName, long removedByUserId, string removedByUsername)
         {
             this.adminService = adminService;
             this.tgClient = tgClient;

@@ -9,14 +9,14 @@ namespace TelegramBotTry1.Commands
 {
     public class ViewHistoryCommand : IBotCommand
     {
-        private readonly MessageService messageService;
+        private readonly IMessageService messageService;
         private readonly ITgBotClientEx tgClient;
         private readonly ChatId chatId;
         public DateTime Begin { get; }
         public DateTime End { get; }
         public string ChatName { get; }
 
-        public ViewHistoryCommand(MessageService messageService, ITgBotClientEx tgClient, ChatId chatId, DateTime begin, DateTime end, string chatName)
+        public ViewHistoryCommand(IMessageService messageService, ITgBotClientEx tgClient, ChatId chatId, DateTime begin, DateTime end, string chatName)
         {
             this.messageService = messageService;
             this.tgClient = tgClient;

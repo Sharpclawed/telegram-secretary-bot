@@ -9,20 +9,20 @@ namespace TelegramBotTry1.Commands
 {
     public class ViewInactiveChatsCommand : IBotCommand
     {
-        private readonly MessageService messageService;
+        private readonly IMessageService messageService;
         private readonly ITgBotClientEx tgClient;
         private readonly ChatId chatId;
         public DateTime? SinceDate { get; }
         public DateTime? UntilDate { get; }
 
-        public ViewInactiveChatsCommand(MessageService messageService, ITgBotClientEx tgClient, ChatId chatId)
+        public ViewInactiveChatsCommand(IMessageService messageService, ITgBotClientEx tgClient, ChatId chatId)
         {
             this.messageService = messageService;
             this.tgClient = tgClient;
             this.chatId = chatId;
         }
 
-        public ViewInactiveChatsCommand(MessageService messageService, ITgBotClientEx tgClient, ChatId chatId, DateTime sinceDate, DateTime untilDate)
+        public ViewInactiveChatsCommand(IMessageService messageService, ITgBotClientEx tgClient, ChatId chatId, DateTime sinceDate, DateTime untilDate)
         {
             this.messageService = messageService;
             this.tgClient = tgClient;
