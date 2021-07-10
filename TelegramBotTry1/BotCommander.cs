@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Domain.Services;
 using Telegram.Bot.Types;
 using TelegramBotTry1.Commands;
 
@@ -10,10 +11,12 @@ namespace TelegramBotTry1
     public class BotCommander
     {
         private readonly ITgBotClientEx tgClient;
+        private readonly MessageService messageService;
 
-        public BotCommander(ITgBotClientEx tgClient)
+        public BotCommander(ITgBotClientEx tgClient, MessageService messageService)
         {
             this.tgClient = tgClient;
+            this.messageService = messageService;
         }
 
         public async Task SendMessageAsync(ChatId chatId, string text)
@@ -28,17 +31,17 @@ namespace TelegramBotTry1
 
         public async Task ViewWaitersAsync(ChatId chatId, DateTime sinceDate, DateTime untilDate)
         {
-            await new ViewWaitersCommand(tgClient, chatId, sinceDate, untilDate).ProcessAsync();
+            await new ViewWaitersCommand(messageService, tgClient, chatId, sinceDate, untilDate).ProcessAsync();
         }
 
         public async Task ViewInactiveChatsAsync(ChatId chatId, DateTime sinceDate, DateTime untilDate)
         {
-            await new ViewInactiveChatsCommand(tgClient, chatId, sinceDate, untilDate).ProcessAsync();
+            await new ViewInactiveChatsCommand(messageService, tgClient, chatId, sinceDate, untilDate).ProcessAsync();
         }
 
         public async Task SendBotStatusAsync(ChatId chatId)
         {
-            await new SendBotStatusCommand(tgClient, chatId).ProcessAsync();
+            await new SendBotStatusCommand(messageService, tgClient, chatId).ProcessAsync();
         }
     }
 }

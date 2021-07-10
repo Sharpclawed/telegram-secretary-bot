@@ -1,31 +1,37 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
+using Domain.Services;
 using Telegram.Bot.Types;
-using TelegramBotTry1.DataProviders;
 
 namespace TelegramBotTry1.Commands
 {
     public class ViewOneTimeChatsCommand : IBotCommand
     {
+        private readonly OneTimeChatService oneTimeChatService;
         private readonly ITgBotClientEx tgClient;
         private readonly ChatId chatId;
 
-        public ViewOneTimeChatsCommand(ITgBotClientEx tgClient, ChatId chatId)
+        public ViewOneTimeChatsCommand(OneTimeChatService oneTimeChatService, ITgBotClientEx tgClient, ChatId chatId)
         {
+            this.oneTimeChatService = oneTimeChatService;
             this.tgClient = tgClient;
             this.chatId = chatId;
         }
 
         public async Task ProcessAsync()
         {
-            var result = IgnoreChatsListProvider.GetRows();
+            var records = oneTimeChatService.GetAll().ToList();
 
-            if (result.Error != null)
+            if (records.Any())
             {
-                await tgClient.SendTextMessageAsync(chatId, result.Error);
-                return;
+                var caption = "Список исключений для просмотра неактивных чатов:\r\n";
+                await tgClient.SendTextMessagesAsSingleTextAsync(chatId, records.Select(x => x.Name).ToList(), caption);
             }
-
-            await tgClient.SendTextMessagesAsSingleTextAsync(chatId, result.Records, result.Caption);
+            else
+            {
+                var caption = "Список исключений для просмотра неактивных чатов пуст\r\n";
+                await tgClient.SendTextMessageAsync(chatId, caption);
+            }
         }
     }
 }

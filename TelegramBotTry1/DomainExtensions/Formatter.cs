@@ -1,11 +1,11 @@
 ﻿using System;
-using DAL.Models;
+using Domain.Models;
 
 namespace TelegramBotTry1.DomainExtensions
 {
     public static class Formatter
     {
-        public static Func<MessageDataSet, string> Waiters { get; } = msg =>
+        public static Func<DomainMessage, string> Waiters { get; } = msg =>
         {
             var timeWithoutAnswer = DateTime.UtcNow.Subtract(msg.Date);
             return string.Format(
@@ -17,7 +17,7 @@ namespace TelegramBotTry1.DomainExtensions
                 , msg.Message);
         };
 
-        public static Func<MessageDataSet, string> InactiveChats { get; } = msg =>
+        public static Func<DomainMessage, string> InactiveChats { get; } = msg =>
         {
             var untilDate = DateTime.UtcNow;
             var mark = string.Empty;
@@ -43,5 +43,7 @@ namespace TelegramBotTry1.DomainExtensions
                 , msg.Date.AddHours(5).ToString("dd.MM.yyyy в H:mm")
                 , msg.Message);
         };
+
+        public static Func<(Admin, Admin), string> AdminWithAddedBy { get; } = pair => pair.Item1.UserName + " добавлен " + pair.Item2.UserName;
     }
 }

@@ -1,40 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using DAL.Models;
+using Domain.Models;
 
 namespace TelegramBotTry1.DomainExtensions
 {
     public static class MessageDataSetExtensions
     {
-        public static IQueryable<MessageDataSet> GetActualDates(this IQueryable<MessageDataSet> dataSets, DateTime begin, DateTime end)
-        {
-            return dataSets.Where(x => x.Date >= begin && x.Date < end);
-        }
-
-        public static IQueryable<MessageDataSet> GetActualChats(this IQueryable<MessageDataSet> dataSets, string exactChatName = null)
-        {
-            if (exactChatName == null)
-                return dataSets.Where(x => x.ChatName != null);
-
-            return dataSets
-                .Where(x => x.ChatName.Equals(exactChatName));
-        }
-
-        public static IQueryable<MessageDataSet> GetActualUser(this IQueryable<MessageDataSet> dataSets, long? exactUserId = null)
-        {
-            if (exactUserId == null)
-                return dataSets;
-
-            var messageDataSets = from dataset in dataSets
-                join chatId in dataSets.Where(x => x.UserId == exactUserId)
-                    .Select(x => x.ChatId).Distinct() on dataset.ChatId equals chatId
-                select dataset;
-            return messageDataSets;
-        }
-
-        public static IEnumerable<MessageDataSet> FilterObviouslySuperfluous(this IEnumerable<MessageDataSet> dataSets)
+        public static IEnumerable<DomainMessage> FilterObviouslySuperfluous(this IEnumerable<DomainMessage> dataSets)
         {
             var ignoreUnanswered = new List<string>
             {

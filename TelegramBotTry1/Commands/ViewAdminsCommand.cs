@@ -1,31 +1,32 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
+using Domain.Services;
 using Telegram.Bot.Types;
-using TelegramBotTry1.DataProviders;
+using TelegramBotTry1.DomainExtensions;
 
 namespace TelegramBotTry1.Commands
 {
     public class ViewAdminsCommand : IBotCommand
     {
+        private readonly AdminService adminService;
         private readonly ITgBotClientEx tgClient;
         private readonly ChatId chatId;
 
-        public ViewAdminsCommand(ITgBotClientEx tgClient, ChatId chatId)
+        public ViewAdminsCommand(AdminService adminService, ITgBotClientEx tgClient, ChatId chatId)
         {
+            this.adminService = adminService;
             this.tgClient = tgClient;
             this.chatId = chatId;
         }
 
         public async Task ProcessAsync()
         {
-            var result = AdminsListProvider.GetRows();
+            var records = adminService.GetAllActiveWithAddedBy().Select(Formatter.AdminWithAddedBy).ToList();
 
-            if (result.Error != null)
-            {
-                await tgClient.SendTextMessageAsync(chatId, result.Error);
-                return;
-            }
-
-            await tgClient.SendTextMessagesAsSingleTextAsync(chatId, result.Records, result.Caption);
+            if (!records.Any())
+                await tgClient.SendTextMessageAsync(chatId, "Список админов пуст");
+            else
+                await tgClient.SendTextMessagesAsSingleTextAsync(chatId, records, "Список админов:\r\n");
         }
     }
 }

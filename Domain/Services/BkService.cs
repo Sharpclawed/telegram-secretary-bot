@@ -1,6 +1,8 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using DAL;
 using DAL.Models;
+using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Services
@@ -41,6 +43,19 @@ namespace Domain.Services
             }
 
             return false;
+        }
+
+        public IEnumerable<User> GetAll()
+        {
+            using var context = new SecretaryContext();
+            return context.BookkeeperDataSets.AsNoTracking()
+                .Select(z => new User
+                {
+                    UserId = z.UserId,
+                    Name = z.UserFirstName,
+                    Surname = z.UserLastName,
+                    Username = z.UserName
+                });
         }
     }
 }

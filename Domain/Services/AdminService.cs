@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using DAL;
 using DAL.Models;
@@ -55,6 +56,16 @@ namespace Domain.Services
             return context.AdminDataSets.AsNoTracking()
                 .Where(x => x.UserId == userId)
                 .SingleOrDefault(x => x.DeleteTime == null) != null;
+        }
+
+        public IEnumerable<(Admin, Admin)> GetAllActiveWithAddedBy()
+        {
+            using var context = new SecretaryContext();
+            var records = context.AdminDataSets.AsNoTracking()
+                .Where(x => x.DeleteTime == null).ToList();
+            return records.Select(z =>
+                (new Admin {UserId = z.UserId, UserName = z.UserName}
+                    , new Admin {UserId = z.AddedUserId, UserName = z.AddedUserName}));
         }
     }
 }

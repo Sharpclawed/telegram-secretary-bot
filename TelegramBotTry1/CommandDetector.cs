@@ -15,13 +15,15 @@ namespace TelegramBotTry1
         private readonly AdminService adminService;
         private readonly BkService bkService;
         private readonly OneTimeChatService oneTimeChatService;
+        private readonly MessageService messageService;
 
-        public CommandDetector(ITgBotClientEx tgClient, AdminService adminService, BkService bkService, OneTimeChatService oneTimeChatService)
+        public CommandDetector(ITgBotClientEx tgClient, AdminService adminService, BkService bkService, OneTimeChatService oneTimeChatService, MessageService messageService)
         {
             this.tgClient = tgClient;
             this.adminService = adminService;
             this.bkService = bkService;
             this.oneTimeChatService = oneTimeChatService;
+            this.messageService = messageService;
         }
 
         public IBotCommand Parse(Message message)
@@ -60,7 +62,7 @@ namespace TelegramBotTry1
             switch (commandText)
             {
                 case "viewadmins":
-                    return new ViewAdminsCommand(tgClient, chatId);
+                    return new ViewAdminsCommand(adminService, tgClient, chatId);
                 case "addadmin":
                     var addAdminName = match.Groups[patternPosition + 1].Value;
                     return new AddAdminCommand(adminService, tgClient, chatId, addAdminName, message.From.Id, message.From.Username);
@@ -68,7 +70,7 @@ namespace TelegramBotTry1
                     var removeAdminName = match.Groups[patternPosition + 1].Value;
                     return new RemoveAdminCommand(adminService, tgClient, chatId, removeAdminName, message.From.Id, message.From.Username);
                 case "viewbk":
-                    return new ViewBkCommand(tgClient, chatId);
+                    return new ViewBkCommand(bkService, tgClient, chatId);
                 case "addbk":
                     var addBkName = match.Groups[patternPosition + 1].Value;
                     return new AddBkCommand(bkService, tgClient, chatId, addBkName);
@@ -76,11 +78,11 @@ namespace TelegramBotTry1
                     var removeBkName = match.Groups[patternPosition + 1].Value;
                     return new RemoveBkCommand(bkService, tgClient, chatId, removeBkName);
                 case "viewwaiters":
-                    return new ViewWaitersCommand(tgClient, chatId);
+                    return new ViewWaitersCommand(messageService, tgClient, chatId);
                 case "viewinactivechats":
-                    return new ViewInactiveChatsCommand(tgClient, chatId);
+                    return new ViewInactiveChatsCommand(messageService, tgClient, chatId);
                 case "viewonetimechats":
-                    return new ViewOneTimeChatsCommand(tgClient, chatId);
+                    return new ViewOneTimeChatsCommand(oneTimeChatService, tgClient, chatId);
                 case "addonetimechat":
                     var addOnetimechatName = match.Groups[patternPosition + 1].Value;
                     return new AddOnetimeChatCommand(oneTimeChatService, tgClient, chatId, addOnetimechatName);
@@ -91,16 +93,16 @@ namespace TelegramBotTry1
                     var historyChatName = match.Groups[patternPosition + 1].Value;
                     var historyBegin = DateTime.ParseExact(match.Groups[patternPosition + 2].Value, "dd.MM.yyyy", CultureInfo.InvariantCulture);
                     var historyEnd = historyBegin.AddDays(double.Parse(match.Groups[patternPosition + 3].Value));
-                    return new ViewHistoryCommand(tgClient, chatId, historyBegin, historyEnd, historyChatName);
+                    return new ViewHistoryCommand(messageService, tgClient, chatId, historyBegin, historyEnd, historyChatName);
                 case "historyof":
                     var historyUserId = match.Groups[patternPosition + 1].Value;
                     var historyofBegin = DateTime.ParseExact(match.Groups[patternPosition + 2].Value, "dd.MM.yyyy", CultureInfo.InvariantCulture);
                     var historyofEnd = historyofBegin.AddDays(double.Parse(match.Groups[patternPosition + 3].Value));
-                    return new ViewHistoryOfCommand(tgClient, chatId, historyofBegin, historyofEnd, long.Parse(historyUserId));
+                    return new ViewHistoryOfCommand(messageService, tgClient, chatId, historyofBegin, historyofEnd, long.Parse(historyUserId));
                 case "historyall":
                     var historyallBegin = DateTime.ParseExact(match.Groups[patternPosition + 1].Value, "dd.MM.yyyy", CultureInfo.InvariantCulture);
                     var historyallEnd = historyallBegin.AddDays(double.Parse(match.Groups[patternPosition + 2].Value));
-                    return new ViewHistoryAllCommand(tgClient, chatId, historyallBegin, historyallEnd);
+                    return new ViewHistoryAllCommand(messageService, tgClient, chatId, historyallBegin, historyallEnd);
                 case "help":
                     return new SendHelpTipCommand(tgClient, message.Chat.Id);
             }

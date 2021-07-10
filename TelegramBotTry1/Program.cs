@@ -34,7 +34,7 @@ namespace TelegramBotTry1
             var oneTimeChatService = new OneTimeChatService();
             var messageService = new MessageService();
             commandMessageProcessor = new CommandMessageProcessor(tgClient, adminService, bkService, oneTimeChatService, messageService);
-            botCommander = new BotCommander(tgClient);
+            botCommander = new BotCommander(tgClient, messageService);
             var botStateReporter = new BotStateReporter(botCommander);
             var waitersViewReporter = new WaitersReporter(botCommander);
             var inactiveChatsReporter = new InactiveChatsReporter(botCommander);

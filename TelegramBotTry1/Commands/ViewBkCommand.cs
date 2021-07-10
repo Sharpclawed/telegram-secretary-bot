@@ -1,31 +1,31 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
+using Domain.Services;
 using Telegram.Bot.Types;
-using TelegramBotTry1.DataProviders;
 
 namespace TelegramBotTry1.Commands
 {
     public class ViewBkCommand : IBotCommand
     {
+        private readonly BkService bkService;
         private readonly ITgBotClientEx tgClient;
         private readonly ChatId chatId;
 
-        public ViewBkCommand(ITgBotClientEx tgClient, ChatId chatId)
+        public ViewBkCommand(BkService bkService, ITgBotClientEx tgClient, ChatId chatId)
         {
+            this.bkService = bkService;
             this.tgClient = tgClient;
             this.chatId = chatId;
         }
 
         public async Task ProcessAsync()
         {
-            var result = BookkeepersListProvider.GetRows();
+            var records = bkService.GetAll().Select(x => x.Name + " " + x.Surname).ToList();
 
-            if (result.Error != null)
-            {
-                await tgClient.SendTextMessageAsync(chatId, result.Error);
-                return;
-            }
-
-            await tgClient.SendTextMessagesAsSingleTextAsync(chatId, result.Records, result.Caption);
+            if (records.Any())
+                await tgClient.SendTextMessagesAsSingleTextAsync(chatId, records, "Список бухгалтеров:\r\n");
+            else
+                await tgClient.SendTextMessageAsync(chatId, "Список бухгалтеров пуст");
         }
     }
 }

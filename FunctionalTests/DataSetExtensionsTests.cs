@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DAL.Models;
 using Domain;
+using Domain.Models;
 using NUnit.Framework;
 using FluentAssertions;
 using TelegramBotTry1.DomainExtensions;
@@ -186,7 +187,7 @@ namespace FunctionalTests
                 "🌸🌸🌸",
                 "✅",
             };
-            var set = testCases.Select(z => new MessageDataSet{Message =  z}).ToList();
+            var set = testCases.Select(z => new DomainMessage(){Message =  z}).ToList();
             var sut = set.FilterObviouslySuperfluous();
 
             sut.Should().BeEquivalentTo(new List<MessageDataSet>());

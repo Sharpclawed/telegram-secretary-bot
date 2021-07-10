@@ -1,6 +1,8 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using DAL;
 using DAL.Models;
+using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Services
@@ -39,6 +41,12 @@ namespace Domain.Services
             }
 
             return false;
+        }
+
+        public IEnumerable<Chat> GetAll()
+        {
+            using var context = new SecretaryContext();
+            return context.OnetimeChatDataSets.AsNoTracking().ToList().Select(z => new Chat{ Id = z.ChatId, Name = z.ChatName});
         }
     }
 }

@@ -22,7 +22,7 @@ namespace TelegramBotTry1
             this.tgClient = tgClient;
             this.adminService = adminService;
             this.messageService = messageService;
-            commandDetector = new CommandDetector(tgClient, adminService, bkService, oneTimeChatService);
+            commandDetector = new CommandDetector(tgClient, adminService, bkService, oneTimeChatService, messageService);
         }
 
         public async Task ProcessTextMessageAsync(Message message)
