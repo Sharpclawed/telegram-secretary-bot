@@ -50,6 +50,7 @@ namespace Domain
 
         public static Chat GetChatByChatName(this IQueryable<MessageDataSet> dataSets, string chatName)
         {
+            //todo 3 seconds - too much
             var message = dataSets.Where(x => x.ChatName.ToLower() == chatName.ToLower()).OrderByDescending(x => x.Date).FirstOrDefault();
             if (message == null)
                 throw new ArgumentException("Чат не найден");

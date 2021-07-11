@@ -48,7 +48,7 @@ namespace Domain.Services
         public IEnumerable<User> GetAll()
         {
             using var context = new SecretaryContext();
-            return context.BookkeeperDataSets.AsNoTracking()
+            return context.BookkeeperDataSets.AsNoTracking().ToList()
                 .Select(z => new User
                 {
                     UserId = z.UserId,
