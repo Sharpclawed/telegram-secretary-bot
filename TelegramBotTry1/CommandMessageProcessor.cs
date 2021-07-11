@@ -90,7 +90,6 @@ namespace TelegramBotTry1
             };
 
             messageService.Save(recievedDataSet);
-            Console.WriteLine(recievedDataSet.ToString());
         }
     }
 }
