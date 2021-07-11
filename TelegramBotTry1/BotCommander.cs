@@ -7,7 +7,6 @@ using TelegramBotTry1.Commands;
 
 namespace TelegramBotTry1
 {
-    //TODO take away configuring tgClient
     public class BotCommander
     {
         private readonly ITgBotClientEx tgClient;

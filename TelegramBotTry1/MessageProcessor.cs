@@ -10,14 +10,14 @@ using TelegramBotTry1.Settings;
 
 namespace TelegramBotTry1
 {
-    public class CommandMessageProcessor
+    public class MessageProcessor
     {
         private readonly ITgBotClientEx tgClient;
         private readonly IAdminService adminService;
         private readonly IMessageService messageService;
         private readonly CommandDetector commandDetector;
 
-        public CommandMessageProcessor(ITgBotClientEx tgClient, IAdminService adminService, IBkService bkService,
+        public MessageProcessor(ITgBotClientEx tgClient, IAdminService adminService, IBkService bkService,
             IOneTimeChatService oneTimeChatService, IMessageService messageService)
         {
             this.tgClient = tgClient;
