@@ -1,7 +1,6 @@
 ﻿using Telegram.Bot.Types;
-using TelegramBotTry1.SecretsStore;
 
-namespace TelegramBotTry1
+namespace TelegramBotTry1.Settings
 {
     public static class ChatIds
     {

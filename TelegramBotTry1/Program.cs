@@ -4,7 +4,7 @@ using DAL;
 using Domain.Services;
 using Microsoft.EntityFrameworkCore;
 using TelegramBotTry1.Reporters;
-using TelegramBotTry1.SecretsStore;
+using TelegramBotTry1.Settings;
 
 namespace TelegramBotTry1
 {

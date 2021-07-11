@@ -1,4 +1,4 @@
-﻿namespace TelegramBotTry1
+﻿namespace TelegramBotTry1.Settings
 {
     public static class TgBotSettings
     {

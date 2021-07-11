@@ -1,4 +1,4 @@
-﻿namespace DAL.SecretsStore
+﻿namespace DAL.Settings
 {
     internal static partial class DbSettings
     {

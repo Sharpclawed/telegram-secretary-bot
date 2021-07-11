@@ -1,4 +1,4 @@
-﻿namespace TelegramBotTry1.SecretsStore
+﻿namespace TelegramBotTry1.Settings
 {
     public static partial class Secrets
     {

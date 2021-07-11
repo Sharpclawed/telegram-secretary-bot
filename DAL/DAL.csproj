@@ -18,4 +18,8 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="5.0.7" />
   </ItemGroup>
 
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="cd $(ProjectDir)Settings\&#xD;&#xA;if not exist DbSettingsSecret.cs (type nul &gt; DbSettingsSecret.cs)" />
+  </Target>
+
 </Project>

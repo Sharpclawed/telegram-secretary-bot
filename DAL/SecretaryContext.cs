@@ -1,5 +1,5 @@
 ﻿using DAL.Models;
-using DAL.SecretsStore;
+using DAL.Settings;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAL

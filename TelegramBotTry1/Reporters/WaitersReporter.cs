@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Sockets;
 using System.Timers;
+using TelegramBotTry1.Settings;
 
 namespace TelegramBotTry1.Reporters
 {

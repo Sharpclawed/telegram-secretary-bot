@@ -36,7 +36,7 @@
   </ItemGroup>
   <PropertyGroup />
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="cd $(ProjectDir)SecretsStore\&#xD;&#xA;if not exist SecretsLocal.cs (type nul &gt; SecretsLocal.cs)" />
+    <Exec Command="cd $(ProjectDir)Settings\&#xD;&#xA;if not exist SecretsLocal.cs (type nul &gt; SecretsLocal.cs)" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

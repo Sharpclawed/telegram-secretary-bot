@@ -5,7 +5,7 @@ using Domain.Models;
 
 namespace TelegramBotTry1.DomainExtensions
 {
-    public static class MessageDataSetExtensions
+    public static class MessagesExtensions
     {
         public static IEnumerable<DomainMessage> FilterObviouslySuperfluous(this IEnumerable<DomainMessage> dataSets)
         {
