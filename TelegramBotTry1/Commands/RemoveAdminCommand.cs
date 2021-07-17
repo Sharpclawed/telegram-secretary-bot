@@ -1,41 +1,36 @@
-﻿using System;
-using System.Linq;
-using TelegramBotTry1.Domain;
-using TelegramBotTry1.Dto;
+﻿using System.Threading.Tasks;
+using Domain.Models;
+using Domain.Services;
+using Telegram.Bot.Types;
 
 namespace TelegramBotTry1.Commands
 {
     public class RemoveAdminCommand : IBotCommand
     {
+        private readonly IAdminService adminService;
+        private readonly ITgBotClientEx tgClient;
+        private readonly ChatId chatId;
         public string AdminName { get; }
         public long UserId { get; }
         public string UserName { get; }
 
-        public RemoveAdminCommand(string adminName, long addedUserId, string addedUsername)
+        public RemoveAdminCommand(IAdminService adminService, ITgBotClientEx tgClient, ChatId chatId, string adminName, long removedByUserId, string removedByUsername)
         {
+            this.adminService = adminService;
+            this.tgClient = tgClient;
+            this.chatId = chatId;
             AdminName = adminName;
-            UserId = addedUserId;
-            UserName = addedUsername;
+            UserId = removedByUserId;
+            UserName = removedByUsername;
         }
 
-        public CommandResult Process()
+        public async Task ProcessAsync()
         {
-            using (var context = new MsgContext())
-            {
-                var adminDataSets = context.Set<AdminDataSet>();
-                var messageDataSets = context.Set<MessageDataSet>().AsNoTracking();
-                var user = messageDataSets.GetUserByUserName(AdminName);
-                if (adminDataSets.IsAdmin(user.UserId))
-                {
-                    var adminDataSet = adminDataSets.First(x =>
-                        x.UserId == user.UserId && x.DeleteTime == null);
-                    adminDataSet.DeleteTime = DateTime.UtcNow;
-                    adminDataSet.DeletedUserId = UserId;
-                    adminDataSet.DeletedUserName = UserName;
-                    context.SaveChanges();
-                }
-            }
-            return new CommandResult { Message = "Команда обработана" };
+            var removedBy = new Admin { UserId = UserId, UserName = UserName };
+            var succeeded = adminService.Unmake(AdminName, removedBy);
+            var result = succeeded ? "Команда обработана" : "Пользователь не найден";
+
+            await tgClient.SendTextMessageAsync(chatId, result);
         }
     }
 }

@@ -1,20 +1,18 @@
 ﻿using System;
-using System.Linq;
 using System.Net.Sockets;
 using System.Timers;
-using TelegramBotTry1.Commands;
-using TelegramBotTry1.Domain;
+using TelegramBotTry1.Settings;
 
 namespace TelegramBotTry1.Reporters
 {
     public class WaitersReporter : IReporter
     {
-        private readonly ITelegramBotClientAdapter botClient;
+        private readonly BotCommander botCommander;
         private Timer viewWaitersTimer;
 
-        public WaitersReporter(ITelegramBotClientAdapter botClient)
+        public WaitersReporter(BotCommander botCommander)
         {
-            this.botClient = botClient;
+            this.botCommander = botCommander;
             Init();
         }
 
@@ -43,34 +41,15 @@ namespace TelegramBotTry1.Reporters
                 {
                     var sinceDate = DateTime.UtcNow.AddHours(-61).AddMinutes(-125);
                     var untilDate = DateTime.UtcNow.AddMinutes(-120);
-                    var command = new ViewWaitersCommand(sinceDate, untilDate);
-                    var waitersReport = command.Process();
-
-                    await botClient.SendTextMessagesAsExcelReportAsync(
-                        ChatIds.Unanswered,
-                        waitersReport.Messages,
-                        waitersReport.Caption,
-                        new[]
-                        {
-                            nameof(IMessageDataSet.Date),
-                            nameof(IMessageDataSet.ChatName),
-                            nameof(IMessageDataSet.Message),
-                            nameof(IMessageDataSet.UserFirstName),
-                            nameof(IMessageDataSet.UserLastName),
-                            nameof(IMessageDataSet.UserName),
-                            nameof(IMessageDataSet.UserId)
-                        });
+                    await botCommander.ViewWaitersAsync(ChatIds.Unanswered, sinceDate, untilDate);
                 }
-                else if (signalTime.Hour >= 7 && signalTime.Hour < 18 && signalTime.DayOfWeek != DayOfWeek.Saturday && signalTime.DayOfWeek != DayOfWeek.Sunday)
+                else if (signalTime.Hour is >= 7 and < 18 && signalTime.DayOfWeek != DayOfWeek.Saturday && signalTime.DayOfWeek != DayOfWeek.Sunday)
                 {
                     var sinceDate = signalTime.Hour == 7 && signalTime.Minute < 5
                         ? DateTime.UtcNow.AddHours(-13).AddMinutes(-125)
                         : DateTime.UtcNow.AddMinutes(-125);
                     var untilDate = DateTime.UtcNow.AddMinutes(-120);
-                    var command = new ViewWaitersCommand(sinceDate, untilDate);
-                    var waitersReport = command.Process();
-                    var formattedRecords = waitersReport.Messages.Select(Formatter.Waiters).ToList();
-                    await botClient.SendTextMessagesAsListAsync(ChatIds.Unanswered, formattedRecords, ChatType.Chat);
+                    await botCommander.ViewWaitersAsync(ChatIds.Unanswered, sinceDate, untilDate);
                 }
             }
             catch (Exception exception)
@@ -80,11 +59,11 @@ namespace TelegramBotTry1.Reporters
                 {
                     case SocketException _:
                     case ObjectDisposedException _:
-                        await botClient.SendTextMessageAsync(ChatIds.Botva, "Пропала коннекция к базе. Отключаюсь, чтобы не потерялись данные. vw\r\n"
-                                                                                + "Пожалуйста, включите меня в течение суток");
+                        await botCommander.SendMessageAsync(ChatIds.Botva,
+                            "Пропала коннекция к базе. Отключаюсь, чтобы не потерялись данные. vw\r\n" + "Пожалуйста, включите меня в течение суток");
                         throw;
                     default:
-                        await botClient.SendTextMessageAsync(ChatIds.Test125, exception.ToString());
+                        await botCommander.SendMessageAsync(ChatIds.Test125, exception.ToString());
                         break;
                 }
             }

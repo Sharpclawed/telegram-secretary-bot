@@ -1,31 +1,62 @@
 ﻿using System;
-using TelegramBotTry1.DataProviders;
-using TelegramBotTry1.Dto;
+using System.Linq;
+using System.Threading.Tasks;
+using Domain.Models;
+using Domain.Services;
+using Telegram.Bot.Types;
+using TelegramBotTry1.DomainExtensions;
+using TelegramBotTry1.Settings;
 
 namespace TelegramBotTry1.Commands
 {
     public class ViewWaitersCommand : IBotCommand
     {
+        private readonly IMessageService messageService;
+        private readonly ITgBotClientEx tgClient;
+        private readonly ChatId chatId;
         public DateTime? SinceDate { get; }
         public DateTime? UntilDate { get; }
 
-        public ViewWaitersCommand()
+        public ViewWaitersCommand(IMessageService messageService, ITgBotClientEx tgClient, ChatId chatId)
         {
+            this.messageService = messageService;
+            this.tgClient = tgClient;
+            this.chatId = chatId;
         }
 
-        public ViewWaitersCommand(DateTime sinceDate, DateTime untilDate)
+        public ViewWaitersCommand(IMessageService messageService, ITgBotClientEx tgClient, ChatId chatId, DateTime sinceDate, DateTime untilDate)
         {
+            this.messageService = messageService;
+            this.tgClient = tgClient;
+            this.chatId = chatId;
             SinceDate = sinceDate;
             UntilDate = untilDate;
         }
-
-        public CommandResult Process()
+        
+        public async Task ProcessAsync()
         {
             var sinceDateValue = SinceDate ?? DateTime.UtcNow.Date.AddMonths(-1);
             var untilDateValue = UntilDate ?? DateTime.UtcNow.Date.AddMinutes(-30);
-            var waitersReport = ViewWaitersProvider.GetWaiters(sinceDateValue, untilDateValue);
+            var records = messageService.GetUnansweredDirMsgs(sinceDateValue, untilDateValue).FilterObviouslySuperfluous().ToList();
+            var formattedRecords = records.Select(Formatter.Waiters).ToList();
 
-            return new CommandResult { Messages = waitersReport, Caption = "Отчет по неотвеченным сообщениям" };
+            if (formattedRecords.Count <= TgBotSettings.ReadableCountOfMessages)
+                await tgClient.SendTextMessagesAsListAsync(chatId, formattedRecords, СorrespondenceType.Personal);
+            else
+                await tgClient.SendTextMessagesAsExcelReportAsync(
+                    chatId,
+                    records,
+                    "Отчет по неотвеченным сообщениям",
+                    new[]
+                    {
+                        nameof(DomainMessage.Date),
+                        nameof(DomainMessage.ChatName),
+                        nameof(DomainMessage.Message),
+                        nameof(DomainMessage.UserFirstName),
+                        nameof(DomainMessage.UserLastName),
+                        nameof(DomainMessage.UserName),
+                        nameof(DomainMessage.UserId)
+                    });
         }
     }
 }

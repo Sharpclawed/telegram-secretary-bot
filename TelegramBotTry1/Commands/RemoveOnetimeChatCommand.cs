@@ -1,30 +1,31 @@
-﻿using System.Linq;
-using TelegramBotTry1.Domain;
-using TelegramBotTry1.Dto;
+﻿using System.Threading.Tasks;
+using Domain.Services;
+using Telegram.Bot.Types;
 
 namespace TelegramBotTry1.Commands
 {
     public class RemoveOnetimeChatCommand : IBotCommand
     {
+        private readonly IOneTimeChatService oneTimeChatService;
+        private readonly ITgBotClientEx tgClient;
+        private readonly ChatId chatId;
         public string ChatName { get; }
 
-        public RemoveOnetimeChatCommand(string chatName)
+        public RemoveOnetimeChatCommand(IOneTimeChatService oneTimeChatService, ITgBotClientEx tgClient, ChatId chatId,
+            string chatName)
         {
+            this.oneTimeChatService = oneTimeChatService;
+            this.tgClient = tgClient;
+            this.chatId = chatId;
             ChatName = chatName;
         }
 
-        public CommandResult Process()
+        public async Task ProcessAsync()
         {
-            using (var context = new MsgContext())
-            {
-                var messageDataSets = context.Set<MessageDataSet>().AsNoTracking();
-                var onetimeChatDataSets = context.Set<OnetimeChatDataSet>();
-                var chat = messageDataSets.GetChatByChatName(ChatName);
-                onetimeChatDataSets.Remove(onetimeChatDataSets.First(x => x.ChatId == chat.Id));
-                context.SaveChanges();
-            }
+            var succeeded = oneTimeChatService.Unmake(ChatName);
+            var result = succeeded ? "Команда обработана" : "Чат не найден";
 
-            return new CommandResult { Message = "Команда обработана" };
+            await tgClient.SendTextMessageAsync(chatId, result);
         }
     }
 }

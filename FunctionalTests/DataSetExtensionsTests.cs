@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using DAL.Models;
+using Domain;
+using Domain.Models;
 using NUnit.Framework;
-using TelegramBotTry1;
 using FluentAssertions;
-using Telegram.Bot.Types;
-using TelegramBotTry1.Domain;
+using TelegramBotTry1.DomainExtensions;
 
 namespace FunctionalTests
 {
@@ -13,12 +14,12 @@ namespace FunctionalTests
     public class DataSetExtensionsTests
     {
         //todo should be isolated
-        private List<IMessageDataSet> dataSet;
+        private List<MessageDataSet> dataSet;
 
         [SetUp]
         public void SetUp()
         {
-            dataSet = new List<IMessageDataSet>
+            dataSet = new List<MessageDataSet>
             {
                 GetMessage(1, "Чат^1", new DateTime(2017, 1, 10), 1, 1, "Message 1.1"),
                 GetMessage(1, "Чат^1", new DateTime(2017, 1, 2), 2, 2, "Message 1.2"),
@@ -101,7 +102,7 @@ namespace FunctionalTests
                 .GetChatByChatName("incorrect name"));
         }
 
-        private IMessageDataSet GetMessage(long chatId, string chatName, DateTime date, long userId, long messageId, string message)
+        private MessageDataSet GetMessage(long chatId, string chatName, DateTime date, long userId, long messageId, string message)
         {
             return new MessageDataSet
             {
@@ -186,7 +187,7 @@ namespace FunctionalTests
                 "🌸🌸🌸",
                 "✅",
             };
-            var set = testCases.Select(z => new MessageDataSet(new Message {Text = z, From = new Telegram.Bot.Types.User(), Chat = new Telegram.Bot.Types.Chat()})).ToList();
+            var set = testCases.Select(z => new DomainMessage(){Message =  z}).ToList();
             var sut = set.FilterObviouslySuperfluous();
 
             sut.Should().BeEquivalentTo(new List<MessageDataSet>());

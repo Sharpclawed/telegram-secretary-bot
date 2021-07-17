@@ -1,37 +1,30 @@
-﻿using System.Linq;
-using TelegramBotTry1.Domain;
-using TelegramBotTry1.Dto;
+﻿using System.Threading.Tasks;
+using Domain.Services;
+using Telegram.Bot.Types;
 
 namespace TelegramBotTry1.Commands
 {
     public class AddOnetimeChatCommand : IBotCommand
     {
+        private readonly IOneTimeChatService oneTimeChatService;
+        private readonly ITgBotClientEx tgClient;
+        private readonly ChatId chatId;
         public string ChatName { get; }
 
-        public AddOnetimeChatCommand(string chatName)
+        public AddOnetimeChatCommand(IOneTimeChatService oneTimeChatService, ITgBotClientEx tgClient, ChatId chatId, string chatName)
         {
+            this.oneTimeChatService = oneTimeChatService;
+            this.tgClient = tgClient;
+            this.chatId = chatId;
             ChatName = chatName;
         }
 
-        public CommandResult Process()
+        public async Task ProcessAsync()
         {
-            using (var context = new MsgContext())
-            {
-                var messageDataSets = context.Set<MessageDataSet>().AsNoTracking();
-                var onetimeChatDataSets = context.Set<OnetimeChatDataSet>();
-                var chat = messageDataSets.GetChatByChatName(ChatName);
-                if (!onetimeChatDataSets.Any(x => x.ChatId == chat.Id))
-                {
-                    onetimeChatDataSets.Add(new OnetimeChatDataSet
-                    {
-                        ChatName = chat.Name,
-                        ChatId = chat.Id
-                    });
-                    context.SaveChanges();
-                }
-            }
+            oneTimeChatService.Make(ChatName);
 
-            return new CommandResult { Message = "Команда обработана" };
+            var result = "Команда обработана";
+            await tgClient.SendTextMessageAsync(chatId, result);
         }
     }
 }
