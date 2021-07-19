@@ -7,33 +7,33 @@ using TelegramBotTry1.Settings;
 
 namespace TelegramBotTry1
 {
-    public class SecretaryBot
+    public interface ISecretaryBot
     {
-        private static readonly string mainBotToken = Secrets.MainBotToken;
+        BotCommander BotCommander { get; }
+        MessageProcessor MessageProcessor { get; }
+        string Name { get; }
+        void ConfigPolling();
+        Task ConfigWebhookAsync(string url);
+        void StartReceiving();
+        void StartReporters();
+    }
 
-        private static readonly SecretaryBot instance = new ();
-        private static BotCommander botCommander;
-        private static ITgBotClientEx tgClient;
-        private static MessageProcessor messageProcessor;
-        private static BotStateReporter botStateReporter;
-        private static WaitersReporter waitersViewReporter;
-        private static InactiveChatsReporter inactiveChatsReporter;
-        private static string name;
-        private static bool initialized;
+    public class SecretaryBot : ISecretaryBot
+    {
+        private ITgBotClientEx tgClient;
+        private BotCommander botCommander;
+        private MessageProcessor messageProcessor;
+        private BotStateReporter botStateReporter;
+        private WaitersReporter waitersViewReporter;
+        private InactiveChatsReporter inactiveChatsReporter;
+        private string name;
 
-        private SecretaryBot()
+        public SecretaryBot(ITgBotClientEx tgClientEx)
         {
+            tgClient = tgClientEx;
         }
 
-        public static async Task<SecretaryBot> GetAsync()
-        {
-            if (!initialized)
-                await InitAsync();
-
-            return instance;
-        }
-
-        private static async Task InitAsync()
+        public async Task InitAsync()
         {
             await using (var context = new SecretaryContext())
             {
@@ -43,21 +43,19 @@ namespace TelegramBotTry1
             var bkService = new BkService();
             var oneTimeChatService = new OneTimeChatService();
             var messageService = new MessageService();
-            tgClient = new TgBotClientEx(mainBotToken);
             botCommander = new BotCommander(tgClient, messageService);
             messageProcessor = new MessageProcessor(tgClient, adminService, bkService, oneTimeChatService, messageService);
             botStateReporter = new BotStateReporter(botCommander);
             waitersViewReporter = new WaitersReporter(botCommander);
             inactiveChatsReporter = new InactiveChatsReporter(botCommander);
             name = (await tgClient.GetMeAsync()).Username;
-            initialized = true;
         }
 
         public BotCommander BotCommander => botCommander;
         public MessageProcessor MessageProcessor => messageProcessor;
         public string Name => name;
 
-        public void SetPolling()
+        public void ConfigPolling()
         {
             tgClient.OnMessage += async (_, messageEventArgs) => await messageProcessor.ProcessTextMessageAsync(messageEventArgs.Message);
             tgClient.OnMessageEdited += async (_, messageEventArgs) => await messageProcessor.ProcessTextMessageAsync(messageEventArgs.Message);
@@ -68,7 +66,12 @@ namespace TelegramBotTry1
             tgClient.OnCallbackQuery += async (_, e) => await botCommander.SendMessageAsync(ChatIds.Test125, e.CallbackQuery.Message.Text);
         }
 
-        public void StartPolling()
+        public async Task ConfigWebhookAsync(string url)
+        {
+            await tgClient.SetWebhookAsync(url).ConfigureAwait(false);
+        }
+
+        public void StartReceiving()
         {
             tgClient.StartReceiving();
         }

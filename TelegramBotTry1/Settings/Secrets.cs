@@ -2,8 +2,6 @@
 {
     public static partial class Secrets
     {
-        public static string DbConnectionString { get; }
-
         public static string MainBotToken { get; }
         public static string TestBotToken { get; }
 
