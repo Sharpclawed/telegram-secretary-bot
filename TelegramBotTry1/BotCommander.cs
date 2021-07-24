@@ -23,7 +23,7 @@ namespace TelegramBotTry1
             await new SendMessageCommand(tgClient, chatId, text).ProcessAsync();
         }
 
-        public async Task SendMessagesAsync(IEnumerable<ChatId> chatIds, string text)
+        public async Task SendMessagesAsync(IEnumerable<long> chatIds, string text)
         {
             await new DistributeMessageCommand(tgClient, chatIds, text).ProcessAsync();
         }
