@@ -1,7 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using DAL;
 using Domain.Services;
 using Microsoft.EntityFrameworkCore;
+using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.InputFiles;
 using TelegramBotTry1.Reporters;
 using TelegramBotTry1.Settings;
 
@@ -13,7 +17,7 @@ namespace TelegramBotTry1
         MessageProcessor MessageProcessor { get; }
         string Name { get; }
         void ConfigPolling();
-        Task ConfigWebhookAsync(string url);
+        Task ConfigWebhookAsync(string url, InputFileStream cert = null, CancellationToken cancellationToken = default);
         void StartReceiving();
         void StartReporters();
     }
@@ -66,9 +70,12 @@ namespace TelegramBotTry1
             tgClient.OnCallbackQuery += async (_, e) => await botCommander.SendMessageAsync(ChatIds.Test125, e.CallbackQuery.Message.Text);
         }
 
-        public async Task ConfigWebhookAsync(string url)
+        public async Task ConfigWebhookAsync(string url, InputFileStream cert = null, CancellationToken cancellationToken = default)
         {
-            await tgClient.SetWebhookAsync(url).ConfigureAwait(false);
+            await tgClient.SetWebhookAsync(url, cert, cancellationToken: cancellationToken, allowedUpdates: new List<UpdateType>
+                {
+                    UpdateType.Message
+                }).ConfigureAwait(false);
         }
 
         public void StartReceiving()

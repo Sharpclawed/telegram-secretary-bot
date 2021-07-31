@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
@@ -7,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using SecretaryWebAPI.Settings;
 using Telegram.Bot;
+using Telegram.Bot.Types.InputFiles;
 using TelegramBotTry1;
 
 namespace SecretaryWebAPI.Services
@@ -32,8 +34,9 @@ namespace SecretaryWebAPI.Services
             var bot = scope.ServiceProvider.GetRequiredService<ISecretaryBot>();
             
             var webhookAddress = WebhookSettings.Url + "bot/" + WebhookSettings.BotToken;
+            await using FileStream cert = File.OpenRead(WebhookSettings.PathToCert);
             logger.LogInformation("Setting webhook: ", webhookAddress);
-            await bot.ConfigWebhookAsync(webhookAddress);
+            await bot.ConfigWebhookAsync(webhookAddress, cert, cancellationToken);
         }
 
         public async Task StopAsync(CancellationToken cancellationToken)
