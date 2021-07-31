@@ -26,7 +26,7 @@ namespace TelegramBotTry1.Commands
             if (!records.Any())
                 await tgClient.SendTextMessageAsync(chatId, "Список админов пуст");
             else
-                await tgClient.SendTextMessagesAsSingleTextAsync(chatId, records, "Список админов:\r\n");
+                await tgClient.SendTextMessagesAsSingleTextAsync(chatId, records, "Список админов:");
         }
     }
 }

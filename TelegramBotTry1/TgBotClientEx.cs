@@ -36,7 +36,7 @@ namespace TelegramBotTry1
         public async Task SendTextMessagesAsSingleTextAsync(ChatId chatId, IEnumerable<string> msgs, string caption)
         {
             var result = string.Join("\r\n", msgs);
-            await SendTextMessageAsync(chatId, caption + result);
+            await SendTextMessageAsync(chatId, $"{caption}\r\n{result}");
         }
         
         public async Task SendTextMessagesAsExcelReportAsync(ChatId chatId, List<DomainMessage> msgs, string caption, string[] columnNames, Func<DomainMessage, string> groupBy = null)

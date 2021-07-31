@@ -2,7 +2,7 @@
 {
     public class DistributeMessages
     {
-        public long[] ChatId { get; set; }
+        public long[] ChatIds { get; set; }
         public string Text { get; set; }
     }
 }
