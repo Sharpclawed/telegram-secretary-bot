@@ -30,8 +30,9 @@ namespace SecretaryWebAPI
                 bot.InitAsync().GetAwaiter().GetResult();
                 return bot;
             });
-            services.AddHostedService<ConfigureWebhook>();
+            services.AddHostedService<ConfigureWebhookService>();
             services.AddScoped<HandleUpdateService>();
+            services.AddScoped<HandleDistributeMessagesService>();
             services.AddControllers().AddNewtonsoftJson();
             services.AddSwaggerGen(c =>
             {
@@ -57,10 +58,15 @@ namespace SecretaryWebAPI
 
             app.UseEndpoints(endpoints =>
             {
-                var token = WebhookSettings.BotToken;
-                endpoints.MapControllerRoute(name: "tgwebhook",
-                    pattern: $"bot/{token}",
+                var botToken = WebhookSettings.BotToken;
+                endpoints.MapControllerRoute(name: "tgWebhook",
+                    pattern: $"bot/{botToken}",
                     new { controller = "Webhook", action = "Post" });
+
+                var managingToken = WebhookSettings.DistributeManagingToken;
+                endpoints.MapControllerRoute(name: "distributeMessages",
+                    pattern: $"api/{managingToken}/{{controller=Distribute}}/{{action=Messages}}");
+
                 endpoints.MapControllers();
             });
         }

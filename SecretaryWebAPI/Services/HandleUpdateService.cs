@@ -5,6 +5,7 @@ using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using TelegramBotTry1;
+using TelegramBotTry1.Settings;
 
 namespace SecretaryWebAPI.Services
 {
@@ -42,7 +43,7 @@ namespace SecretaryWebAPI.Services
             await bot.MessageProcessor.ProcessTextMessageAsync(message);
         }
 
-        public Task HandleErrorAsync(Exception exception)
+        public async Task HandleErrorAsync(Exception exception)
         {
             var errorMessage = exception switch
             {
@@ -50,8 +51,8 @@ namespace SecretaryWebAPI.Services
                 _ => exception.ToString()
             };
 
+            await bot.BotCommander.SendMessageAsync(ChatIds.Debug, errorMessage);
             logger.LogInformation(errorMessage);
-            return Task.CompletedTask;
         }
     }
 }

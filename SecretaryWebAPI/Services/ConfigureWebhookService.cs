@@ -8,18 +8,17 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using SecretaryWebAPI.Settings;
 using Telegram.Bot;
-using Telegram.Bot.Types.InputFiles;
 using TelegramBotTry1;
 
 namespace SecretaryWebAPI.Services
 {
-    public class ConfigureWebhook : IHostedService
+    public class ConfigureWebhookService : IHostedService
     {
-        private readonly ILogger<ConfigureWebhook> logger;
+        private readonly ILogger<ConfigureWebhookService> logger;
         private readonly IServiceProvider services;
         private readonly IConfiguration configuration;
 
-        public ConfigureWebhook(ILogger<ConfigureWebhook> logger,
+        public ConfigureWebhookService(ILogger<ConfigureWebhookService> logger,
                                 IServiceProvider serviceProvider,
                                 IConfiguration configuration)
         {
