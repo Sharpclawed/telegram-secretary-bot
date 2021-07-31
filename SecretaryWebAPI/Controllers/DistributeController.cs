@@ -22,6 +22,8 @@ namespace SecretaryWebAPI.Controllers
         public async Task<IActionResult> Update([FromBody] DistributeMessages distributeMessages)
         {
             //todo store commands
+            //todo check sending
+            //todo return result
             await bot.BotCommander.SendMessagesAsync(distributeMessages.ChatId, distributeMessages.Text);
 
             return Ok();

@@ -8,7 +8,7 @@ namespace TelegramBotTry1
     {
         static async Task Main()
         {
-            var tgClient = new TgBotClientEx(Secrets.MainBotToken);
+            var tgClient = new TgBotClientEx(Secrets.TgBotToken);
             var bot = new SecretaryBot(tgClient);
             await bot.InitAsync();
             bot.ConfigPolling();

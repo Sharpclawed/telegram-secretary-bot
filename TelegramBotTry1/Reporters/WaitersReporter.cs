@@ -63,7 +63,7 @@ namespace TelegramBotTry1.Reporters
                             "Пропала коннекция к базе. Отключаюсь, чтобы не потерялись данные. vw\r\n" + "Пожалуйста, включите меня в течение суток");
                         throw;
                     default:
-                        await botCommander.SendMessageAsync(ChatIds.Test125, exception.ToString());
+                        await botCommander.SendMessageAsync(ChatIds.Debug, exception.ToString());
                         break;
                 }
             }

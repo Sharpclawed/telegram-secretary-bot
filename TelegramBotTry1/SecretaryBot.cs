@@ -64,10 +64,10 @@ namespace TelegramBotTry1
             tgClient.OnMessage += async (_, messageEventArgs) => await messageProcessor.ProcessTextMessageAsync(messageEventArgs.Message);
             tgClient.OnMessageEdited += async (_, messageEventArgs) => await messageProcessor.ProcessTextMessageAsync(messageEventArgs.Message);
             tgClient.OnReceiveError += async (_, receiveErrorEventArgs) =>
-                await botCommander.SendMessageAsync(ChatIds.Test125, receiveErrorEventArgs.ApiRequestException.Message);
+                await botCommander.SendMessageAsync(ChatIds.Debug, receiveErrorEventArgs.ApiRequestException.Message);
             tgClient.OnReceiveGeneralError += async (_, e) =>
-                await botCommander.SendMessageAsync(ChatIds.Test125, e.Exception.Message + " \r\n" + e.Exception.InnerException);
-            tgClient.OnCallbackQuery += async (_, e) => await botCommander.SendMessageAsync(ChatIds.Test125, e.CallbackQuery.Message.Text);
+                await botCommander.SendMessageAsync(ChatIds.Debug, e.Exception.Message + " \r\n" + e.Exception.InnerException);
+            tgClient.OnCallbackQuery += async (_, e) => await botCommander.SendMessageAsync(ChatIds.Debug, e.CallbackQuery.Message.Text);
         }
 
         public async Task ConfigWebhookAsync(string url, InputFileStream cert = null, CancellationToken cancellationToken = default)

@@ -61,7 +61,7 @@ namespace TelegramBotTry1
                             + "Пожалуйста, включите меня в течение суток");
                         throw;
                     default:
-                        await tgClient.SendTextMessageAsync(ChatIds.Test125, exception.ToString());
+                        await tgClient.SendTextMessageAsync(ChatIds.Debug, exception.ToString());
                         break;
                 }
             }

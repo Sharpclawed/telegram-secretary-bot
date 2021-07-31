@@ -23,7 +23,7 @@ namespace SecretaryWebAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddHttpClient("tgClient").AddTypedClient<ITgBotClientEx>(httpClient => new TgBotClientEx(Secrets.MainBotToken, httpClient));
+            services.AddHttpClient("tgClient").AddTypedClient<ITgBotClientEx>(httpClient => new TgBotClientEx(Secrets.TgBotToken, httpClient));
             services.AddSingleton<ISecretaryBot, SecretaryBot>(serviceProvider =>
             {
                 var bot = new SecretaryBot(serviceProvider.GetService<ITgBotClientEx>());

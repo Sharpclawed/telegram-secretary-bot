@@ -6,6 +6,6 @@ namespace SecretaryWebAPI.Settings
     {
         public static string Url { get; }
         public static string PathToCert { get; }
-        public static string BotToken => Secrets.TestBotToken;
+        public static string BotToken => Secrets.TgBotToken;
     }
 }
