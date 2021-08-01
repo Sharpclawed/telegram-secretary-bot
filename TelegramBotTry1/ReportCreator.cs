@@ -13,7 +13,8 @@ namespace TelegramBotTry1
     {
         public static FileStream Create(IEnumerable<KeyValuePair<string, List<DomainMessage>>> sheetsData, string[] colNames)
         {
-            var tempFileName = "temp-" + Guid.NewGuid() + ".xls";
+            //todo unhardcoded path
+            var tempFileName = $@"c:\temp\temp-{Guid.NewGuid()}.xls";
             var fileStream = new FileStream(tempFileName, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read, 4096,
                 FileOptions.RandomAccess | FileOptions.DeleteOnClose);
             using (var xlPackage = new ExcelPackage(fileStream))
