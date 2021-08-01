@@ -40,7 +40,7 @@ namespace SecretaryWebAPI.Services
 
         private async Task BotOnMessageReceived(Message message)
         {
-            await bot.MessageProcessor.ProcessTextMessageAsync(message);
+            await bot.MessageProcessor.ProcessMessageAsync(message);
         }
 
         public async Task HandleErrorAsync(Exception exception)

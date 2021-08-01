@@ -20,7 +20,7 @@ namespace TelegramBotTry1.Commands
             this.tgClient = tgClient;
             this.chatIds = chatIds;
             this.text = text;
-            this.caption = caption ?? "Рассылка сообщений выполнена";
+            this.caption = caption ?? $"Рассылка сообщения выполнена\r\n{text}";
             this.withMarkdown = withMarkdown;
         }
 
@@ -29,7 +29,7 @@ namespace TelegramBotTry1.Commands
             var result = await SendTextMessagesAsync();
             var rows = result.Select(z => $"ChatId: {z.Item1} Result: {z.Item2}");
             //todo send as excel
-            await tgClient.SendTextMessagesAsSingleTextAsync(ChatIds.Botva, rows, caption);
+            await tgClient.SendTextMessagesAsSingleTextAsync(ChatIds.LogDistributing, rows, caption);
         }
 
         private async Task<IEnumerable<(long, string)>> SendTextMessagesAsync()
@@ -54,7 +54,7 @@ namespace TelegramBotTry1.Commands
 
         private async Task SendTextMessageAsync(long chatId)
         {
-            var permittedChats = new List<long> {ChatIds.Botva.Identifier, ChatIds.Debug.Identifier};
+            var permittedChats = new List<long> {ChatIds.Botva.Identifier, ChatIds.Debug.Identifier, ChatIds.LogDistributing.Identifier};
             if (!permittedChats.Contains(chatId))
                 throw new Exception("Unallowed chat");
 

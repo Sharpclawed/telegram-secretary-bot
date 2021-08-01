@@ -8,5 +8,6 @@
         public static long DebugChatId { get; }
         public static long BotvaChatId { get; }
         public static long UnasweredChatId { get; }
+        public static long LogChatId { get; }
     }
 }

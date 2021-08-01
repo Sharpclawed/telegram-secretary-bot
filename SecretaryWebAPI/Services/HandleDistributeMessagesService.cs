@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using SecretaryWebAPI.Models;
 using TelegramBotTry1;
@@ -20,8 +19,8 @@ namespace SecretaryWebAPI.Services
         {
             try
             {
-                var senderInfo = $"Рассылка сообщения\r\n{distributeMessages.Text}\r\nвыполнена с ip: {callerIp ?? "unknown"}";
-                await bot.BotCommander.DistributeMessageAsync(distributeMessages.ChatIds, distributeMessages.Text, senderInfo);
+                //var senderInfo = $"Рассылка сообщения\r\n{distributeMessages.Text}\r\nвыполнена с ip: {callerIp ?? "unknown"}";
+                await bot.BotCommander.DistributeMessageAsync(distributeMessages.ChatIds, distributeMessages.Text);
             }
             catch (Exception exception)
             {

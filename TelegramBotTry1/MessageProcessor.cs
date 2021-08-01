@@ -6,6 +6,7 @@ using Domain.Models;
 using Domain.Services;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using TelegramBotTry1.Commands;
 using TelegramBotTry1.Settings;
 
 namespace TelegramBotTry1
@@ -26,27 +27,21 @@ namespace TelegramBotTry1
             commandDetector = new CommandDetector(tgClient, adminService, bkService, oneTimeChatService, messageService);
         }
 
-        public async Task ProcessTextMessageAsync(Message message)
+        public async Task ProcessMessageAsync(Message message)
         {
             try
             {
                 SaveToDatabase(message);
-                if (message.Type != MessageType.Text || message.Text.First() != '/')
-                    return;
 
-                var isMessagePersonal = message.Chat.Title == null;
-                if (!isMessagePersonal)
-                    return;
-
-                var isAdminAsking = adminService.IfAdmin(message.From.Id);
-                if (!isAdminAsking)
+                switch (message.Type)
                 {
-                    await tgClient.SendTextMessageAsync(message.Chat.Id, "У вас не хватает прав");
-                    return;
+                    case MessageType.Text:
+                        await ProcessTextMessage(message);
+                        break;
+                    case MessageType.ChatMembersAdded:
+                        await ProcessChatMembersAdded(message);
+                        break;
                 }
-
-                var command = commandDetector.Parse(message);
-                await command.ProcessAsync();
             }
             catch (Exception exception)
             {
@@ -65,6 +60,32 @@ namespace TelegramBotTry1
                         break;
                 }
             }
+        }
+
+        private async Task ProcessChatMembersAdded(Message message)
+        {
+            var chatToReport = ChatIds.LogDistributing;
+            var newMembers = message.NewChatMembers;
+            var command = new CheckAddedMemberCommand(tgClient, chatToReport, newMembers, message.Chat);
+            await command.ProcessAsync();
+        }
+
+        private async Task ProcessTextMessage(Message message)
+        {
+            var isCommand = message.Text.First() == '/';
+            var isMessagePersonal = message.Chat.Title == null;
+            if (!isCommand || !isMessagePersonal)
+                return;
+
+            var isAdminAsking = adminService.IfAdmin(message.From.Id);
+            if (!isAdminAsking)
+            {
+                await tgClient.SendTextMessageAsync(message.Chat.Id, "У вас не хватает прав");
+                return;
+            }
+
+            var command = commandDetector.Parse(message);
+            await command.ProcessAsync();
         }
 
         private void SaveToDatabase(Message message)

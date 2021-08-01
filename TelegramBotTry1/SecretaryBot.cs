@@ -61,8 +61,8 @@ namespace TelegramBotTry1
 
         public void ConfigPolling()
         {
-            tgClient.OnMessage += async (_, messageEventArgs) => await messageProcessor.ProcessTextMessageAsync(messageEventArgs.Message);
-            tgClient.OnMessageEdited += async (_, messageEventArgs) => await messageProcessor.ProcessTextMessageAsync(messageEventArgs.Message);
+            tgClient.OnMessage += async (_, messageEventArgs) => await messageProcessor.ProcessMessageAsync(messageEventArgs.Message);
+            tgClient.OnMessageEdited += async (_, messageEventArgs) => await messageProcessor.ProcessMessageAsync(messageEventArgs.Message);
             tgClient.OnReceiveError += async (_, receiveErrorEventArgs) =>
                 await botCommander.SendMessageAsync(ChatIds.Debug, receiveErrorEventArgs.ApiRequestException.Message);
             tgClient.OnReceiveGeneralError += async (_, e) =>
