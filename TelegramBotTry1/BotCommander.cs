@@ -30,7 +30,7 @@ namespace TelegramBotTry1
 
         public async Task DistributeMessageAsync(IEnumerable<long> chatIds, string text, string caption = null)
         {
-            await new DistributeMessageCommand(tgClient, chatIds, text, caption).ProcessAsync();
+            await new DistributeMessageCommand(messageService, tgClient, chatIds, text, caption).ProcessAsync();
         }
 
         public async Task ViewInactiveChatsAsync(ChatId chatId, DateTime sinceDate, DateTime untilDate)
