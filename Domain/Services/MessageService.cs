@@ -141,12 +141,12 @@ namespace Domain.Services
             return lastMessagesFromDirectors;
         }
 
-        public DomainMessage GetLastMessage()
+        public DomainMessage GetLastChatMessage()
         {
             using var context = new SecretaryContext();
             var lastMsg = context.MessageDataSets.AsNoTracking()
                 .OrderByDescending(message => message.Date)
-                .First();
+                .First(z => z.ChatName != null);
             return new DomainMessage
                 {
                     UserId = lastMsg.UserId,
@@ -190,7 +190,7 @@ namespace Domain.Services
         IEnumerable<DomainMessage> GetHistory(DateTime begin, DateTime end, string exactChatName, long? exactUserId);
         IOrderedEnumerable<DomainMessage> GetLastDirMsgFromInactiveChats(DateTime sinceDate, DateTime untilDate, TimeSpan checkingPeriod);
         IEnumerable<DomainMessage> GetUnansweredDirMsgs(DateTime sinceDate, DateTime untilDate);
-        DomainMessage GetLastMessage();
+        DomainMessage GetLastChatMessage();
         Dictionary<long, string> GetChatNames(long[] cnatIds);
     }
 }

@@ -20,7 +20,7 @@ namespace TelegramBotTry1.Commands
 
         public async Task ProcessAsync()
         {
-            var lastMessage = messageService.GetLastMessage();
+            var lastMessage = messageService.GetLastChatMessage();
             var lastMessageDate = lastMessage?.Date.AddHours(5) ?? DateTime.MinValue;
             var lastMessageChat = lastMessage?.ChatName;
             var iAmAliveMessage = $"Работаю в штатном режиме\r\nПоследнее сообщение от {lastMessageDate:dd.MM.yyyy H:mm} в \"{lastMessageChat}\"";
