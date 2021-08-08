@@ -17,7 +17,7 @@ namespace TelegramBotTry1.Commands
         private readonly string caption;
         private readonly bool withMarkdown;
         
-        public DistributeMessageCommand(IMessageService messageService, ITgBotClientEx tgClient, IEnumerable<long> chatIds, string text, string caption = null, bool withMarkdown = false)
+        public DistributeMessageCommand(IMessageService messageService, ITgBotClientEx tgClient, IEnumerable<long> chatIds, string text, string caption = null, bool withMarkdown = true)
         {
             this.messageService = messageService;
             this.tgClient = tgClient;

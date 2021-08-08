@@ -28,6 +28,7 @@ namespace SecretaryWebAPI
             {
                 var bot = new SecretaryBot(serviceProvider.GetService<ITgBotClientEx>());
                 bot.InitAsync().GetAwaiter().GetResult();
+                bot.StartReporters();
                 return bot;
             });
             services.AddHostedService<ConfigureWebhookService>();
