@@ -39,7 +39,7 @@ namespace TelegramBotTry1.Commands
                 return $"Чат не найден. Id: {z.Item1} result: {z.Item2}";
             });
             //todo send as excel
-            await tgClient.SendTextMessagesAsSingleTextAsync(ChatIds.LogDistributing, rows, caption);
+            await tgClient.SendTextMessagesAsSingleTextAsync(ChatIds.LogDistributing, rows, caption, withMarkdown ? ParseMode.Markdown : ParseMode.Default, true);
         }
 
         private async Task<List<(long, string)>> SendTextMessagesAsync()
@@ -68,7 +68,7 @@ namespace TelegramBotTry1.Commands
             if (!permittedChats.Contains(chatId))
                 throw new Exception("Unallowed chat");
 
-            await tgClient.SendTextMessageAsync(chatId, text, withMarkdown ? ParseMode.Markdown : ParseMode.Default);
+            await tgClient.SendTextMessageAsync(chatId, text, withMarkdown ? ParseMode.Markdown : ParseMode.Default, true);
         }
     }
 }
