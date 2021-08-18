@@ -21,7 +21,7 @@ namespace TelegramBotTry1.Reporters
         {
             timer = new Timer
             {
-                Interval = 1000 * 60 * 60 * 0.5 //30 minutes
+                Interval = 1000 * 60 * 30 //30 minutes
             };
             timer.Elapsed += ShowASign;
             timer.AutoReset = true;

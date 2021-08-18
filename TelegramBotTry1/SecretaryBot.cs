@@ -13,6 +13,7 @@ namespace TelegramBotTry1
 {
     public interface ISecretaryBot
     {
+        Task InitAsync();
         BotCommander BotCommander { get; }
         MessageProcessor MessageProcessor { get; }
         string Name { get; }

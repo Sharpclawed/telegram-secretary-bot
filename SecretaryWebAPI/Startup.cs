@@ -24,14 +24,9 @@ namespace SecretaryWebAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddHttpClient("tgClient").AddTypedClient<ITgBotClientEx>(httpClient => new TgBotClientEx(Secrets.TgBotToken, httpClient));
-            services.AddSingleton<ISecretaryBot, SecretaryBot>(serviceProvider =>
-            {
-                var bot = new SecretaryBot(serviceProvider.GetService<ITgBotClientEx>());
-                bot.InitAsync().GetAwaiter().GetResult();
-                bot.StartReporters();
-                return bot;
-            });
+            services.AddSingleton<ISecretaryBot, SecretaryBot>(serviceProvider => new SecretaryBot(serviceProvider.GetService<ITgBotClientEx>()));
             services.AddHostedService<ConfigureWebhookService>();
+            services.AddHostedService<ConfigureReportersService>();
             services.AddScoped<HandleUpdateService>();
             services.AddScoped<HandleDistributeMessagesService>();
             services.AddControllers().AddNewtonsoftJson();
