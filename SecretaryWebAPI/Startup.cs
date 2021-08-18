@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using SecretaryWebAPI.Services;
 using SecretaryWebAPI.Settings;
+using Serilog;
 using TelegramBotTry1;
 using TelegramBotTry1.Settings;
 
@@ -26,7 +27,7 @@ namespace SecretaryWebAPI
             services.AddHttpClient("tgClient").AddTypedClient<ITgBotClientEx>(httpClient => new TgBotClientEx(Secrets.TgBotToken, httpClient));
             services.AddSingleton<ISecretaryBot, SecretaryBot>(serviceProvider => new SecretaryBot(serviceProvider.GetService<ITgBotClientEx>()));
             services.AddHostedService<ConfigureWebhookService>();
-            services.AddHostedService<ConfigureReportersService>();
+            services.AddHostedService<InitializeBotService>();
             services.AddScoped<HandleUpdateService>();
             services.AddScoped<HandleDistributeMessagesService>();
             services.AddControllers().AddNewtonsoftJson();
@@ -47,7 +48,7 @@ namespace SecretaryWebAPI
             }
 
             app.UseHttpsRedirection();
-
+            //app.UseSerilogRequestLogging();
             app.UseRouting();
 
             app.UseAuthorization();

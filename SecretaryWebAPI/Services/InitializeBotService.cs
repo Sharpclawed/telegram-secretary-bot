@@ -9,13 +9,13 @@ using TelegramBotTry1;
 
 namespace SecretaryWebAPI.Services
 {
-    public class ConfigureReportersService : IHostedService
+    public class InitializeBotService : IHostedService
     {
-        private readonly ILogger<ConfigureWebhookService> logger;
+        private readonly ILogger<InitializeBotService> logger;
         private readonly IServiceProvider services;
         private readonly IConfiguration configuration;
 
-        public ConfigureReportersService(ILogger<ConfigureWebhookService> logger,
+        public InitializeBotService(ILogger<InitializeBotService> logger,
             IServiceProvider serviceProvider,
             IConfiguration configuration)
         {
@@ -28,14 +28,15 @@ namespace SecretaryWebAPI.Services
         {
             using var scope = services.CreateScope();
             var bot = scope.ServiceProvider.GetRequiredService<ISecretaryBot>();
-            logger.LogInformation("Starting reporters: ");
+            logger.LogInformation("Initializing Secretary bot");
             await bot.InitAsync();
+            logger.LogInformation("Starting reporters");
             bot.StartReporters();
         }
 
         public async Task StopAsync(CancellationToken cancellationToken)
         {
-            logger.LogInformation("gracefull shutdown");
+            logger.LogCritical("Failed to init bot");
         }
     }
 }

@@ -51,8 +51,8 @@ namespace SecretaryWebAPI.Services
                 _ => exception.ToString()
             };
 
+            logger.LogError(errorMessage);
             await bot.BotCommander.SendMessageAsync(ChatIds.Debug, errorMessage);
-            logger.LogInformation(errorMessage);
         }
     }
 }

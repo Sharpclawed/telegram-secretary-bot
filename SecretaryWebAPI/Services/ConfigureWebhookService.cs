@@ -16,15 +16,11 @@ namespace SecretaryWebAPI.Services
     {
         private readonly ILogger<ConfigureWebhookService> logger;
         private readonly IServiceProvider services;
-        private readonly IConfiguration configuration;
 
-        public ConfigureWebhookService(ILogger<ConfigureWebhookService> logger,
-                                IServiceProvider serviceProvider,
-                                IConfiguration configuration)
+        public ConfigureWebhookService(ILogger<ConfigureWebhookService> logger, IServiceProvider serviceProvider)
         {
             this.logger = logger;
             services = serviceProvider;
-            this.configuration = configuration;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
@@ -34,7 +30,7 @@ namespace SecretaryWebAPI.Services
             
             var webhookAddress = WebhookSettings.Url + "bot/" + WebhookSettings.BotToken;
             await using FileStream cert = File.OpenRead(WebhookSettings.PathToCert);
-            logger.LogInformation("Setting webhook: ", webhookAddress);
+            logger.LogInformation("Setting webhook");
             await bot.ConfigWebhookAsync(webhookAddress, cert, cancellationToken);
         }
 
@@ -43,7 +39,7 @@ namespace SecretaryWebAPI.Services
             using var scope = services.CreateScope();
             var botClient = scope.ServiceProvider.GetRequiredService<ITelegramBotClient>();
 
-            // Remove webhook upon app shutdown
+            logger.LogCritical("Failed to set webhook");
             logger.LogInformation("Removing webhook");
             await botClient.DeleteWebhookAsync(cancellationToken);
         }
