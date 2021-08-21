@@ -23,6 +23,9 @@ namespace SecretaryWebAPI.Services
             try
             {
                 //var senderInfo = $"Рассылка сообщения\r\n{distributeMessages.Text}\r\nвыполнена с ip: {callerIp ?? "unknown"}";
+                logger.LogInformation("Recieved message distribution: {1}", distributeMessages.Text);
+                logger.LogInformation("\tfor chats: {1}", string.Join(',', distributeMessages.ChatIds));
+                logger.LogInformation("\tfrom: {1}", callerIp);
                 await bot.BotCommander.DistributeMessageAsync(distributeMessages.ChatIds, distributeMessages.Text);
             }
             catch (Exception exception)

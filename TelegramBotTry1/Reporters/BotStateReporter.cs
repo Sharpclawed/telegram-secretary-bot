@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Globalization;
 using System.Net.Sockets;
 using System.Timers;
+using Microsoft.Extensions.Logging;
 using TelegramBotTry1.Settings;
 
 namespace TelegramBotTry1.Reporters
@@ -8,12 +10,14 @@ namespace TelegramBotTry1.Reporters
     public class BotStateReporter : IReporter
     {
         private readonly BotCommander botCommander;
+        private readonly ILogger logger;
         private Timer timer;
         private DateTime lastIAmAliveCheckUtc = DateTime.UtcNow.Date;
 
-        public BotStateReporter(BotCommander botCommander)
+        public BotStateReporter(BotCommander botCommander, ILogger logger)
         {
             this.botCommander = botCommander;
+            this.logger = logger;
             Init();
         }
 
@@ -30,6 +34,7 @@ namespace TelegramBotTry1.Reporters
         public void Start()
         {
             timer.Start();
+            logger.LogInformation("BotStateReporter started");
         }
 
         private async void ShowASign(object sender, ElapsedEventArgs e)
@@ -37,17 +42,22 @@ namespace TelegramBotTry1.Reporters
             try
             {
                 var scheduledRunUtc = DateTime.UtcNow.Date.AddHours(4); //9 часов по-нашему
+                logger.LogInformation("BotStateReporter tick\r\nscheduledRunUtc:{1}\r\nDateTime.UtcNow:{2}\r\nlastIAmAliveCheckUtc.Date:{3}"
+                , scheduledRunUtc.ToString(CultureInfo.InvariantCulture)
+                , DateTime.UtcNow.ToString(CultureInfo.InvariantCulture)
+                , lastIAmAliveCheckUtc.Date);
                 if (DateTime.UtcNow > scheduledRunUtc
                     && scheduledRunUtc.Date > lastIAmAliveCheckUtc.Date
-                    && scheduledRunUtc.DayOfWeek == DayOfWeek.Saturday)
+                    && (scheduledRunUtc.DayOfWeek == DayOfWeek.Saturday || scheduledRunUtc.DayOfWeek == DayOfWeek.Sunday))
                 {
+                    logger.LogInformation("BotStateReporter actually works");
                     await botCommander.SendBotStatusAsync(ChatIds.Unanswered);
                     lastIAmAliveCheckUtc = DateTime.UtcNow;
                 }
             }
             catch (Exception exception)
             {
-                Console.WriteLine(exception.ToString());
+                logger.LogError(exception.ToString());
                 switch (exception)
                 {
                     case SocketException _:

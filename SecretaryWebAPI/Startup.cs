@@ -3,10 +3,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using SecretaryWebAPI.Services;
 using SecretaryWebAPI.Settings;
-using Serilog;
 using TelegramBotTry1;
 using TelegramBotTry1.Settings;
 
@@ -25,7 +25,9 @@ namespace SecretaryWebAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddHttpClient("tgClient").AddTypedClient<ITgBotClientEx>(httpClient => new TgBotClientEx(Secrets.TgBotToken, httpClient));
-            services.AddSingleton<ISecretaryBot, SecretaryBot>(serviceProvider => new SecretaryBot(serviceProvider.GetService<ITgBotClientEx>()));
+            services.AddSingleton<ISecretaryBot, SecretaryBot>(serviceProvider => new SecretaryBot(
+                serviceProvider.GetService<ITgBotClientEx>(),
+                serviceProvider.GetService<ILogger<SecretaryBot>>()));
             services.AddHostedService<ConfigureWebhookService>();
             services.AddHostedService<InitializeBotService>();
             services.AddScoped<HandleUpdateService>();
