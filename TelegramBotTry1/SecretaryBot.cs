@@ -55,9 +55,9 @@ namespace TelegramBotTry1
             var oneTimeChatService = new OneTimeChatService();
             var messageService = new MessageService();
             botCommander = new BotCommander(tgClient, messageService);
-            messageProcessor = new MessageProcessor(tgClient, adminService, bkService, oneTimeChatService, messageService);
+            messageProcessor = new MessageProcessor(tgClient, adminService, bkService, oneTimeChatService, messageService, logger);
             botStateReporter = new BotStateReporter(botCommander, logger);
-            waitersViewReporter = new WaitersReporter(botCommander);
+            waitersViewReporter = new WaitersReporter(botCommander, logger);
             inactiveChatsReporter = new InactiveChatsReporter(botCommander, logger);
             name = (await tgClient.GetMeAsync()).Username;
             logger.Log(LogLevel.Information, "Init's completed");

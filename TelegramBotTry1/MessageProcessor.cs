@@ -4,6 +4,7 @@ using System.Net.Sockets;
 using System.Threading.Tasks;
 using Domain.Models;
 using Domain.Services;
+using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using TelegramBotTry1.Commands;
@@ -16,14 +17,16 @@ namespace TelegramBotTry1
         private readonly ITgBotClientEx tgClient;
         private readonly IAdminService adminService;
         private readonly IMessageService messageService;
+        private readonly ILogger logger;
         private readonly CommandDetector commandDetector;
 
         public MessageProcessor(ITgBotClientEx tgClient, IAdminService adminService, IBkService bkService,
-            IOneTimeChatService oneTimeChatService, IMessageService messageService)
+            IOneTimeChatService oneTimeChatService, IMessageService messageService, ILogger logger)
         {
             this.tgClient = tgClient;
             this.adminService = adminService;
             this.messageService = messageService;
+            this.logger = logger;
             commandDetector = new CommandDetector(tgClient, adminService, bkService, oneTimeChatService, messageService);
         }
 
@@ -45,8 +48,7 @@ namespace TelegramBotTry1
             }
             catch (Exception exception)
             {
-                Console.WriteLine(exception.Message);
-                Console.WriteLine(exception.InnerException);
+                logger.LogError(exception.ToString());
                 switch (exception)
                 {
                     case SocketException _:

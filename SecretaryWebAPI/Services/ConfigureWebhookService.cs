@@ -29,8 +29,8 @@ namespace SecretaryWebAPI.Services
 
         public async Task StopAsync(CancellationToken cancellationToken)
         {
-            logger.LogInformation("Removing webhook");
-            await secretaryBot.DeleteWebhookAsync(cancellationToken);
+            //logger.LogInformation("Removing webhook");
+            //await secretaryBot.DeleteWebhookAsync(cancellationToken);
         }
     }
 }

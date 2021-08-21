@@ -25,7 +25,7 @@ namespace TelegramBotTry1.Reporters
         {
             timer = new Timer
             {
-                Interval = 1000 * 60 * 5 //5 minutes
+                Interval = 1000 * 60 * 30 //30 minutes
             };
             timer.Elapsed += ViewInactiveChatsAsync;
             timer.AutoReset = true;

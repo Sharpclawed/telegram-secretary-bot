@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Sockets;
 using System.Timers;
+using Microsoft.Extensions.Logging;
 using TelegramBotTry1.Settings;
 
 namespace TelegramBotTry1.Reporters
@@ -8,11 +9,13 @@ namespace TelegramBotTry1.Reporters
     public class WaitersReporter : IReporter
     {
         private readonly BotCommander botCommander;
+        private readonly ILogger logger;
         private Timer viewWaitersTimer;
 
-        public WaitersReporter(BotCommander botCommander)
+        public WaitersReporter(BotCommander botCommander, ILogger logger)
         {
             this.botCommander = botCommander;
+            this.logger = logger;
             Init();
         }
 
@@ -54,7 +57,7 @@ namespace TelegramBotTry1.Reporters
             }
             catch (Exception exception)
             {
-                Console.WriteLine(exception.ToString());
+                logger.LogError(exception.ToString());
                 switch (exception)
                 {
                     case SocketException _:
