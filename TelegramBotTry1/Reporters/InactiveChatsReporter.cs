@@ -42,15 +42,10 @@ namespace TelegramBotTry1.Reporters
             try
             {
                 var scheduledRunUtc = DateTime.UtcNow.Date.AddHours(4); //9 часов по-нашему
-                logger.LogInformation("InactiveChatsReporter tick\r\nscheduledRunUtc:{1}\r\nDateTime.UtcNow:{2}\r\nlastIAmAliveCheckUtc.Date:{3}"
-                    , scheduledRunUtc.ToString(CultureInfo.InvariantCulture)
-                    , DateTime.UtcNow.ToString(CultureInfo.InvariantCulture)
-                    , lastInactiveChatCheckUtc.Date);
                 if (DateTime.UtcNow > scheduledRunUtc
                     && scheduledRunUtc.Date > lastInactiveChatCheckUtc.Date
                     && scheduledRunUtc.DayOfWeek == DayOfWeek.Sunday)
                 {
-                    logger.LogInformation("InactiveChatsReporter actually works");
                     var sinceDate = scheduledRunUtc.AddDays(-28);
                     var untilDate = scheduledRunUtc;
                     await botCommander.ViewInactiveChatsAsync(ChatIds.Unanswered, sinceDate, untilDate);

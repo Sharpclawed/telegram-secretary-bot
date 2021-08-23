@@ -40,7 +40,7 @@ namespace SecretaryWebAPI.Services
 
         public async Task StopAsync(CancellationToken cancellationToken)
         {
-            logger.LogInformation("Bot shutdown");
+            logger.LogWarning("Bot shutdown");
         }
     }
 }

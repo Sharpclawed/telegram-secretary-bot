@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 using System.Net.Sockets;
 using System.Timers;
 using Microsoft.Extensions.Logging;
@@ -42,15 +41,10 @@ namespace TelegramBotTry1.Reporters
             try
             {
                 var scheduledRunUtc = DateTime.UtcNow.Date.AddHours(4); //9 часов по-нашему
-                logger.LogInformation("BotStateReporter tick\r\nscheduledRunUtc:{1}\r\nDateTime.UtcNow:{2}\r\nlastIAmAliveCheckUtc.Date:{3}"
-                , scheduledRunUtc.ToString(CultureInfo.InvariantCulture)
-                , DateTime.UtcNow.ToString(CultureInfo.InvariantCulture)
-                , lastIAmAliveCheckUtc.Date);
                 if (DateTime.UtcNow > scheduledRunUtc
                     && scheduledRunUtc.Date > lastIAmAliveCheckUtc.Date
-                    && (scheduledRunUtc.DayOfWeek == DayOfWeek.Saturday || scheduledRunUtc.DayOfWeek == DayOfWeek.Sunday))
+                    && scheduledRunUtc.DayOfWeek == DayOfWeek.Saturday)
                 {
-                    logger.LogInformation("BotStateReporter actually works");
                     await botCommander.SendBotStatusAsync(ChatIds.Unanswered);
                     lastIAmAliveCheckUtc = DateTime.UtcNow;
                 }
