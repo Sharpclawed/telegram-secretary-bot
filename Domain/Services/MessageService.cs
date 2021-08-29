@@ -5,6 +5,7 @@ using DAL;
 using DAL.Models;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace Domain.Services
 {
@@ -140,12 +141,12 @@ namespace Domain.Services
             return lastMessagesFromDirectors;
         }
 
-        public DomainMessage GetLastMessage()
+        public DomainMessage GetLastChatMessage()
         {
             using var context = new SecretaryContext();
             var lastMsg = context.MessageDataSets.AsNoTracking()
                 .OrderByDescending(message => message.Date)
-                .First();
+                .First(z => z.ChatName != null);
             return new DomainMessage
                 {
                     UserId = lastMsg.UserId,
@@ -159,6 +160,28 @@ namespace Domain.Services
                     MessageId = lastMsg.MessageId
                 };
         }
+
+        public Dictionary<long, string> GetChatNames(long[] chatIds)
+        {
+            using var context = new SecretaryContext();
+            var messageDataSets = context.MessageDataSets.AsNoTracking();
+            var chatsWithNames = (
+                    from msg in messageDataSets
+                    select new {msg.ChatId, msg.ChatName, msg.Date.Year}
+                ).Distinct()
+                .ToArray();
+            var chatsWithNamesDistinct = (
+                from cht in chatsWithNames
+                group cht by cht.ChatId
+                into groups
+                select groups.OrderByDescending(z => z.Year).FirstOrDefault()
+            ).ToArray();
+            return chatIds
+                .Distinct()
+                .Join(chatsWithNamesDistinct, z => z, z => z.ChatId,
+                    (a, b) => new KeyValuePair<long, string>(a, b.ChatName))
+                .ToDictionary(z => z.Key, z => z.Value);
+        }
     }
 
     public interface IMessageService
@@ -167,6 +190,7 @@ namespace Domain.Services
         IEnumerable<DomainMessage> GetHistory(DateTime begin, DateTime end, string exactChatName, long? exactUserId);
         IOrderedEnumerable<DomainMessage> GetLastDirMsgFromInactiveChats(DateTime sinceDate, DateTime untilDate, TimeSpan checkingPeriod);
         IEnumerable<DomainMessage> GetUnansweredDirMsgs(DateTime sinceDate, DateTime untilDate);
-        DomainMessage GetLastMessage();
+        DomainMessage GetLastChatMessage();
+        Dictionary<long, string> GetChatNames(long[] cnatIds);
     }
 }

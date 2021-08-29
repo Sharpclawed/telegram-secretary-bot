@@ -32,3 +32,4 @@ _ReSharper*/
 packages/
 TelegramBotTry1/Settings/SecretsLocal.cs
 DAL/Settings/DbSettingsSecret.cs
+SecretaryWebAPI/Settings/WebhookSettingsLocal.cs

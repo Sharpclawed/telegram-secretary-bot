@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Domain.Models;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.InputFiles;
 using TelegramBotTry1.Settings;
 
@@ -33,10 +34,10 @@ namespace TelegramBotTry1
                 await SendTextMessageAsync(chatId, msg);
         }
 
-        public async Task SendTextMessagesAsSingleTextAsync(ChatId chatId, IEnumerable<string> msgs, string caption)
+        public async Task SendTextMessagesAsSingleTextAsync(ChatId chatId, IEnumerable<string> msgs, string caption, ParseMode parseMode = ParseMode.Default, bool removeLinkPreview = false)
         {
             var result = string.Join("\r\n", msgs);
-            await SendTextMessageAsync(chatId, caption + result);
+            await SendTextMessageAsync(chatId, $"{caption}\r\n{result}", parseMode, removeLinkPreview);
         }
         
         public async Task SendTextMessagesAsExcelReportAsync(ChatId chatId, List<DomainMessage> msgs, string caption, string[] columnNames, Func<DomainMessage, string> groupBy = null)
@@ -78,7 +79,7 @@ namespace TelegramBotTry1
     public interface ITgBotClientEx : ITelegramBotClient
     {
         Task SendTextMessagesAsListAsync(ChatId chatId, IList<string> msgs, СorrespondenceType сorrespondenceType);
-        Task SendTextMessagesAsSingleTextAsync(ChatId chatId, IEnumerable<string> msgs, string caption);
+        Task SendTextMessagesAsSingleTextAsync(ChatId chatId, IEnumerable<string> msgs, string caption, ParseMode parseMode = ParseMode.Default, bool removeLinkPreview = false);
         Task SendTextMessagesAsExcelReportAsync(ChatId chatId, List<DomainMessage> msgs, string caption,
             string[] columnNames, Func<DomainMessage, string> groupBy = null);
     }

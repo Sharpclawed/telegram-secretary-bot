@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunctionalTests", "Function
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DAL", "DAL\DAL.csproj", "{8C9A2F1F-01B6-4ED4-AB8C-EEC3388B301F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{F1474F2B-837B-43DC-9879-5C6C492A32F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain.csproj", "{F1474F2B-837B-43DC-9879-5C6C492A32F2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecretaryWebAPI", "SecretaryWebAPI\SecretaryWebAPI.csproj", "{90EDD850-1491-424A-A2FE-EF9F68101E65}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{F1474F2B-837B-43DC-9879-5C6C492A32F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F1474F2B-837B-43DC-9879-5C6C492A32F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F1474F2B-837B-43DC-9879-5C6C492A32F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{90EDD850-1491-424A-A2FE-EF9F68101E65}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90EDD850-1491-424A-A2FE-EF9F68101E65}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90EDD850-1491-424A-A2FE-EF9F68101E65}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90EDD850-1491-424A-A2FE-EF9F68101E65}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

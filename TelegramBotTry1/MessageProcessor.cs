@@ -4,8 +4,10 @@ using System.Net.Sockets;
 using System.Threading.Tasks;
 using Domain.Models;
 using Domain.Services;
+using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using TelegramBotTry1.Commands;
 using TelegramBotTry1.Settings;
 
 namespace TelegramBotTry1
@@ -15,43 +17,38 @@ namespace TelegramBotTry1
         private readonly ITgBotClientEx tgClient;
         private readonly IAdminService adminService;
         private readonly IMessageService messageService;
+        private readonly ILogger logger;
         private readonly CommandDetector commandDetector;
 
         public MessageProcessor(ITgBotClientEx tgClient, IAdminService adminService, IBkService bkService,
-            IOneTimeChatService oneTimeChatService, IMessageService messageService)
+            IOneTimeChatService oneTimeChatService, IMessageService messageService, ILogger logger)
         {
             this.tgClient = tgClient;
             this.adminService = adminService;
             this.messageService = messageService;
+            this.logger = logger;
             commandDetector = new CommandDetector(tgClient, adminService, bkService, oneTimeChatService, messageService);
         }
 
-        public async Task ProcessTextMessageAsync(Message message)
+        public async Task ProcessMessageAsync(Message message)
         {
             try
             {
                 SaveToDatabase(message);
-                if (message.Type != MessageType.Text || message.Text.First() != '/')
-                    return;
 
-                var isMessagePersonal = message.Chat.Title == null;
-                if (!isMessagePersonal)
-                    return;
-
-                var isAdminAsking = adminService.IfAdmin(message.From.Id);
-                if (!isAdminAsking)
+                switch (message.Type)
                 {
-                    await tgClient.SendTextMessageAsync(message.Chat.Id, "У вас не хватает прав");
-                    return;
+                    case MessageType.Text:
+                        await ProcessTextMessage(message);
+                        break;
+                    case MessageType.ChatMembersAdded:
+                        await ProcessChatMembersAdded(message);
+                        break;
                 }
-
-                var command = commandDetector.Parse(message);
-                await command.ProcessAsync();
             }
             catch (Exception exception)
             {
-                Console.WriteLine(exception.Message);
-                Console.WriteLine(exception.InnerException);
+                logger.LogError(exception.ToString());
                 switch (exception)
                 {
                     case SocketException _:
@@ -61,10 +58,36 @@ namespace TelegramBotTry1
                             + "Пожалуйста, включите меня в течение суток");
                         throw;
                     default:
-                        await tgClient.SendTextMessageAsync(ChatIds.Test125, exception.ToString());
+                        await tgClient.SendTextMessageAsync(ChatIds.Debug, exception.ToString());
                         break;
                 }
             }
+        }
+
+        private async Task ProcessChatMembersAdded(Message message)
+        {
+            var chatToReport = ChatIds.LogDistributing;
+            var newMembers = message.NewChatMembers;
+            var command = new CheckAddedMemberCommand(tgClient, chatToReport, newMembers, message.Chat);
+            await command.ProcessAsync();
+        }
+
+        private async Task ProcessTextMessage(Message message)
+        {
+            var isCommand = message.Text.First() == '/';
+            var isMessagePersonal = message.Chat.Title == null;
+            if (!isCommand || !isMessagePersonal)
+                return;
+
+            var isAdminAsking = adminService.IfAdmin(message.From.Id);
+            if (!isAdminAsking)
+            {
+                await tgClient.SendTextMessageAsync(message.Chat.Id, "У вас не хватает прав");
+                return;
+            }
+
+            var command = commandDetector.Parse(message);
+            await command.ProcessAsync();
         }
 
         private void SaveToDatabase(Message message)

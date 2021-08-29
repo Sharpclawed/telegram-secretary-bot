@@ -23,7 +23,7 @@ namespace TelegramBotTry1.Commands
             var records = bkService.GetAll().Select(x => x.Name + " " + x.Surname).ToList();
 
             if (records.Any())
-                await tgClient.SendTextMessagesAsSingleTextAsync(chatId, records, "Список бухгалтеров:\r\n");
+                await tgClient.SendTextMessagesAsSingleTextAsync(chatId, records, "Список бухгалтеров:");
             else
                 await tgClient.SendTextMessageAsync(chatId, "Список бухгалтеров пуст");
         }

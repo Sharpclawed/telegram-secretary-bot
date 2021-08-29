@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Globalization;
 using System.Net.Sockets;
 using System.Timers;
+using Microsoft.Extensions.Logging;
 using TelegramBotTry1.Settings;
 
 namespace TelegramBotTry1.Reporters
@@ -8,12 +10,14 @@ namespace TelegramBotTry1.Reporters
     public class InactiveChatsReporter : IReporter
     {
         private readonly BotCommander botCommander;
+        private readonly ILogger logger;
         private Timer timer;
         private DateTime lastInactiveChatCheckUtc = DateTime.UtcNow.Date;
 
-        public InactiveChatsReporter(BotCommander botCommander)
+        public InactiveChatsReporter(BotCommander botCommander, ILogger logger)
         {
             this.botCommander = botCommander;
+            this.logger = logger;
             Init();
         }
 
@@ -21,7 +25,7 @@ namespace TelegramBotTry1.Reporters
         {
             timer = new Timer
             {
-                Interval = 1000 * 60 * 5 //5 minutes
+                Interval = 1000 * 60 * 30 //30 minutes
             };
             timer.Elapsed += ViewInactiveChatsAsync;
             timer.AutoReset = true;
@@ -30,6 +34,7 @@ namespace TelegramBotTry1.Reporters
         public void Start()
         {
             timer.Start();
+            logger.LogInformation("InactiveChatsReporter started");
         }
 
         private async void ViewInactiveChatsAsync(object sender, ElapsedEventArgs e)
@@ -50,7 +55,7 @@ namespace TelegramBotTry1.Reporters
             }
             catch (Exception exception)
             {
-                Console.WriteLine(exception.ToString());
+                logger.LogError(exception.ToString());
                 switch (exception)
                 {
                     case SocketException _:
@@ -59,7 +64,7 @@ namespace TelegramBotTry1.Reporters
                                                                            + "Пожалуйста, включите меня в течение суток");
                         throw;
                     default:
-                        await botCommander.SendMessageAsync(ChatIds.Test125, exception.ToString());
+                        await botCommander.SendMessageAsync(ChatIds.Debug, exception.ToString());
                         break;
                 }
             }

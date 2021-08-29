@@ -13,13 +13,12 @@ namespace TelegramBotTry1
     {
         public static FileStream Create(IEnumerable<KeyValuePair<string, List<DomainMessage>>> sheetsData, string[] colNames)
         {
-            var tempFileName = "temp-" + Guid.NewGuid() + ".xls";
+            //todo unhardcoded path
+            var tempFileName = $@"c:\temp\temp-{Guid.NewGuid()}.xls";
             var fileStream = new FileStream(tempFileName, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read, 4096,
                 FileOptions.RandomAccess | FileOptions.DeleteOnClose);
             using (var xlPackage = new ExcelPackage(fileStream))
             {
-                ClearSheets(xlPackage);
-
                 var sheetNameCounts = new Dictionary<string, int>();
                 colNames = NormilizeColNames(colNames);
                 var colNamesWithIndexes = SetColumnSortNumbers(colNames);
@@ -79,21 +78,11 @@ namespace TelegramBotTry1
             return fileStream;
         }
 
-        private static void ClearSheets(ExcelPackage xlPackage)
-        {
-            var worksheetsCount = xlPackage.Workbook.Worksheets.Count;
-            if (worksheetsCount > 0)
-            {
-                for (var i = 1; i <= worksheetsCount; i++)
-                {
-                    xlPackage.Workbook.Worksheets.Delete(1);
-                }
-            }
-        }
-
         private static string NormalizeSheetName(string value)
         {
-            var correctValue = value.Replace(new[] { '#', '%', '@', '!', '?', '*', '\'' }, "");
+            var correctValue = value
+                .Replace(new[] { '#', '%', '@', '!', '?', '*', '\'' }, "")
+                .ToLower();
             return correctValue.Length > 30 ? correctValue.Substring(1, 27) : correctValue; //TODO 27 из-за потенциальных страниц с тем же названием
         }
 

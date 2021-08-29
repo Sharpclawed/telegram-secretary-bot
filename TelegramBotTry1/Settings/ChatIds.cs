@@ -4,10 +4,9 @@ namespace TelegramBotTry1.Settings
 {
     public static class ChatIds
     {
-        public static readonly ChatId Test125 = new ChatId(Secrets.Test125Id);
-        public static readonly ChatId Test125hwb = new ChatId(Secrets.Test125HWBId);
-        public static readonly ChatId Test126hwb = new ChatId(Secrets.Test126HWBId);
-        public static readonly ChatId Botva = new ChatId(Secrets.BotvaId);
-        public static readonly ChatId Unanswered = new ChatId(Secrets.UnasweredId);
+        public static readonly ChatId Debug = new ChatId(Secrets.DebugChatId);
+        public static readonly ChatId Botva = new ChatId(Secrets.BotvaChatId);
+        public static readonly ChatId Unanswered = new ChatId(Secrets.UnasweredChatId);
+        public static readonly ChatId LogDistributing = new ChatId(Secrets.LogChatId);
     }
 }

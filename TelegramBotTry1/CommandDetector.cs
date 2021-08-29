@@ -48,6 +48,7 @@ namespace TelegramBotTry1
                 @"^[/](historyof)[:]\s*(.*)\s\b(\d{2}[.]\d{2}[.]\d{4})[ ](\d+)$",
                 @"^[/](historyall)[:]\s*\b(\d{2}[.]\d{2}[.]\d{4})[ ](\d+)$",
                 @"^[/](help)$",
+                @"^[/](ping)$",
             };
 
             var resultPattern = new Regex(string.Join("|", patterns));
@@ -105,6 +106,8 @@ namespace TelegramBotTry1
                     return new ViewHistoryAllCommand(messageService, tgClient, chatId, historyallBegin, historyallEnd);
                 case "help":
                     return new SendHelpTipCommand(tgClient, message.Chat.Id);
+                case "ping":
+                    return new SendBotStatusCommand(messageService, tgClient, message.Chat.Id);
             }
 
             return new SendMessageCommand(tgClient, chatId, "Неизвестная команда");

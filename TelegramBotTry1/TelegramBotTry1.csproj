@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <TargetFramework>net5.0</TargetFramework>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
@@ -34,7 +34,10 @@
     <ProjectReference Include="..\DAL\DAL.csproj" />
     <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
-  <PropertyGroup />
+  <PropertyGroup>
+    <ApplicationIcon />
+    <StartupObject />
+  </PropertyGroup>
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
     <Exec Command="cd $(ProjectDir)Settings\&#xD;&#xA;if not exist SecretsLocal.cs (type nul &gt; SecretsLocal.cs)" />
   </Target>

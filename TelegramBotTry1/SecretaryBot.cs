@@ -1,74 +1,94 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using DAL;
 using Domain.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.InputFiles;
 using TelegramBotTry1.Reporters;
 using TelegramBotTry1.Settings;
 
 namespace TelegramBotTry1
 {
-    public class SecretaryBot
+    public interface ISecretaryBot
     {
-        private static readonly string mainBotToken = Secrets.MainBotToken;
+        Task InitAsync();
+        BotCommander BotCommander { get; }
+        MessageProcessor MessageProcessor { get; }
+        string Name { get; }
+        void ConfigPolling();
+        Task ConfigWebhookAsync(string url, InputFileStream cert = null, CancellationToken cancellationToken = default);
+        Task DeleteWebhookAsync(CancellationToken cancellationToken = default);
+        void StartReceiving();
+        void StartReporters();
+    }
 
-        private static readonly SecretaryBot instance = new ();
-        private static BotCommander botCommander;
-        private static ITgBotClientEx tgClient;
-        private static MessageProcessor messageProcessor;
-        private static BotStateReporter botStateReporter;
-        private static WaitersReporter waitersViewReporter;
-        private static InactiveChatsReporter inactiveChatsReporter;
-        private static string name;
-        private static bool initialized;
+    public class SecretaryBot : ISecretaryBot
+    {
+        private ITgBotClientEx tgClient;
+        private readonly ILogger logger;
+        private BotCommander botCommander;
+        private MessageProcessor messageProcessor;
+        private BotStateReporter botStateReporter;
+        private WaitersReporter waitersViewReporter;
+        private InactiveChatsReporter inactiveChatsReporter;
+        private string name;
 
-        private SecretaryBot()
+        public SecretaryBot(ITgBotClientEx tgClientEx, ILogger logger)
         {
+            tgClient = tgClientEx;
+            this.logger = logger;
         }
 
-        public static async Task<SecretaryBot> GetAsync()
+        public async Task InitAsync()
         {
-            if (!initialized)
-                await InitAsync();
-
-            return instance;
-        }
-
-        private static async Task InitAsync()
-        {
+            logger.Log(LogLevel.Information, "Initialization start");
             await using (var context = new SecretaryContext())
             {
                 await context.Database.MigrateAsync();
             }
+            logger.Log(LogLevel.Information, "Db migration finished");
             var adminService = new AdminService();
             var bkService = new BkService();
             var oneTimeChatService = new OneTimeChatService();
             var messageService = new MessageService();
-            tgClient = new TgBotClientEx(mainBotToken);
             botCommander = new BotCommander(tgClient, messageService);
-            messageProcessor = new MessageProcessor(tgClient, adminService, bkService, oneTimeChatService, messageService);
-            botStateReporter = new BotStateReporter(botCommander);
-            waitersViewReporter = new WaitersReporter(botCommander);
-            inactiveChatsReporter = new InactiveChatsReporter(botCommander);
+            messageProcessor = new MessageProcessor(tgClient, adminService, bkService, oneTimeChatService, messageService, logger);
+            botStateReporter = new BotStateReporter(botCommander, logger);
+            waitersViewReporter = new WaitersReporter(botCommander, logger);
+            inactiveChatsReporter = new InactiveChatsReporter(botCommander, logger);
             name = (await tgClient.GetMeAsync()).Username;
-            initialized = true;
+            logger.Log(LogLevel.Information, "Init's completed");
         }
 
         public BotCommander BotCommander => botCommander;
         public MessageProcessor MessageProcessor => messageProcessor;
         public string Name => name;
 
-        public void SetPolling()
+        public void ConfigPolling()
         {
-            tgClient.OnMessage += async (_, messageEventArgs) => await messageProcessor.ProcessTextMessageAsync(messageEventArgs.Message);
-            tgClient.OnMessageEdited += async (_, messageEventArgs) => await messageProcessor.ProcessTextMessageAsync(messageEventArgs.Message);
+            tgClient.OnMessage += async (_, messageEventArgs) => await messageProcessor.ProcessMessageAsync(messageEventArgs.Message);
+            tgClient.OnMessageEdited += async (_, messageEventArgs) => await messageProcessor.ProcessMessageAsync(messageEventArgs.Message);
             tgClient.OnReceiveError += async (_, receiveErrorEventArgs) =>
-                await botCommander.SendMessageAsync(ChatIds.Test125, receiveErrorEventArgs.ApiRequestException.Message);
+                await botCommander.SendMessageAsync(ChatIds.Debug, receiveErrorEventArgs.ApiRequestException.Message);
             tgClient.OnReceiveGeneralError += async (_, e) =>
-                await botCommander.SendMessageAsync(ChatIds.Test125, e.Exception.Message + " \r\n" + e.Exception.InnerException);
-            tgClient.OnCallbackQuery += async (_, e) => await botCommander.SendMessageAsync(ChatIds.Test125, e.CallbackQuery.Message.Text);
+                await botCommander.SendMessageAsync(ChatIds.Debug, e.Exception.Message + " \r\n" + e.Exception.InnerException);
+            tgClient.OnCallbackQuery += async (_, e) => await botCommander.SendMessageAsync(ChatIds.Debug, e.CallbackQuery.Message.Text);
         }
 
-        public void StartPolling()
+        public async Task ConfigWebhookAsync(string url, InputFileStream cert = null, CancellationToken cancellationToken = default)
+        {
+            await tgClient.SetWebhookAsync(url, cert, cancellationToken: cancellationToken, allowedUpdates: new List<UpdateType> {UpdateType.Message});
+        }
+
+        public async Task DeleteWebhookAsync(CancellationToken cancellationToken = default)
+        {
+            await tgClient.DeleteWebhookAsync(cancellationToken);
+        }
+
+        public void StartReceiving()
         {
             tgClient.StartReceiving();
         }
