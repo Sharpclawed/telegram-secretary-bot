@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using Domain.Models;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
@@ -11,7 +11,7 @@ namespace TelegramBotTry1
 {
     public static class ReportCreator
     {
-        public static FileStream Create(IEnumerable<KeyValuePair<string, List<DomainMessage>>> sheetsData, string[] colNames)
+        public static FileStream Create(IEnumerable<KeyValuePair<string, List<DomainMessage>>> sheetsData, [NotNull] string[] colNames)
         {
             //todo unhardcoded path
             var tempFileName = $@"c:\temp\temp-{Guid.NewGuid()}.xls";
@@ -20,8 +20,6 @@ namespace TelegramBotTry1
             using (var xlPackage = new ExcelPackage(fileStream))
             {
                 var sheetNameCounts = new Dictionary<string, int>();
-                colNames = NormilizeColNames(colNames);
-                var colNamesWithIndexes = SetColumnSortNumbers(colNames);
 
                 foreach (var messagesBySheetName in sheetsData)
                 {
@@ -39,37 +37,25 @@ namespace TelegramBotTry1
                         sheetNameCounts.Add(sheetName, 1);
 
                     var worksheet = xlPackage.Workbook.Worksheets.Add(sheetName);
-                    for (var i = 0; i < colNames.Length; i++)
-                    {
-                        worksheet.Cells[1, i + 1].Value = NormalizeColumnName(colNames[i]);
-                        worksheet.Cells[1, i + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                        worksheet.Cells[1, i + 1].Style.Fill.BackgroundColor.SetColor(Color.AliceBlue);
-                        worksheet.Cells[1, i + 1].Style.Font.Bold = true;
-                    }
+                    worksheet.Row(1).Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    worksheet.Row(1).Style.Fill.BackgroundColor.SetColor(Color.AliceBlue);
+                    worksheet.Row(1).Style.Font.Bold = true;
+                    worksheet.Cells[1, 1].Value = NormalizeColumnName("npp");
+                    for (var i = 1; i <= colNames.Length; i++)
+                        worksheet.Cells[1, i + 1].Value = NormalizeColumnName(colNames[i - 1]);
 
-                    for (var index = 1; index <= messages.Count; index++)
+                    for (var row = 1; row <= messages.Count; row++)
                     {
-                        if (colNamesWithIndexes.ContainsKey("npp"))
-                            worksheet.Cells[index + 1, colNamesWithIndexes["npp"]].Value = index;
-                        if (colNamesWithIndexes.ContainsKey("Date"))
+                        var column = 1;
+                        worksheet.Cells[row + 1, column].Value = row;
+                        foreach (var colName in colNames)
                         {
-                            worksheet.Cells[index + 1, colNamesWithIndexes["Date"]].Value = messages[index - 1].Date;
-                            worksheet.Cells[index + 1, colNamesWithIndexes["Date"]].Style.Numberformat.Format = "dd-mm-yy h:mm:ss";
+                            column++;
+                            if (CellMapping.ContainsKey(colName))
+                                worksheet.Cells[row + 1, column].Value = CellMapping[colName](messages[row - 1]);
                         }
-                        if (colNamesWithIndexes.ContainsKey("UserFirstName"))
-                            worksheet.Cells[index + 1, colNamesWithIndexes["UserFirstName"]].Value = messages[index - 1].UserFirstName;
-                        if (colNamesWithIndexes.ContainsKey("UserLastName"))
-                            worksheet.Cells[index + 1, colNamesWithIndexes["UserLastName"]].Value = messages[index - 1].UserLastName;
-                        if (colNamesWithIndexes.ContainsKey("Message"))
-                            worksheet.Cells[index + 1, colNamesWithIndexes["Message"]].Value = messages[index - 1].Message;
-                        if (colNamesWithIndexes.ContainsKey("UserName"))
-                            worksheet.Cells[index + 1, colNamesWithIndexes["UserName"]].Value = messages[index - 1].UserName;
-                        if (colNamesWithIndexes.ContainsKey("UserId"))
-                            worksheet.Cells[index + 1, colNamesWithIndexes["UserId"]].Value = messages[index - 1].UserId;
-                        if (colNamesWithIndexes.ContainsKey("ChatName"))
-                            worksheet.Cells[index + 1, colNamesWithIndexes["ChatName"]].Value = messages[index - 1].ChatName;
                     }
-                    worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
+                    worksheet.Cells[1, 1, 5, colNames.Length + 1].AutoFitColumns();
                 }
                 xlPackage.Save();
             }
@@ -83,7 +69,7 @@ namespace TelegramBotTry1
             var correctValue = value
                 .Replace(new[] { '#', '%', '@', '!', '?', '*', '\'' }, "")
                 .ToLower();
-            return correctValue.Length > 30 ? correctValue.Substring(1, 27) : correctValue; //TODO 27 из-за потенциальных страниц с тем же названием
+            return correctValue.Length > 30 ? correctValue.Substring(0, 27) : correctValue; //TODO 27 из-за потенциальных страниц с тем же названием
         }
 
         private static string NormalizeColumnName(string value)
@@ -91,48 +77,17 @@ namespace TelegramBotTry1
             return "  " + value + "  ";
         }
 
-        private static string[] GetDefaultColNames()
-        {
-            return new[]
+        private static Dictionary<string, Func<DomainMessage, string>> CellMapping =
+            new()
             {
-                nameof(DomainMessage.Date),
-                nameof(DomainMessage.UserFirstName),
-                nameof(DomainMessage.UserLastName),
-                nameof(DomainMessage.Message),
-                nameof(DomainMessage.UserName),
-                nameof(DomainMessage.UserId)
+                {nameof(DomainMessage.Date), message => message.Date.ToString("dd.MM.yy h:mm:ss")},
+                {nameof(DomainMessage.UserFirstName), message => message.UserFirstName},
+                {nameof(DomainMessage.UserLastName), message => message.UserLastName},
+                {nameof(DomainMessage.UserName), message => message.UserName},
+                {nameof(DomainMessage.UserId), message => message.UserId.ToString()},
+                {nameof(DomainMessage.ChatName), message => message.ChatName},
+                {nameof(DomainMessage.ChatId), message => message.ChatId.ToString()},
+                {nameof(DomainMessage.Message), message => message.Message}
             };
-        }
-
-        private static string[] GetPossibleColNames()
-        {
-            return new[]
-            {
-                nameof(DomainMessage.Date),
-                nameof(DomainMessage.UserFirstName),
-                nameof(DomainMessage.UserLastName),
-                nameof(DomainMessage.UserName),
-                nameof(DomainMessage.UserId),
-                nameof(DomainMessage.ChatName),
-                nameof(DomainMessage.ChatId),
-                nameof(DomainMessage.Message)
-            };
-        }
-
-        private static string[] NormilizeColNames(string[] colNames)
-        {
-            if (colNames == null || colNames.Length == 0)
-                colNames = GetDefaultColNames();
-            var filtered = colNames.Intersect(GetPossibleColNames()).Distinct();
-            var result = new List<string> {"npp"};
-            result.AddRange(filtered);
-            return result.ToArray();
-        }
-
-        private static Dictionary<string, int> SetColumnSortNumbers(string[] colNames)
-        {
-            var result = Enumerable.Range(0, colNames.Length).ToDictionary(x => colNames[x], x => x + 1);
-            return result;
-        }
     }
 }
