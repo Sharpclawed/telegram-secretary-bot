@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using Domain.Models;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
@@ -11,7 +12,7 @@ namespace TelegramBotTry1
 {
     public static class ReportCreator
     {
-        public static FileStream Create(IEnumerable<KeyValuePair<string, List<DomainMessage>>> sheetsData, [NotNull] string[] colNames)
+        public static FileStream Create(ILookup<string, DomainMessage> sheetsData, [NotNull] string[] colNames)
         {
             //todo unhardcoded path
             var tempFileName = $@"c:\temp\temp-{Guid.NewGuid()}.xls";
@@ -23,7 +24,7 @@ namespace TelegramBotTry1
 
                 foreach (var messagesBySheetName in sheetsData)
                 {
-                    var messages = messagesBySheetName.Value;
+                    var messages = messagesBySheetName.ToList();
                     if (messages.Count == 0)
                         continue;
                     var sheetName = NormalizeSheetName(messagesBySheetName.Key);

@@ -43,24 +43,9 @@ namespace TelegramBotTry1
         public async Task SendTextMessagesAsExcelReportAsync(ChatId chatId, List<DomainMessage> msgs, string caption, string[] columnNames, Func<DomainMessage, string> groupBy = null)
         {
             //todo add tests
-            IEnumerable<KeyValuePair<string, List<DomainMessage>>> listsWithRows;
-            if (groupBy == null)
-                listsWithRows = new Dictionary<string, List<DomainMessage>>
-                {
-                    {caption, msgs}
-                };
-            else
-            {
-                listsWithRows = msgs
-                    .GroupBy(groupBy)
-                    .Select(gdc =>
-                    {
-                        var dataSets = gdc.OrderBy(z => z.Date).ToList();
-                        return new KeyValuePair<string, List<DomainMessage>>(
-                            groupBy(dataSets.LastOrDefault()) ?? "default",
-                            dataSets);
-                    });
-            }
+            var listsWithRows = groupBy == null
+                ? msgs.ToLookup(z => caption, msg => msg)
+                : msgs.OrderBy(z => z.Date).ToLookup(groupBy);
 
             using (var fileStream = ReportCreator.Create(listsWithRows, columnNames))
             {
