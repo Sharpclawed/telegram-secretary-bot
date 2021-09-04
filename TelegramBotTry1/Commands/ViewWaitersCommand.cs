@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Domain.Models;
 using Domain.Services;
 using Telegram.Bot.Types;
 using TelegramBotTry1.DomainExtensions;
@@ -38,25 +37,25 @@ namespace TelegramBotTry1.Commands
             var sinceDateValue = SinceDate ?? DateTime.UtcNow.Date.AddMonths(-1);
             var untilDateValue = UntilDate ?? DateTime.UtcNow.Date.AddMinutes(-30);
             var records = messageService.GetUnansweredDirMsgs(sinceDateValue, untilDateValue).FilterObviouslySuperfluous().ToList();
-            var formattedRecords = records.Select(Formatter.Waiters).ToList();
 
-            if (formattedRecords.Count <= TgBotSettings.ReadableCountOfMessages)
+            if (records.Count <= TgBotSettings.ReadableCountOfMessages)
+            {
+                var formattedRecords = records.Select(Formatter.Waiters).ToList();
                 await tgClient.SendTextMessagesAsListAsync(chatId, formattedRecords, СorrespondenceType.Personal);
+            }
             else
-                await tgClient.SendTextMessagesAsExcelReportAsync(
-                    chatId,
-                    records,
-                    "Отчет по неотвеченным сообщениям",
-                    new[]
-                    {
-                        nameof(DomainMessage.Date),
-                        nameof(DomainMessage.ChatName),
-                        nameof(DomainMessage.Message),
-                        nameof(DomainMessage.UserFirstName),
-                        nameof(DomainMessage.UserLastName),
-                        nameof(DomainMessage.UserName),
-                        nameof(DomainMessage.UserId)
-                    });
+            {
+                var recordsWithColumnsToReport = records.Select(z => new
+                {
+                    Date = z.Date.ToString("dd.MM.yy HH:mm:ss"),
+                    z.ChatName,
+                    z.Message,
+                    z.UserFirstName,
+                    z.UserLastName,
+                    z.UserName,
+                    z.UserId
+                }).ToList();
+                await tgClient.SendTextMessagesAsExcelReportAsync(chatId, recordsWithColumnsToReport, "Отчет по неотвеченным сообщениям");}
         }
     }
 }
