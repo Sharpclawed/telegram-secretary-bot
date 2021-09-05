@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Domain.Models;
 using Domain.Services;
 using Telegram.Bot.Types;
 
@@ -37,21 +36,17 @@ namespace TelegramBotTry1.Commands
             var untilDateValue = UntilDate ?? DateTime.UtcNow;
             var records = messageService.GetLastDirMsgFromInactiveChats(sinceDateValue, untilDateValue, TimeSpan.FromDays(7));
             var caption = "Отчет по неактивным чатам";
+            var recordsWithColumnsToReport = records.Select(z => new
+            {
+                Date = z.Date.ToString("dd.MM.yy HH:mm:ss"),
+                z.ChatName,
+                z.Message,
+                z.UserFirstName,
+                z.UserLastName,
+                z.UserName
+            }).ToList();
 
-            await tgClient.SendTextMessagesAsExcelReportAsync(
-                chatId,
-                records.ToList(),
-                caption,
-                new[]
-                {
-                    nameof(DomainMessage.Date),
-                    nameof(DomainMessage.ChatName),
-                    nameof(DomainMessage.Message),
-                    nameof(DomainMessage.UserFirstName),
-                    nameof(DomainMessage.UserLastName),
-                    nameof(DomainMessage.UserName),
-                    nameof(DomainMessage.UserId)
-                });
+            await tgClient.SendTextMessagesAsExcelReportAsync(chatId, recordsWithColumnsToReport, caption);
         }
     }
 }

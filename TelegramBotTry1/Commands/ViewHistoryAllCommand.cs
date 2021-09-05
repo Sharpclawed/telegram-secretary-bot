@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Domain.Models;
 using Domain.Services;
 using Telegram.Bot.Types;
 
@@ -31,20 +30,19 @@ namespace TelegramBotTry1.Commands
             if (!records.Any())
                 await tgClient.SendTextMessageAsync(chatId, "За указанный период сообщений не найдено");
             else
-                await tgClient.SendTextMessagesAsExcelReportAsync(
-                    chatId,
-                    records,
-                    "История сообщений",
-                    new[]
+            {
+                var recordsWithColumnsToReport = records
+                    .ToLookup(z => z.ChatName, z => new
                     {
-                        nameof(DomainMessage.Date),
-                        nameof(DomainMessage.Message),
-                        nameof(DomainMessage.UserFirstName),
-                        nameof(DomainMessage.UserLastName),
-                        nameof(DomainMessage.UserName),
-                        nameof(DomainMessage.UserId)
-                    },
-                    msg => msg.ChatName);
+                        Date = z.Date.ToString("dd.MM.yy HH:mm:ss"),
+                        z.Message,
+                        z.UserFirstName,
+                        z.UserLastName,
+                        z.UserName,
+                        z.UserId
+                    });
+                await tgClient.SendTextMessagesAsExcelReportAsync(chatId, recordsWithColumnsToReport, "История сообщений");
+            }
         }
     }
 }

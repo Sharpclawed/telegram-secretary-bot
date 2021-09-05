@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Domain.Models;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -40,33 +38,17 @@ namespace TelegramBotTry1
             await SendTextMessageAsync(chatId, $"{caption}\r\n{result}", parseMode, removeLinkPreview);
         }
         
-        public async Task SendTextMessagesAsExcelReportAsync(ChatId chatId, List<DomainMessage> msgs, string caption, string[] columnNames, Func<DomainMessage, string> groupBy = null)
+        public async Task SendTextMessagesAsExcelReportAsync<T>(ChatId chatId, List<T> msgs, string caption = null)
         {
-            //todo add tests
-            IEnumerable<KeyValuePair<string, List<DomainMessage>>> listsWithRows;
-            if (groupBy == null)
-                listsWithRows = new Dictionary<string, List<DomainMessage>>
-                {
-                    {caption, msgs}
-                };
-            else
-            {
-                listsWithRows = msgs
-                    .GroupBy(groupBy)
-                    .Select(gdc =>
-                    {
-                        var dataSets = gdc.OrderBy(z => z.Date).ToList();
-                        return new KeyValuePair<string, List<DomainMessage>>(
-                            groupBy(dataSets.LastOrDefault()) ?? "default",
-                            dataSets);
-                    });
-            }
+            var sheetsWithRows = msgs.ToLookup(_ => caption ?? "Лист1");
+            await SendTextMessagesAsExcelReportAsync(chatId, sheetsWithRows, caption);
+        }
 
-            using (var fileStream = ReportCreator.Create(listsWithRows, columnNames))
-            {
-                var fileToSend = new InputOnlineFile(fileStream, caption + ".xls");
-                await SendDocumentAsync(chatId, fileToSend, caption);
-            }
+        public async Task SendTextMessagesAsExcelReportAsync<T>(ChatId chatId, ILookup<string, T> rowsWithSheets, string caption = null)
+        {
+            await using var fileStream = ReportCreator.Create(rowsWithSheets);
+            var fileToSend = new InputOnlineFile(fileStream, (caption ?? "report") + ".xls");
+            await SendDocumentAsync(chatId, fileToSend, caption);
         }
     }
 
@@ -80,7 +62,7 @@ namespace TelegramBotTry1
     {
         Task SendTextMessagesAsListAsync(ChatId chatId, IList<string> msgs, СorrespondenceType сorrespondenceType);
         Task SendTextMessagesAsSingleTextAsync(ChatId chatId, IEnumerable<string> msgs, string caption, ParseMode parseMode = ParseMode.Default, bool removeLinkPreview = false);
-        Task SendTextMessagesAsExcelReportAsync(ChatId chatId, List<DomainMessage> msgs, string caption,
-            string[] columnNames, Func<DomainMessage, string> groupBy = null);
+        Task SendTextMessagesAsExcelReportAsync<T>(ChatId chatId, List<T> msgs, string caption = null);
+        Task SendTextMessagesAsExcelReportAsync<T>(ChatId chatId, ILookup<string, T> rowsWithSheets, string caption = null);
     }
 }

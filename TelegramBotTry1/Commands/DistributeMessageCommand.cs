@@ -30,32 +30,46 @@ namespace TelegramBotTry1.Commands
         public async Task ProcessAsync()
         {
             var result = await SendTextMessagesAsync();
-            var chats = messageService.GetChatNames(result.Select(z => z.Item1).ToArray());
-            var rows = result.Select(z =>
+
+            var chats = messageService.GetChatNames(result.Select(z => z.ChatId).ToArray());
+            foreach (var distributingResult in result)
+                distributingResult.ChatName = chats.TryGetValue(distributingResult.ChatId, out var chatName) ? chatName : "Чат не распознан";
+
+            if (result.Count <= TgBotSettings.ReadableCountOfMessages)
             {
-                var chatNameFound = chats.TryGetValue(z.Item1, out var chatName);
-                if (chatNameFound)
-                    return $"{chatName} ({z.Item1}) result: {z.Item2}";
-                return $"Чат не найден. Id: {z.Item1} result: {z.Item2}";
-            });
-            //todo send as excel
-            await tgClient.SendTextMessagesAsSingleTextAsync(ChatIds.LogDistributing, rows, caption, withMarkdown ? ParseMode.Markdown : ParseMode.Default, true);
+                var rows = result.Select(z => $"{z.ChatName} ({z.ChatId}) result: {z.Verdict} {z.ErrorMessage}");
+                await tgClient.SendTextMessagesAsSingleTextAsync(ChatIds.LogDistributing, rows, caption, withMarkdown ? ParseMode.Markdown : ParseMode.Default, true);
+            }
+            else
+            {
+                await tgClient.SendTextMessageAsync(ChatIds.LogDistributing, caption);
+                await tgClient.SendTextMessagesAsExcelReportAsync(ChatIds.LogDistributing, result);
+            }
         }
 
-        private async Task<List<(long, string)>> SendTextMessagesAsync()
+        private async Task<List<DistributingResult>> SendTextMessagesAsync()
         {
-            var result = new List<(long, string)>();
+            var result = new List<DistributingResult>();
             //todo avoid throttling
             foreach (var chatId in chatIds)
             {
                 try
                 {
                     await SendTextMessageAsync(chatId);
-                    result.Add((chatId, "Success"));
+                    result.Add(new DistributingResult
+                    {
+                        ChatId = chatId,
+                        Verdict = "Success"
+                    });
                 }
                 catch (Exception e)
                 {
-                    result.Add((chatId, e.Message));
+                    result.Add(new DistributingResult
+                    {
+                        ChatId = chatId,
+                        Verdict = "Failed",
+                        ErrorMessage = e.Message
+                    });
                 }
             }
 
@@ -70,5 +84,13 @@ namespace TelegramBotTry1.Commands
 
             await tgClient.SendTextMessageAsync(chatId, text, withMarkdown ? ParseMode.Markdown : ParseMode.Default, true);
         }
-    }
+
+        public class DistributingResult
+        {
+            public string ChatName { get; set; }
+            public long ChatId { get; set; }
+            public string Verdict { get; set; }
+            public string ErrorMessage { get; set; }
+        }
+    } 
 }

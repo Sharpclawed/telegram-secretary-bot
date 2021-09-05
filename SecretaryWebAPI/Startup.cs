@@ -28,8 +28,8 @@ namespace SecretaryWebAPI
             services.AddSingleton<ISecretaryBot, SecretaryBot>(serviceProvider => new SecretaryBot(
                 serviceProvider.GetService<ITgBotClientEx>(),
                 serviceProvider.GetService<ILogger<SecretaryBot>>()));
-            services.AddHostedService<ConfigureWebhookService>();
             services.AddHostedService<InitializeBotService>();
+            services.AddHostedService<ConfigureWebhookService>();
             services.AddScoped<HandleUpdateService>();
             services.AddScoped<HandleDistributeMessagesService>();
             services.AddControllers().AddNewtonsoftJson();

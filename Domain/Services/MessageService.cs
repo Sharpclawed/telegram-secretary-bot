@@ -5,7 +5,6 @@ using DAL;
 using DAL.Models;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
 
 namespace Domain.Services
 {
@@ -49,7 +48,8 @@ namespace Domain.Services
                     Date = z.Date,
                     Message = z.Message,
                     MessageId = z.MessageId
-                });
+                })
+                .OrderBy(z => z.Date);
         }
 
         public IOrderedEnumerable<DomainMessage> GetLastDirMsgFromInactiveChats(DateTime sinceDate, DateTime untilDate, TimeSpan checkingPeriod)
