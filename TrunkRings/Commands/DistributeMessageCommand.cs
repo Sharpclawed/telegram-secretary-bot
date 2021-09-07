@@ -1,0 +1,96 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using TrunkRings.Domain.Services;
+using Telegram.Bot.Types.Enums;
+using TrunkRings.Settings;
+
+namespace TrunkRings.Commands
+{
+    public class DistributeMessageCommand : IBotCommand
+    {
+        private readonly IMessageService messageService;
+        private readonly ITgBotClientEx tgClient;
+        private readonly IEnumerable<long> chatIds;
+        private readonly string text;
+        private readonly string caption;
+        private readonly bool withMarkdown;
+        
+        public DistributeMessageCommand(IMessageService messageService, ITgBotClientEx tgClient, IEnumerable<long> chatIds, string text, string caption = null, bool withMarkdown = true)
+        {
+            this.messageService = messageService;
+            this.tgClient = tgClient;
+            this.chatIds = chatIds;
+            this.text = text;
+            this.caption = caption ?? $"Рассылка сообщения выполнена\r\n{text}";
+            this.withMarkdown = withMarkdown;
+        }
+
+        public async Task ProcessAsync()
+        {
+            var result = await SendTextMessagesAsync();
+
+            var chats = messageService.GetChatNames(result.Select(z => z.ChatId).ToArray());
+            foreach (var distributingResult in result)
+                distributingResult.ChatName = chats.TryGetValue(distributingResult.ChatId, out var chatName) ? chatName : "Чат не распознан";
+
+            if (result.Count <= TgBotSettings.ReadableCountOfMessages)
+            {
+                var rows = result.Select(z => $"{z.ChatName} ({z.ChatId}) result: {z.Verdict} {z.ErrorMessage}");
+                await tgClient.SendTextMessagesAsSingleTextAsync(ChatIds.LogDistributing, rows, caption, withMarkdown ? ParseMode.Markdown : ParseMode.Default, true);
+            }
+            else
+            {
+                await tgClient.SendTextMessageAsync(ChatIds.LogDistributing, caption);
+                await tgClient.SendTextMessagesAsExcelReportAsync(ChatIds.LogDistributing, result);
+            }
+        }
+
+        private async Task<List<DistributingResult>> SendTextMessagesAsync()
+        {
+            var result = new List<DistributingResult>();
+            //todo avoid throttling
+            foreach (var chatId in chatIds)
+            {
+                try
+                {
+                    await SendTextMessageAsync(chatId);
+                    result.Add(new DistributingResult
+                    {
+                        ChatId = chatId,
+                        Verdict = "Success"
+                    });
+                }
+                catch (Exception e)
+                {
+                    result.Add(new DistributingResult
+                    {
+                        ChatId = chatId,
+                        Verdict = "Failed",
+                        ErrorMessage = e.Message
+                    });
+                }
+            }
+
+            return result;
+        }
+
+        private async Task SendTextMessageAsync(long chatId)
+        {
+            var permittedChats = new List<long> {ChatIds.Botva.Identifier, ChatIds.Debug.Identifier, ChatIds.LogDistributing.Identifier, -555793869 };
+            if (!permittedChats.Contains(chatId))
+                throw new Exception("Unallowed chat");
+
+            await tgClient.SendTextMessageAsync(chatId, text, withMarkdown ? ParseMode.Markdown : ParseMode.Default, true);
+        }
+
+        public class DistributingResult
+        {
+            public string ChatName { get; set; }
+            public long ChatId { get; set; }
+            public string Verdict { get; set; }
+            public string ErrorMessage { get; set; }
+        }
+    } 
+}

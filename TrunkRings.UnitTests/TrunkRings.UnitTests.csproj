@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+  </ItemGroup>
+  <ItemGroup>
+	<ProjectReference Include="..\TrunkRings.DAL\TrunkRings.DAL.csproj" />
+	<ProjectReference Include="..\TrunkRings.Domain\TrunkRings.Domain.csproj" />
+	<ProjectReference Include="..\TrunkRings\TrunkRings.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="FluentAssertions">
+      <Version>5.10.3</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.10.0" />
+    <PackageReference Include="NUnit">
+      <Version>3.13.2</Version>
+    </PackageReference>
+    <PackageReference Include="NUnit3TestAdapter" Version="4.0.0" />
+  </ItemGroup>
+</Project>

@@ -30,6 +30,6 @@ _ReSharper*/
 .vs/
 #Nuget packages folder
 packages/
-TelegramBotTry1/Settings/SecretsLocal.cs
-DAL/Settings/DbSettingsSecret.cs
-SecretaryWebAPI/Settings/WebhookSettingsLocal.cs
+TrunkRings/Settings/SecretsLocal.cs
+TrunkRings.DAL/Settings/DbSettingsSecret.cs
+TrunkRings.WebAPI/Settings/WebhookSettingsLocal.cs
