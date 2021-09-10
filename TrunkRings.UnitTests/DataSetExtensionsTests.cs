@@ -74,7 +74,7 @@ namespace TrunkRings.UnitTests
         public void GetUserByUserName_getsIfExists()
         {
             var sut = dataSet.AsQueryable()
-                .GetUserByUserName("user 2 user name");
+                .FindUserByUserName("user 2 user name");
 
             sut.UserId.Should().Be(2);
         }
@@ -82,15 +82,14 @@ namespace TrunkRings.UnitTests
         [Test]
         public void GetUserByUserName_throwsIfNotExists()
         {
-            Assert.Throws<ArgumentException>(() => dataSet.AsQueryable()
-                .GetUserByUserName("incorrect name"));
+            dataSet.AsQueryable().FindUserByUserName("incorrect name").Should().BeNull();
         }
 
         [Test]
         public void GetChatByChatName_getsIfExists()
         {
             var sut = dataSet.AsQueryable()
-                .GetChatByChatName("Chat2");
+                .FindChatByChatName("Chat2");
 
             sut.Id.Should().Be(2);
         }
@@ -98,8 +97,7 @@ namespace TrunkRings.UnitTests
         [Test]
         public void GetChatByChatName_throwsIfNotExists()
         {
-            Assert.Throws<ArgumentException>(() => dataSet.AsQueryable()
-                .GetChatByChatName("incorrect name"));
+            dataSet.AsQueryable().FindChatByChatName("incorrect name").Should().BeNull();
         }
 
         private MessageDataSet GetMessage(long chatId, string chatName, DateTime date, long userId, long messageId, string message)

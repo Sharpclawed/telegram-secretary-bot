@@ -21,8 +21,7 @@ namespace TrunkRings.Commands
 
         public async Task ProcessAsync()
         {
-            var succeeded = bkService.Unmake(BkName);
-            var result = succeeded ? "Команда обработана" : "Пользователь не найден";
+            var result = bkService.TryUnmake(BkName, out string message) ? "Команда обработана" : message;
 
             await tgClient.SendTextMessageAsync(chatId, result);
         }

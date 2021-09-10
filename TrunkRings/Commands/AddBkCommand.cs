@@ -21,10 +21,10 @@ namespace TrunkRings.Commands
 
         public async Task ProcessAsync()
         {
-            bkService.Make(BkName);
-
-            var result = "Команда обработана";
-            await tgClient.SendTextMessageAsync(chatId, result);
+            if (bkService.TryMake(BkName, out string resultMessage))
+                await tgClient.SendTextMessageAsync(chatId, "Команда обработана");
+            else
+                await tgClient.SendTextMessageAsync(chatId, resultMessage);
         }
     }
 }

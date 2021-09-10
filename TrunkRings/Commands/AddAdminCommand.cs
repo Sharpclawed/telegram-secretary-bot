@@ -26,11 +26,11 @@ namespace TrunkRings.Commands
 
         public async Task ProcessAsync()
         {
-            var addedBy = new Admin{UserId = AddedUserId, UserName = AddedUserName };
-            adminService.Make(AdminName, addedBy);
-
-            var result = "Команда обработана";
-            await tgClient.SendTextMessageAsync(chatId, result);
+            var addedBy = new Admin {UserId = AddedUserId, UserName = AddedUserName};
+            if (adminService.TryMake(AdminName, addedBy, out string resultMessage))
+                await tgClient.SendTextMessageAsync(chatId, "Команда обработана");
+            else
+                await tgClient.SendTextMessageAsync(chatId, resultMessage);
         }
     }
 }

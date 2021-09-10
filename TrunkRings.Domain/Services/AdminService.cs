@@ -10,44 +10,61 @@ namespace TrunkRings.Domain.Services
 {
     public class AdminService : IAdminService
     {
-        public void Make(string userName, Admin addedBy)
+        public bool TryMake(string userName, Admin addedBy, out string message)
         {
             using var context = new SecretaryContext();
             var adminDataSets = context.AdminDataSets;
             var messageDataSets = context.MessageDataSets.AsNoTracking();
-            var user = messageDataSets.GetUserByUserName(userName);
-            if (!adminDataSets.Any(x => x.UserId == user.UserId && x.DeleteTime == null))
+            var user = messageDataSets.FindUserByUserName(userName);
+            if (user == null)
             {
-                adminDataSets.Add(new AdminDataSet
-                {
-                    AddTime = DateTime.UtcNow,
-                    AddedUserId = addedBy.UserId,
-                    AddedUserName = addedBy.UserName,
-                    UserId = user.UserId,
-                    UserName = user.Name
-                });
-
-                context.SaveChanges();
+                message = "Пользователь не найден";
+                return false;
             }
+
+            if (adminDataSets.Any(x => x.UserId == user.UserId && x.DeleteTime == null))
+            {
+                message = "Пользователь уже в списке";
+                return false;
+            }
+
+            adminDataSets.Add(new AdminDataSet
+            {
+                AddTime = DateTime.UtcNow,
+                AddedUserId = addedBy.UserId,
+                AddedUserName = addedBy.UserName,
+                UserId = user.UserId,
+                UserName = user.Name
+            });
+            context.SaveChanges();
+            message = "Пользователь добавлен";
+            return true;
         }
 
-        public bool Unmake(string userName, Admin removedBy)
+        public bool TryUnmake(string userName, Admin removedBy, out string message)
         {
             using var context = new SecretaryContext();
             var adminDataSets = context.AdminDataSets;
             var messageDataSets = context.MessageDataSets.AsNoTracking();
-            var user = messageDataSets.GetUserByUserName(userName);
-            var adminToRemove = adminDataSets.FirstOrDefault(x => x.UserId == user.UserId && x.DeleteTime == null);
-            if (adminToRemove != null)
+            var user = messageDataSets.FindUserByUserName(userName);
+            if (user == null)
             {
-                adminToRemove.DeleteTime = DateTime.UtcNow;
-                adminToRemove.DeletedUserId = removedBy.UserId;
-                adminToRemove.DeletedUserName = removedBy.UserName;
-                context.SaveChanges();
-                return true;
+                message = "Пользователь не найден";
+                return false;
+            }
+            var adminToRemove = adminDataSets.FirstOrDefault(x => x.UserId == user.UserId && x.DeleteTime == null);
+            if (adminToRemove == null)
+            {
+                message = "Пользователь отсутствует в списке";
+                return false;
             }
 
-            return false;
+            adminToRemove.DeleteTime = DateTime.UtcNow;
+            adminToRemove.DeletedUserId = removedBy.UserId;
+            adminToRemove.DeletedUserName = removedBy.UserName;
+            context.SaveChanges();
+            message = "Пользователь успешно удален";
+            return true;
         }
 
         public bool IfAdmin(long userId)
@@ -71,8 +88,8 @@ namespace TrunkRings.Domain.Services
 
     public interface IAdminService
     {
-        void Make(string userName, Admin addedBy);
-        bool Unmake(string userName, Admin removedBy);
+        bool TryMake(string userName, Admin addedBy, out string message);
+        bool TryUnmake(string userName, Admin removedBy, out string message);
         bool IfAdmin(long userId);
         IEnumerable<(Admin, Admin)> GetAllActiveWithAddedBy();
     }

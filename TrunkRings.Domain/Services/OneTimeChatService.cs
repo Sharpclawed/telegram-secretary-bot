@@ -9,38 +9,53 @@ namespace TrunkRings.Domain.Services
 {
     public class OneTimeChatService : IOneTimeChatService
     {
-        public void Make(string chatName)
+        public bool TryMake(string chatName, out string message)
         {
             using var context = new SecretaryContext();
             var messageDataSets = context.MessageDataSets.AsNoTracking();
             var onetimeChatDataSets = context.OnetimeChatDataSets;
-            var chat = messageDataSets.GetChatByChatName(chatName);
-            if (!onetimeChatDataSets.Any(x => x.ChatId == chat.Id))
+            var chat = messageDataSets.FindChatByChatName(chatName);
+            if (chat == null)
             {
-                onetimeChatDataSets.Add(new OnetimeChatDataSet
-                {
-                    ChatName = chat.Name,
-                    ChatId = chat.Id
-                });
-                context.SaveChanges();
+                message = "Чат не найден";
+                return false;
             }
+
+            if (onetimeChatDataSets.Any(x => x.ChatId == chat.Id))
+            {
+                message = "Чат уже в списке";
+                return false;
+            }
+
+            onetimeChatDataSets.Add(new OnetimeChatDataSet {ChatName = chat.Name, ChatId = chat.Id});
+            context.SaveChanges();
+            message = "Чат добавлен";
+            return true;
         }
 
-        public bool Unmake(string chatName)
+        public bool TryUnmake(string chatName, out string message)
         {
             using var context = new SecretaryContext();
             var messageDataSets = context.MessageDataSets.AsNoTracking();
             var onetimeChatDataSets = context.OnetimeChatDataSets;
-            var chat = messageDataSets.GetChatByChatName(chatName);
-            var chatToRemove = onetimeChatDataSets.FirstOrDefault(x => x.ChatId == chat.Id);
-            if (chatToRemove != null)
+            var chat = messageDataSets.FindChatByChatName(chatName);
+            if (chat == null)
             {
-                onetimeChatDataSets.Remove(chatToRemove);
-                context.SaveChanges();
-                return true;
+                message = "Чат не найден";
+                return false;
             }
 
-            return false;
+            var chatToRemove = onetimeChatDataSets.FirstOrDefault(x => x.ChatId == chat.Id);
+            if (chatToRemove == null)
+            {
+                message = "Чат отсутствует в списке";
+                return false;
+            }
+
+            onetimeChatDataSets.Remove(chatToRemove);
+            context.SaveChanges();
+            message = "Чат успешно удален";
+            return true;
         }
 
         public IEnumerable<Chat> GetAll()
@@ -52,8 +67,8 @@ namespace TrunkRings.Domain.Services
 
     public interface IOneTimeChatService
     {
-        void Make(string chatName);
-        bool Unmake(string chatName);
+        bool TryMake(string chatName, out string message);
+        bool TryUnmake(string chatName, out string message);
         IEnumerable<Chat> GetAll();
     }
 }

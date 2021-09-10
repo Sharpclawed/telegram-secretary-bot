@@ -33,11 +33,11 @@ namespace TrunkRings.Domain
             return messageDataSets;
         }
 
-        public static User GetUserByUserName(this IQueryable<MessageDataSet> dataSets, string userName)
+        public static User FindUserByUserName(this IQueryable<MessageDataSet> dataSets, string userName)
         {
             var message = dataSets.Where(x => x.UserName.ToLower() == userName.ToLower()).OrderByDescending(x => x.Date).FirstOrDefault();
             if (message == null)
-                throw new ArgumentException("Пользователь не найден");
+                return null;
 
             return new User
             {
@@ -48,12 +48,12 @@ namespace TrunkRings.Domain
             };
         }
 
-        public static Chat GetChatByChatName(this IQueryable<MessageDataSet> dataSets, string chatName)
+        public static Chat FindChatByChatName(this IQueryable<MessageDataSet> dataSets, string chatName)
         {
             //todo 3 seconds - too much
             var message = dataSets.Where(x => x.ChatName.ToLower() == chatName.ToLower()).OrderByDescending(x => x.Date).FirstOrDefault();
             if (message == null)
-                throw new ArgumentException("Чат не найден");
+                return null;
 
             return new Chat
             {

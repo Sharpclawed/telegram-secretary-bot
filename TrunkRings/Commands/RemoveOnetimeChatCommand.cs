@@ -22,8 +22,7 @@ namespace TrunkRings.Commands
 
         public async Task ProcessAsync()
         {
-            var succeeded = oneTimeChatService.Unmake(ChatName);
-            var result = succeeded ? "Команда обработана" : "Чат не найден";
+            var result = oneTimeChatService.TryUnmake(ChatName, out string message) ? "Команда обработана" : message;
 
             await tgClient.SendTextMessageAsync(chatId, result);
         }

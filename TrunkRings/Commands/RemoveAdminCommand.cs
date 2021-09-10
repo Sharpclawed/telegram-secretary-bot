@@ -27,10 +27,9 @@ namespace TrunkRings.Commands
         public async Task ProcessAsync()
         {
             var removedBy = new Admin { UserId = UserId, UserName = UserName };
-            var succeeded = adminService.Unmake(AdminName, removedBy);
-            var result = succeeded ? "Команда обработана" : "Пользователь не найден";
+            var resultMessage = adminService.TryUnmake(AdminName, removedBy, out string message) ? "Команда обработана" : message;
 
-            await tgClient.SendTextMessageAsync(chatId, result);
+            await tgClient.SendTextMessageAsync(chatId, resultMessage);
         }
     }
 }
