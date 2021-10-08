@@ -1,12 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using TrunkRings.DAL;
-using TrunkRings.Domain.Services;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.InputFiles;
+using TrunkRings.Domain;
 using TrunkRings.Reporters;
 using TrunkRings.Settings;
 
@@ -45,15 +43,12 @@ namespace TrunkRings
         public async Task InitAsync()
         {
             logger.Log(LogLevel.Information, "Initialization start");
-            await using (var context = new SecretaryContext())
-            {
-                await context.Database.MigrateAsync();
-            }
+            var domainServices = new DomainServices();
             logger.Log(LogLevel.Information, "Db migration finished");
-            var adminService = new AdminService();
-            var bkService = new BkService();
-            var oneTimeChatService = new OneTimeChatService();
-            var messageService = new MessageService();
+            var adminService = domainServices.GetAdminService();
+            var bkService = domainServices.GetBookkeeperService();
+            var oneTimeChatService = domainServices.GetOneTimeChatService();
+            var messageService = domainServices.GetMessageService();
             botCommander = new BotCommander(tgClient, messageService);
             messageProcessor = new MessageProcessor(tgClient, adminService, bkService, oneTimeChatService, messageService, logger);
             botStateReporter = new BotStateReporter(botCommander, logger);

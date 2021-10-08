@@ -8,7 +8,7 @@ using TrunkRings.Domain.Models;
 
 namespace TrunkRings.Domain.Services
 {
-    public class MessageService : IMessageService
+    class MessageService : IMessageService
     {
         public void Save(DomainMessage message)
         {

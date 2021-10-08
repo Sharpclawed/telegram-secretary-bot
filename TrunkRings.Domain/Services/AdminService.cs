@@ -8,7 +8,7 @@ using TrunkRings.Domain.Models;
 
 namespace TrunkRings.Domain.Services
 {
-    public class AdminService : IAdminService
+    class AdminService : IAdminService
     {
         public bool TryMake(string userName, Admin addedBy, out string message)
         {

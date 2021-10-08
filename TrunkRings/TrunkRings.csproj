@@ -29,7 +29,6 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TrunkRings.DAL\TrunkRings.DAL.csproj" />
     <ProjectReference Include="..\TrunkRings.Domain\TrunkRings.Domain.csproj" />
   </ItemGroup>
   <PropertyGroup>
