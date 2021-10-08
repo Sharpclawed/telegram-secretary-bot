@@ -2,7 +2,7 @@
 
 namespace TrunkRings.Commands
 {
-    public interface IBotCommand
+    interface IBotCommand
     {
         Task ProcessAsync();
     }

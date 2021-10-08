@@ -1,6 +1,6 @@
 ﻿namespace TrunkRings.Settings
 {
-    public static class TgBotSettings
+    static class TgBotSettings
     {
         public static int SendLimitForOneChatPerMinute => 20;
         public static int SendLimitForAllChatsPerSecond => 30;

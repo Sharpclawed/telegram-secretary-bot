@@ -9,7 +9,7 @@ using TrunkRings.Commands;
 
 namespace TrunkRings
 {
-    public class CommandDetector
+    class CommandDetector
     {
         private readonly ITgBotClientEx tgClient;
         private readonly IAdminService adminService;

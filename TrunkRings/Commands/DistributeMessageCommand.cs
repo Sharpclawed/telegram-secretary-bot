@@ -8,7 +8,7 @@ using TrunkRings.Settings;
 
 namespace TrunkRings.Commands
 {
-    public class DistributeMessageCommand : IBotCommand
+    class DistributeMessageCommand : IBotCommand
     {
         private readonly IMessageService messageService;
         private readonly ITgBotClientEx tgClient;

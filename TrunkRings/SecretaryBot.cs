@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -7,6 +8,8 @@ using Telegram.Bot.Types.InputFiles;
 using TrunkRings.Domain;
 using TrunkRings.Reporters;
 using TrunkRings.Settings;
+
+[assembly: InternalsVisibleTo("TrunkRings.UnitTests")]
 
 namespace TrunkRings
 {

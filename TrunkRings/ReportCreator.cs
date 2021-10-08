@@ -8,7 +8,7 @@ using OfficeOpenXml.Style;
 
 namespace TrunkRings
 {
-    public static class ReportCreator
+    static class ReportCreator
     {
         public static FileStream Create<T>(ILookup<string, T> sheetsData)
         {

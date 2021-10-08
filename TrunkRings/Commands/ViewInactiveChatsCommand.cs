@@ -6,7 +6,7 @@ using Telegram.Bot.Types;
 
 namespace TrunkRings.Commands
 {
-    public class ViewInactiveChatsCommand : IBotCommand
+    class ViewInactiveChatsCommand : IBotCommand
     {
         private readonly IMessageService messageService;
         private readonly ITgBotClientEx tgClient;

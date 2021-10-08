@@ -4,7 +4,7 @@ using Telegram.Bot.Types;
 
 namespace TrunkRings.Commands
 {
-    public class RemoveOnetimeChatCommand : IBotCommand
+    class RemoveOnetimeChatCommand : IBotCommand
     {
         private readonly IOneTimeChatService oneTimeChatService;
         private readonly ITgBotClientEx tgClient;

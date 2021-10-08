@@ -4,7 +4,7 @@ using Telegram.Bot.Types;
 
 namespace TrunkRings.Commands
 {
-    public class CheckAddedMemberCommand :IBotCommand
+    class CheckAddedMemberCommand :IBotCommand
     {
         private readonly ITgBotClientEx tgClient;
         private readonly ChatId chatToReport;

@@ -6,7 +6,7 @@ using TrunkRings.Settings;
 
 namespace TrunkRings.Reporters
 {
-    public class WaitersReporter : IReporter
+    class WaitersReporter : IReporter
     {
         private readonly BotCommander botCommander;
         private readonly ILogger logger;

@@ -6,7 +6,7 @@ using Telegram.Bot.Types;
 
 namespace TrunkRings.Commands
 {
-    public class ViewHistoryAllCommand : IBotCommand
+    class ViewHistoryAllCommand : IBotCommand
     {
         private readonly IMessageService messageService;
         private readonly ITgBotClientEx tgClient;

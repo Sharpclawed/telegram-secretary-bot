@@ -1,6 +1,6 @@
 ﻿namespace TrunkRings.Reporters
 {
-    public interface IReporter
+    interface IReporter
     {
         void Start();
     }
