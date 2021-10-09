@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
@@ -29,7 +30,11 @@ namespace TrunkRings.WebAPI.Services
                 logger.LogInformation("Initializing Secretary bot");
                 var secretaryBotConfig = new SecretaryBotConfig
                 {
-                    ConnectionString = configuration.GetConnectionString("SecretaryDatabase")
+                    ConnectionString = configuration.GetConnectionString("SecretaryDatabase"),
+                    DebugChatId = configuration.GetValue<long>("TgBotSettings:ChatIds:Debug"),
+                    LogDistributingChatId = configuration.GetValue<long>("TgBotSettings:ChatIds:DistributedMessages"),
+                    UnansweredChatId = configuration.GetValue<long>("TgBotSettings:ChatIds:UnasweredMessages"),
+                    AllowedForDistributionChatIds = configuration.GetSection("TgBotSettings:ChatIds:AllowedChatsForDistribution").Get<List<long>>()
                 };
                 await secretaryBot.InitAsync(secretaryBotConfig);
                 logger.LogInformation("Starting reporters");

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using TrunkRings;
 using TrunkRings.Settings;
 using TrunkRings.WebAPI.Models;
 

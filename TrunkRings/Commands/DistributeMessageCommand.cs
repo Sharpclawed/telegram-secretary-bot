@@ -78,8 +78,7 @@ namespace TrunkRings.Commands
 
         private async Task SendTextMessageAsync(long chatId)
         {
-            var permittedChats = new List<long> {ChatIds.Botva.Identifier, ChatIds.Debug.Identifier, ChatIds.LogDistributing.Identifier, -555793869 };
-            if (!permittedChats.Contains(chatId))
+            if (!ChatIds.AllowedForDistribution.Contains(chatId))
                 throw new Exception("Unallowed chat");
 
             await tgClient.SendTextMessageAsync(chatId, text, withMarkdown ? ParseMode.Markdown : ParseMode.Default, true);

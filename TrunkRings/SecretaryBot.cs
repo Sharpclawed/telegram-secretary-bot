@@ -48,6 +48,7 @@ namespace TrunkRings
             logger.Log(LogLevel.Information, "Initialization start");
             var domainServices = new DomainServices(botConfig.ConnectionString);
             logger.Log(LogLevel.Information, "Db migration finished");
+            SetChatIds(botConfig);
             var adminService = domainServices.GetAdminService();
             var bkService = domainServices.GetBookkeeperService();
             var oneTimeChatService = domainServices.GetOneTimeChatService();
@@ -96,6 +97,14 @@ namespace TrunkRings
             botStateReporter.Start();
             waitersViewReporter.Start();
             inactiveChatsReporter.Start();
+        }
+
+        private void SetChatIds(ISecretaryBotConfig botConfig)
+        {
+            ChatIds.Debug = botConfig.DebugChatId;
+            ChatIds.LogDistributing = botConfig.LogDistributingChatId;
+            ChatIds.Unanswered = botConfig.UnansweredChatId;
+            ChatIds.AllowedForDistribution = botConfig.AllowedForDistributionChatIds;
         }
     }
 }

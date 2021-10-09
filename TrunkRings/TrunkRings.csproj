@@ -26,7 +26,4 @@
   <ItemGroup>
     <ProjectReference Include="..\TrunkRings.Domain\TrunkRings.Domain.csproj" />
   </ItemGroup>
-  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="cd $(ProjectDir)Settings\&#xD;&#xA;if not exist SecretsLocal.cs (type nul &gt; SecretsLocal.cs)" />
-  </Target>
 </Project>

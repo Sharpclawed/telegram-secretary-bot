@@ -56,7 +56,7 @@ namespace TrunkRings.Reporters
                 {
                     case SocketException _:
                     case ObjectDisposedException _:
-                        await botCommander.SendMessageAsync(ChatIds.Botva, "Пропала коннекция к базе. Отключаюсь, чтобы не потерялись данные. sas\r\n"
+                        await botCommander.SendMessageAsync(ChatIds.Debug, "Пропала коннекция к базе. Отключаюсь, чтобы не потерялись данные. sas\r\n"
                                                                            + "Пожалуйста, включите меня в течение суток");
                         throw;
                     default:

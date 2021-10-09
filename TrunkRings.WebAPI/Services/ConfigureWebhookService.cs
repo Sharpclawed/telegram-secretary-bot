@@ -1,21 +1,22 @@
 ﻿using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using TrunkRings;
-using TrunkRings.WebAPI.Settings;
 
 namespace TrunkRings.WebAPI.Services
 {
     public class ConfigureWebhookService : IHostedService
     {
         private readonly ILogger<ConfigureWebhookService> logger;
+        private readonly IConfiguration configuration;
         private readonly ISecretaryBot secretaryBot;
 
-        public ConfigureWebhookService(ILogger<ConfigureWebhookService> logger, ISecretaryBot secretaryBot)
+        public ConfigureWebhookService(ISecretaryBot secretaryBot, ILogger<ConfigureWebhookService> logger, IConfiguration configuration)
         {
             this.logger = logger;
+            this.configuration = configuration;
             this.secretaryBot = secretaryBot;
         }
 
@@ -26,8 +27,11 @@ namespace TrunkRings.WebAPI.Services
             secretaryBot.ConfigPolling();
             secretaryBot.StartReceiving();
 #else
-            var webhookAddress = $"{WebhookSettings.Url}bot/{WebhookSettings.BotToken}";
-            await using FileStream cert = File.OpenRead(WebhookSettings.PathToCert);
+            var url = configuration.GetValue<string>("TgBotSettings:Webhook:Url");
+            var pathToCert = configuration.GetValue<string>("TgBotSettings:Webhook:PathToCert");
+            var token = configuration.GetValue<string>("TgBotSettings:Token");
+            var webhookAddress = $"{url}bot/{token}";
+            await using FileStream cert = File.OpenRead(pathToCert);
             logger.LogInformation("Setting webhook");
             await secretaryBot.ConfigWebhookAsync(webhookAddress, cert, cancellationToken);
 #endif
