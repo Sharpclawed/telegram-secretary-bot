@@ -47,7 +47,7 @@ namespace TrunkRings
         public async Task SendTextMessagesAsExcelReportAsync<T>(ChatId chatId, ILookup<string, T> rowsWithSheets, string caption = null)
         {
             await using var fileStream = ReportCreator.Create(rowsWithSheets);
-            var fileToSend = new InputOnlineFile(fileStream, (caption ?? "report") + ".xls");
+            var fileToSend = new InputOnlineFile(fileStream, (caption ?? "report") + ".xlsx");
             await SendDocumentAsync(chatId, fileToSend, caption);
         }
     }
