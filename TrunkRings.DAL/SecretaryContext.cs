@@ -4,7 +4,7 @@ using TrunkRings.DAL.Settings;
 
 namespace TrunkRings.DAL
 {
-    public class SecretaryContext : DbContext
+    public sealed class SecretaryContext : DbContext
     {
         public DbSet<MessageDataSet> MessageDataSets { get; set; }
         public DbSet<AdminDataSet> AdminDataSets { get; set; }
@@ -19,5 +19,10 @@ namespace TrunkRings.DAL
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
             => optionsBuilder.UseNpgsql(DbSettings.DbConnectionString);
+
+        public void SetConnectionString(string connectionString)
+        {
+            DbSettings.DbConnectionString = connectionString;
+        }
     }
 }

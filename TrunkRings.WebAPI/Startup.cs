@@ -5,7 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using TrunkRings;
 using TrunkRings.Settings;
 using TrunkRings.WebAPI.Services;
 using TrunkRings.WebAPI.Settings;
@@ -52,7 +51,6 @@ namespace TrunkRings.WebAPI
             app.UseHttpsRedirection();
             //app.UseSerilogRequestLogging();
             app.UseRouting();
-
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

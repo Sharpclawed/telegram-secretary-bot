@@ -31,5 +31,6 @@ _ReSharper*/
 #Nuget packages folder
 packages/
 TrunkRings/Settings/SecretsLocal.cs
-TrunkRings.DAL/Settings/DbSettingsSecret.cs
 TrunkRings.WebAPI/Settings/WebhookSettingsLocal.cs
+TrunkRings.WebAPI/appsettings.Development.json
+TrunkRings.WebAPI/appsettings.Production.json

@@ -6,9 +6,10 @@ namespace TrunkRings.Domain
 {
     public class DomainServices
     {
-        public DomainServices()
+        public DomainServices(string connectionString)
         {
             using var context = new SecretaryContext();
+            context.SetConnectionString(connectionString);
             context.Database.Migrate();
         }
 

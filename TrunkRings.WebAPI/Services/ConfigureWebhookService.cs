@@ -21,10 +21,16 @@ namespace TrunkRings.WebAPI.Services
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
+#if DEBUG
+            logger.LogInformation("Setting polling");
+            secretaryBot.ConfigPolling();
+            secretaryBot.StartReceiving();
+#else
             var webhookAddress = $"{WebhookSettings.Url}bot/{WebhookSettings.BotToken}";
             await using FileStream cert = File.OpenRead(WebhookSettings.PathToCert);
             logger.LogInformation("Setting webhook");
             await secretaryBot.ConfigWebhookAsync(webhookAddress, cert, cancellationToken);
+#endif
         }
 
         public async Task StopAsync(CancellationToken cancellationToken)

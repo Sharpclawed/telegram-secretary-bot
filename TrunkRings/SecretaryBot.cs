@@ -15,7 +15,7 @@ namespace TrunkRings
 {
     public interface ISecretaryBot
     {
-        Task InitAsync();
+        Task InitAsync(ISecretaryBotConfig botConfig);
         BotCommander BotCommander { get; }
         MessageProcessor MessageProcessor { get; }
         string Name { get; }
@@ -43,10 +43,10 @@ namespace TrunkRings
             this.logger = logger;
         }
 
-        public async Task InitAsync()
+        public async Task InitAsync(ISecretaryBotConfig botConfig)
         {
             logger.Log(LogLevel.Information, "Initialization start");
-            var domainServices = new DomainServices();
+            var domainServices = new DomainServices(botConfig.ConnectionString);
             logger.Log(LogLevel.Information, "Db migration finished");
             var adminService = domainServices.GetAdminService();
             var bkService = domainServices.GetBookkeeperService();
