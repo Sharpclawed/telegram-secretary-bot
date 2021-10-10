@@ -4,7 +4,7 @@ using Telegram.Bot.Types.Enums;
 
 namespace TrunkRings.Commands
 {
-    public class SendHelpTipCommand : IBotCommand
+    class SendHelpTipCommand : IBotCommand
     {
         private readonly ITgBotClientEx tgClient;
         private readonly ChatId chatId;

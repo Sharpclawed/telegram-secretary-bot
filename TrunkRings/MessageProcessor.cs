@@ -53,7 +53,7 @@ namespace TrunkRings
                 {
                     case SocketException _:
                     case ObjectDisposedException _:
-                        await tgClient.SendTextMessageAsync(ChatIds.Botva,
+                        await tgClient.SendTextMessageAsync(ChatIds.Debug,
                             "Пропала коннекция к базе. Отключаюсь, чтобы не потерялись данные. mr\r\n"
                             + "Пожалуйста, включите меня в течение суток");
                         throw;

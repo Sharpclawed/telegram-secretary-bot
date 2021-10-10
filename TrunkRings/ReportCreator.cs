@@ -8,12 +8,12 @@ using OfficeOpenXml.Style;
 
 namespace TrunkRings
 {
-    public static class ReportCreator
+    static class ReportCreator
     {
         public static FileStream Create<T>(ILookup<string, T> sheetsData)
         {
             //todo unhardcoded path
-            var tempFileName = $@"c:\temp\temp-{Guid.NewGuid()}.xls";
+            var tempFileName = $@"C:\temp\temp-{Guid.NewGuid()}.xlsx";
             var fileStream = new FileStream(tempFileName, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read, 4096,
                 FileOptions.RandomAccess | FileOptions.DeleteOnClose);
             using (var xlPackage = new ExcelPackage(fileStream))

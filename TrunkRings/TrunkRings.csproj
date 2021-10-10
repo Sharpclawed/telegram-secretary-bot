@@ -16,11 +16,6 @@
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="App.config">
-      <SubType>Designer</SubType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="EPPlus">
       <Version>4.5.3.3</Version>
     </PackageReference>
@@ -29,14 +24,6 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TrunkRings.DAL\TrunkRings.DAL.csproj" />
     <ProjectReference Include="..\TrunkRings.Domain\TrunkRings.Domain.csproj" />
   </ItemGroup>
-  <PropertyGroup>
-    <ApplicationIcon />
-    <StartupObject />
-  </PropertyGroup>
-  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="cd $(ProjectDir)Settings\&#xD;&#xA;if not exist SecretsLocal.cs (type nul &gt; SecretsLocal.cs)" />
-  </Target>
 </Project>

@@ -6,7 +6,7 @@ using TrunkRings.DomainExtensions;
 
 namespace TrunkRings.Commands
 {
-    public class ViewAdminsCommand : IBotCommand
+    class ViewAdminsCommand : IBotCommand
     {
         private readonly IAdminService adminService;
         private readonly ITgBotClientEx tgClient;

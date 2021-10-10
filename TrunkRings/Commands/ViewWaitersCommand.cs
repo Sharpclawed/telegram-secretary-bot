@@ -8,7 +8,7 @@ using TrunkRings.Settings;
 
 namespace TrunkRings.Commands
 {
-    public class ViewWaitersCommand : IBotCommand
+    class ViewWaitersCommand : IBotCommand
     {
         private readonly IMessageService messageService;
         private readonly ITgBotClientEx tgClient;

@@ -5,7 +5,7 @@ using Telegram.Bot.Types;
 
 namespace TrunkRings.Commands
 {
-    public class RemoveAdminCommand : IBotCommand
+    class RemoveAdminCommand : IBotCommand
     {
         private readonly IAdminService adminService;
         private readonly ITgBotClientEx tgClient;

@@ -7,7 +7,7 @@ using TrunkRings.Domain.Models;
 
 namespace TrunkRings.Domain.Services
 {
-    public class OneTimeChatService : IOneTimeChatService
+    class OneTimeChatService : IOneTimeChatService
     {
         public bool TryMake(string chatName, out string message)
         {

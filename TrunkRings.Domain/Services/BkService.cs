@@ -7,7 +7,7 @@ using TrunkRings.Domain.Models;
 
 namespace TrunkRings.Domain.Services
 {
-    public class BkService : IBkService
+    class BkService : IBkService
     {
         public bool TryMake(string userName, out string message)
         {

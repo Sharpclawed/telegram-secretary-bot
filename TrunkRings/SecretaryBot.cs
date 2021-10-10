@@ -1,20 +1,21 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using TrunkRings.DAL;
-using TrunkRings.Domain.Services;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.InputFiles;
+using TrunkRings.Domain;
 using TrunkRings.Reporters;
 using TrunkRings.Settings;
+
+[assembly: InternalsVisibleTo("TrunkRings.UnitTests")]
 
 namespace TrunkRings
 {
     public interface ISecretaryBot
     {
-        Task InitAsync();
+        Task InitAsync(ISecretaryBotConfig botConfig);
         BotCommander BotCommander { get; }
         MessageProcessor MessageProcessor { get; }
         string Name { get; }
@@ -42,18 +43,16 @@ namespace TrunkRings
             this.logger = logger;
         }
 
-        public async Task InitAsync()
+        public async Task InitAsync(ISecretaryBotConfig botConfig)
         {
             logger.Log(LogLevel.Information, "Initialization start");
-            await using (var context = new SecretaryContext())
-            {
-                await context.Database.MigrateAsync();
-            }
+            var domainServices = new DomainServices(botConfig.ConnectionString);
             logger.Log(LogLevel.Information, "Db migration finished");
-            var adminService = new AdminService();
-            var bkService = new BkService();
-            var oneTimeChatService = new OneTimeChatService();
-            var messageService = new MessageService();
+            SetChatIds(botConfig);
+            var adminService = domainServices.GetAdminService();
+            var bkService = domainServices.GetBookkeeperService();
+            var oneTimeChatService = domainServices.GetOneTimeChatService();
+            var messageService = domainServices.GetMessageService();
             botCommander = new BotCommander(tgClient, messageService);
             messageProcessor = new MessageProcessor(tgClient, adminService, bkService, oneTimeChatService, messageService, logger);
             botStateReporter = new BotStateReporter(botCommander, logger);
@@ -98,6 +97,14 @@ namespace TrunkRings
             botStateReporter.Start();
             waitersViewReporter.Start();
             inactiveChatsReporter.Start();
+        }
+
+        private void SetChatIds(ISecretaryBotConfig botConfig)
+        {
+            ChatIds.Debug = botConfig.DebugChatId;
+            ChatIds.LogDistributing = botConfig.LogDistributingChatId;
+            ChatIds.Unanswered = botConfig.UnansweredChatId;
+            ChatIds.AllowedForDistribution = botConfig.AllowedForDistributionChatIds;
         }
     }
 }

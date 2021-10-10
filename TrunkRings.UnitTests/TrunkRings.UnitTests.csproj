@@ -14,9 +14,6 @@
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="app.config" />
-  </ItemGroup>
-  <ItemGroup>
 	<ProjectReference Include="..\TrunkRings.DAL\TrunkRings.DAL.csproj" />
 	<ProjectReference Include="..\TrunkRings.Domain\TrunkRings.Domain.csproj" />
 	<ProjectReference Include="..\TrunkRings\TrunkRings.csproj" />

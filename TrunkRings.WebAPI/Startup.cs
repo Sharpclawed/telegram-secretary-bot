@@ -5,10 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using TrunkRings;
-using TrunkRings.Settings;
 using TrunkRings.WebAPI.Services;
-using TrunkRings.WebAPI.Settings;
 
 namespace TrunkRings.WebAPI
 {
@@ -24,7 +21,8 @@ namespace TrunkRings.WebAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddHttpClient("tgClient").AddTypedClient<ITgBotClientEx>(httpClient => new TgBotClientEx(Secrets.TgBotToken, httpClient));
+            var botToken = Configuration.GetValue<string>("TgBotSettings:Token");
+            services.AddHttpClient("tgClient").AddTypedClient<ITgBotClientEx>(httpClient => new TgBotClientEx(botToken, httpClient));
             services.AddSingleton<ISecretaryBot, SecretaryBot>(serviceProvider => new SecretaryBot(
                 serviceProvider.GetService<ITgBotClientEx>(),
                 serviceProvider.GetService<ILogger<SecretaryBot>>()));
@@ -52,17 +50,16 @@ namespace TrunkRings.WebAPI
             app.UseHttpsRedirection();
             //app.UseSerilogRequestLogging();
             app.UseRouting();
-
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
-                var botToken = WebhookSettings.BotToken;
+                var botToken = Configuration.GetValue<string>("TgBotSettings:Token");
                 endpoints.MapControllerRoute(name: "tgWebhook",
                     pattern: $"bot/{botToken}",
                     new { controller = "Webhook", action = "Post" });
 
-                var managingToken = WebhookSettings.DistributeManagingToken;
+                var managingToken = Configuration.GetValue<string>("TgBotSettings:DistributeManagingToken");
                 endpoints.MapControllerRoute(name: "distributeMessages",
                     pattern: $"api/{managingToken}/{{controller=Distribute}}/{{action=Messages}}");
 

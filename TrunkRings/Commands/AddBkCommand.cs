@@ -4,7 +4,7 @@ using Telegram.Bot.Types;
 
 namespace TrunkRings.Commands
 {
-    public class AddBkCommand : IBotCommand
+    class AddBkCommand : IBotCommand
     {
         private readonly IBkService bkService;
         private readonly ITgBotClientEx tgClient;

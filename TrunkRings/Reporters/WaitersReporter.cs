@@ -6,7 +6,7 @@ using TrunkRings.Settings;
 
 namespace TrunkRings.Reporters
 {
-    public class WaitersReporter : IReporter
+    class WaitersReporter : IReporter
     {
         private readonly BotCommander botCommander;
         private readonly ILogger logger;
@@ -62,7 +62,7 @@ namespace TrunkRings.Reporters
                 {
                     case SocketException _:
                     case ObjectDisposedException _:
-                        await botCommander.SendMessageAsync(ChatIds.Botva,
+                        await botCommander.SendMessageAsync(ChatIds.Debug,
                             "Пропала коннекция к базе. Отключаюсь, чтобы не потерялись данные. vw\r\n" + "Пожалуйста, включите меня в течение суток");
                         throw;
                     default:

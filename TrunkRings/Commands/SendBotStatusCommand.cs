@@ -5,7 +5,7 @@ using Telegram.Bot.Types;
 
 namespace TrunkRings.Commands
 {
-    public class SendBotStatusCommand : IBotCommand
+    class SendBotStatusCommand : IBotCommand
     {
         private readonly IMessageService messageService;
         private readonly ITgBotClientEx tgClient;

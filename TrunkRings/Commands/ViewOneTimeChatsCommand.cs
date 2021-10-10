@@ -5,7 +5,7 @@ using Telegram.Bot.Types;
 
 namespace TrunkRings.Commands
 {
-    public class ViewOneTimeChatsCommand : IBotCommand
+    class ViewOneTimeChatsCommand : IBotCommand
     {
         private readonly IOneTimeChatService oneTimeChatService;
         private readonly ITgBotClientEx tgClient;

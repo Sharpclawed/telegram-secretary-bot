@@ -1,7 +1,7 @@
 ﻿namespace TrunkRings.DAL.Settings
 {
-    internal static partial class DbSettings
+    static class DbSettings
     {
-        public static string DbConnectionString { get; }
+        public static string DbConnectionString { get; set; }
     }
 }
