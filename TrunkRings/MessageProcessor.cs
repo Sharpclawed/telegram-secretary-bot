@@ -44,6 +44,9 @@ namespace TrunkRings
                     case MessageType.ChatMembersAdded:
                         await ProcessChatMembersAdded(message);
                         break;
+                    case MessageType.GroupCreated:
+                        await ProcessGroupCreated(message);
+                        break;
                 }
             }
             catch (Exception exception)
@@ -62,6 +65,13 @@ namespace TrunkRings
                         break;
                 }
             }
+        }
+
+        private async Task ProcessGroupCreated(Message message)
+        {
+            var chatToReport = ChatIds.LogDistributing;
+            var command = new InformAboutNewChat(tgClient, chatToReport, message.Chat);
+            await command.ProcessAsync();
         }
 
         private async Task ProcessChatMembersAdded(Message message)
