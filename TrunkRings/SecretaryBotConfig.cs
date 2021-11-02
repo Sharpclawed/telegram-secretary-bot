@@ -9,7 +9,6 @@ namespace TrunkRings
         public ChatId DebugChatId { get; set; }
         public ChatId UnansweredChatId { get; set; }
         public ChatId LogDistributingChatId { get; set; }
-        public List<long> AllowedForDistributionChatIds { get; set; }
     }
 
     public interface ISecretaryBotConfig
@@ -18,6 +17,5 @@ namespace TrunkRings
         ChatId DebugChatId { get; set; }
         ChatId UnansweredChatId { get; set; }
         ChatId LogDistributingChatId { get; set; }
-        List<long> AllowedForDistributionChatIds { get; set; }
     }
 }

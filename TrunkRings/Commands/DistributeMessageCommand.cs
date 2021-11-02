@@ -38,7 +38,7 @@ namespace TrunkRings.Commands
             if (result.Count <= TgBotSettings.ReadableCountOfMessages)
             {
                 var rows = result.Select(z => $"{z.ChatName} ({z.ChatId}) result: {z.Verdict} {z.ErrorMessage}");
-                await tgClient.SendTextMessagesAsSingleTextAsync(ChatIds.LogDistributing, rows, caption, withMarkdown ? ParseMode.Markdown : ParseMode.Default, true);
+                await tgClient.SendTextMessagesAsSingleTextAsync(ChatIds.LogDistributing, rows, caption, ParseMode.Default, true);
             }
             else
             {
@@ -55,7 +55,7 @@ namespace TrunkRings.Commands
             {
                 try
                 {
-                    await SendTextMessageAsync(chatId);
+                    await tgClient.SendTextMessageAsync(chatId, text, withMarkdown ? ParseMode.Markdown : ParseMode.Default, true);
                     result.Add(new DistributingResult
                     {
                         ChatId = chatId,
@@ -74,14 +74,6 @@ namespace TrunkRings.Commands
             }
 
             return result;
-        }
-
-        private async Task SendTextMessageAsync(long chatId)
-        {
-            if (!ChatIds.AllowedForDistribution.Contains(chatId))
-                throw new Exception("Unallowed chat");
-
-            await tgClient.SendTextMessageAsync(chatId, text, withMarkdown ? ParseMode.Markdown : ParseMode.Default, true);
         }
 
         public class DistributingResult

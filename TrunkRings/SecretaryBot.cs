@@ -104,7 +104,6 @@ namespace TrunkRings
             ChatIds.Debug = botConfig.DebugChatId;
             ChatIds.LogDistributing = botConfig.LogDistributingChatId;
             ChatIds.Unanswered = botConfig.UnansweredChatId;
-            ChatIds.AllowedForDistribution = botConfig.AllowedForDistributionChatIds;
         }
     }
 }
