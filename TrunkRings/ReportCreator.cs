@@ -52,9 +52,10 @@ namespace TrunkRings
         private static string NormalizeSheetName(string value)
         {
             var correctValue = value
-                .Replace(new[] { '#', '%', '@', '!', '?', '*', '\'' }, "")
+                .Replace(new[] { '#', '%', '@', '!', '?', '*', '\'', '/' }, "")
+                .TrimEnd()
                 .ToLower();
-            return correctValue.Length > 30 ? correctValue.Substring(0, 27) : correctValue; //TODO 27 из-за потенциальных страниц с тем же названием
+            return correctValue.Length > 27 ? correctValue.Substring(0, 27) : correctValue; //TODO 27 из-за потенциальных страниц с тем же названием
         }
     }
 }
