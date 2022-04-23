@@ -13,7 +13,8 @@ namespace TrunkRings
         public static FileStream Create<T>(ILookup<string, T> sheetsData)
         {
             //todo unhardcoded path
-            var tempFileName = $@"C:\temp\temp-{Guid.NewGuid()}.xlsx";
+            var directoryInfo = Directory.CreateDirectory(@"C:\temp");
+            var tempFileName = Path.Join(directoryInfo.FullName, $"temp-{Guid.NewGuid()}.xlsx");
             var fileStream = new FileStream(tempFileName, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read, 4096,
                 FileOptions.RandomAccess | FileOptions.DeleteOnClose);
             using (var xlPackage = new ExcelPackage(fileStream))

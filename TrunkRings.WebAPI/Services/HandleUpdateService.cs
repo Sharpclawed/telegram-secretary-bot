@@ -24,7 +24,8 @@ namespace TrunkRings.WebAPI.Services
             var handler = update.Type switch
             {
                 UpdateType.Message => BotOnMessageReceived(update.Message),
-                UpdateType.EditedMessage => BotOnMessageReceived(update.EditedMessage)
+                UpdateType.EditedMessage => BotOnMessageReceived(update.EditedMessage),
+                _ => Task.CompletedTask
             };
 
             try
