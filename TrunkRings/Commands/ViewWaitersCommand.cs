@@ -45,15 +45,15 @@ namespace TrunkRings.Commands
             }
             else
             {
-                var recordsWithColumnsToReport = records.Select(z => new
+                var recordsWithColumnsToReport = records.Select(msg => new
                 {
-                    Date = z.Date.ToString("dd.MM.yy HH:mm:ss"),
-                    z.ChatName,
-                    z.Message,
-                    z.UserFirstName,
-                    z.UserLastName,
-                    z.UserName,
-                    z.UserId
+                    Date = msg.Date.ToString("dd.MM.yy HH:mm:ss"),
+                    msg.ChatName,
+                    msg.Message,
+                    msg.UserFirstName,
+                    msg.UserLastName,
+                    msg.UserName,
+                    msg.UserId
                 }).ToList();
                 await tgClient.SendTextMessagesAsExcelReportAsync(chatId, recordsWithColumnsToReport, "Отчет по неотвеченным сообщениям");}
         }

@@ -34,11 +34,11 @@ namespace TrunkRings.DomainExtensions
                 "ok",
             };
 
-            var msgsWithDebugData = dataSets.Select(z => new
+            var msgsWithDebugData = dataSets.Select(m => new
                 {
-                    msg = z,
+                    msg = m,
                     txt = new string(
-                            Regex.Replace(z.Message, @"\p{Cs}", " ")
+                            Regex.Replace(m.Message, @"\p{Cs}", " ")
                                 .ToLower()
                                 .Replace("ё", "е")
                                 .Replace("☺️", string.Empty)
@@ -126,9 +126,9 @@ namespace TrunkRings.DomainExtensions
                                 .Where(c => c == '?' || !char.IsPunctuation(c)).ToArray())
                         .Trim()
                 })
-                .Where(z => !ignoreUnanswered.Contains(z.txt));
+                .Where(x => !ignoreUnanswered.Contains(x.txt));
 
-            return msgsWithDebugData.Select(z => z.msg).ToList();
+            return msgsWithDebugData.Select(x => x.msg).ToList();
         }
     }
 }

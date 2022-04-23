@@ -34,14 +34,14 @@ namespace TrunkRings.Commands
             else
             {
                 var recordsWithColumnsToReport = records
-                    .ToLookup(z => z.ChatName, z => new
+                    .ToLookup(msg => msg.ChatName, msg => new
                     {
-                        Date = z.Date.ToString("dd.MM.yy HH:mm:ss"),
-                        z.Message,
-                        z.UserFirstName,
-                        z.UserLastName,
-                        z.UserName,
-                        z.UserId
+                        Date = msg.Date.ToString("dd.MM.yy HH:mm:ss"),
+                        msg.Message,
+                        msg.UserFirstName,
+                        msg.UserLastName,
+                        msg.UserName,
+                        msg.UserId
                     });
                 await tgClient.SendTextMessagesAsExcelReportAsync(chatId, recordsWithColumnsToReport, "История сообщений");
             }

@@ -22,7 +22,7 @@ namespace TrunkRings.Commands
         public async Task ProcessAsync()
         {
             var secretaryBot = await tgClient.GetMeAsync();
-            var botItselfAdded = newMembers.Select(z => z.Id).Contains(secretaryBot.Id);
+            var botItselfAdded = newMembers.Select(user => user.Id).Contains(secretaryBot.Id);
             if (botItselfAdded)
                 await tgClient.SendTextMessageAsync(chatToReport,
                     $"{secretaryBot.FirstName} добавлен в чат {fromChat.Title} (Id: {fromChat.Id})");

@@ -67,12 +67,12 @@ namespace TrunkRings.Domain.Services
         {
             using var context = new SecretaryContext();
             return context.BookkeeperDataSets.AsNoTracking().ToList()
-                .Select(z => new User
+                .Select(bk => new User
                 {
-                    UserId = z.UserId,
-                    Name = z.UserFirstName,
-                    Surname = z.UserLastName,
-                    Username = z.UserName
+                    UserId = bk.UserId,
+                    Name = bk.UserFirstName,
+                    Surname = bk.UserLastName,
+                    Username = bk.UserName
                 });
         }
     }

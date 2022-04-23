@@ -37,19 +37,19 @@ namespace TrunkRings.Domain.Services
                 .GetActualChats(exactChatName)
                 .GetActualUser(exactUserId)
                 .ToList()
-                .Select(z => new DomainMessage
+                .Select(msg => new DomainMessage
                 {
-                    UserId = z.UserId,
-                    UserName = z.UserName,
-                    UserFirstName = z.UserFirstName,
-                    UserLastName = z.UserLastName,
-                    ChatId = z.ChatId,
-                    ChatName = z.ChatName,
-                    Date = z.Date,
-                    Message = z.Message,
-                    MessageId = z.MessageId
+                    UserId = msg.UserId,
+                    UserName = msg.UserName,
+                    UserFirstName = msg.UserFirstName,
+                    UserLastName = msg.UserLastName,
+                    ChatId = msg.ChatId,
+                    ChatName = msg.ChatName,
+                    Date = msg.Date,
+                    Message = msg.Message,
+                    MessageId = msg.MessageId
                 })
-                .OrderBy(z => z.Date);
+                .OrderBy(msg => msg.Date);
         }
 
         public IOrderedEnumerable<DomainMessage> GetLastDirMsgFromInactiveChats(DateTime sinceDate, DateTime untilDate, TimeSpan checkingPeriod)
@@ -63,8 +63,8 @@ namespace TrunkRings.Domain.Services
 
             var lastMessagesFromDirectors = (
                     from msgExt in (
-                        from msg in messageDataSets.Where(z =>
-                            z.Date > sinceDate && z.Date <= untilDate && z.ChatName != null)
+                        from msg in messageDataSets.Where(m =>
+                            m.Date > sinceDate && m.Date <= untilDate && m.ChatName != null)
                         from onetimeChat in onetimeChatDataSets
                             .Where(chat => chat.ChatId == msg.ChatId).DefaultIfEmpty()
                         from bookkeeper in bkDataSets
@@ -81,17 +81,17 @@ namespace TrunkRings.Domain.Services
                     select groups.OrderByDescending(p => p.Date).FirstOrDefault()
                 )
                 .Where(msg => msg.Date <= timeBorder)
-                .Select(z => new DomainMessage
+                .Select(msg => new DomainMessage
                 {
-                    UserId = z.UserId,
-                    UserName = z.UserName,
-                    UserFirstName = z.UserFirstName,
-                    UserLastName = z.UserLastName,
-                    ChatId = z.ChatId,
-                    ChatName = z.ChatName,
-                    Date = z.Date,
-                    Message = z.Message,
-                    MessageId = z.MessageId
+                    UserId = msg.UserId,
+                    UserName = msg.UserName,
+                    UserFirstName = msg.UserFirstName,
+                    UserLastName = msg.UserLastName,
+                    ChatId = msg.ChatId,
+                    ChatName = msg.ChatName,
+                    Date = msg.Date,
+                    Message = msg.Message,
+                    MessageId = msg.MessageId
                 })
                 .OrderByDescending(msg => msg.Date);
 
@@ -107,7 +107,7 @@ namespace TrunkRings.Domain.Services
 
             var lastMessagesFromDirectors = (
                     from msgExt in (
-                        from msg in messageDataSets.Where(z => z.Date > sinceDate)
+                        from msg in messageDataSets.Where(m => m.Date > sinceDate)
                         from bookkeeper in bkDataSets
                             .Where(bk => bk.UserId == msg.UserId).DefaultIfEmpty()
                         from admin in adminDataSets.Where(x => x.DeleteTime == null)
@@ -124,17 +124,17 @@ namespace TrunkRings.Domain.Services
                 )
                 .Where(msgExt => msgExt.msg.Date <= untilDate && msgExt.isByDir)
                 .Select(msgExt => msgExt.msg)
-                .Select(z => new DomainMessage
+                .Select(m => new DomainMessage
                 {
-                    UserId = z.UserId,
-                    UserName = z.UserName,
-                    UserFirstName = z.UserFirstName,
-                    UserLastName = z.UserLastName,
-                    ChatId = z.ChatId,
-                    ChatName = z.ChatName,
-                    Date = z.Date,
-                    Message = z.Message,
-                    MessageId = z.MessageId
+                    UserId = m.UserId,
+                    UserName = m.UserName,
+                    UserFirstName = m.UserFirstName,
+                    UserLastName = m.UserLastName,
+                    ChatId = m.ChatId,
+                    ChatName = m.ChatName,
+                    Date = m.Date,
+                    Message = m.Message,
+                    MessageId = m.MessageId
                 })
                 .OrderBy(msg => msg.Date);
 
@@ -146,7 +146,7 @@ namespace TrunkRings.Domain.Services
             using var context = new SecretaryContext();
             var lastMsg = context.MessageDataSets.AsNoTracking()
                 .OrderByDescending(message => message.Date)
-                .First(z => z.ChatName != null);
+                .First(msg => msg.ChatName != null);
             return new DomainMessage
                 {
                     UserId = lastMsg.UserId,
@@ -174,13 +174,13 @@ namespace TrunkRings.Domain.Services
                 from cht in chatsWithNames
                 group cht by cht.ChatId
                 into groups
-                select groups.OrderByDescending(z => z.Year).FirstOrDefault()
+                select groups.OrderByDescending(x => x.Year).FirstOrDefault()
             ).ToArray();
             return chatIds
                 .Distinct()
-                .Join(chatsWithNamesDistinct, z => z, z => z.ChatId,
+                .Join(chatsWithNamesDistinct, x => x, x => x.ChatId,
                     (a, b) => new KeyValuePair<long, string>(a, b.ChatName))
-                .ToDictionary(z => z.Key, z => z.Value);
+                .ToDictionary(x => x.Key, x => x.Value);
         }
     }
 

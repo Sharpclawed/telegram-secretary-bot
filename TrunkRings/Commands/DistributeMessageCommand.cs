@@ -31,13 +31,13 @@ namespace TrunkRings.Commands
         {
             var result = await SendTextMessagesAsync();
 
-            var chats = messageService.GetChatNames(result.Select(z => z.ChatId).ToArray());
+            var chats = messageService.GetChatNames(result.Select(r => r.ChatId).ToArray());
             foreach (var distributingResult in result)
                 distributingResult.ChatName = chats.TryGetValue(distributingResult.ChatId, out var chatName) ? chatName : "Чат не распознан";
 
             if (result.Count <= TgBotSettings.ReadableCountOfMessages)
             {
-                var rows = result.Select(z => $"{z.ChatName} ({z.ChatId}) result: {z.Verdict} {z.ErrorMessage}");
+                var rows = result.Select(r => $"{r.ChatName} ({r.ChatId}) result: {r.Verdict} {r.ErrorMessage}");
                 await tgClient.SendTextMessagesAsSingleTextAsync(ChatIds.LogDistributing, rows, caption, ParseMode.Default, true);
             }
             else

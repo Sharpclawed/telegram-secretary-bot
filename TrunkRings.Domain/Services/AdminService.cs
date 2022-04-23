@@ -80,9 +80,9 @@ namespace TrunkRings.Domain.Services
             using var context = new SecretaryContext();
             var records = context.AdminDataSets.AsNoTracking()
                 .Where(x => x.DeleteTime == null).ToList();
-            return records.Select(z =>
-                (new Admin {UserId = z.UserId, UserName = z.UserName}
-                    , new Admin {UserId = z.AddedUserId, UserName = z.AddedUserName}));
+            return records.Select(admin =>
+                (new Admin {UserId = admin.UserId, UserName = admin.UserName}
+                    , new Admin {UserId = admin.AddedUserId, UserName = admin.AddedUserName}));
         }
     }
 

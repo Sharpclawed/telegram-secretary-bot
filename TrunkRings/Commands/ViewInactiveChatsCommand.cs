@@ -36,14 +36,14 @@ namespace TrunkRings.Commands
             var untilDateValue = UntilDate ?? DateTime.UtcNow;
             var records = messageService.GetLastDirMsgFromInactiveChats(sinceDateValue, untilDateValue, TimeSpan.FromDays(7));
             var caption = "Отчет по неактивным чатам";
-            var recordsWithColumnsToReport = records.Select(z => new
+            var recordsWithColumnsToReport = records.Select(msg => new
             {
-                Date = z.Date.ToString("dd.MM.yy HH:mm:ss"),
-                z.ChatName,
-                z.Message,
-                z.UserFirstName,
-                z.UserLastName,
-                z.UserName
+                Date = msg.Date.ToString("dd.MM.yy HH:mm:ss"),
+                msg.ChatName,
+                msg.Message,
+                msg.UserFirstName,
+                msg.UserLastName,
+                msg.UserName
             }).ToList();
 
             await tgClient.SendTextMessagesAsExcelReportAsync(chatId, recordsWithColumnsToReport, caption);

@@ -61,7 +61,7 @@ namespace TrunkRings.Domain.Services
         public IEnumerable<Chat> GetAll()
         {
             using var context = new SecretaryContext();
-            return context.OnetimeChatDataSets.AsNoTracking().ToList().Select(z => new Chat{ Id = z.ChatId, Name = z.ChatName});
+            return context.OnetimeChatDataSets.AsNoTracking().ToList().Select(dataset => new Chat{ Id = dataset.ChatId, Name = dataset.ChatName});
         }
     }
 

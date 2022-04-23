@@ -185,7 +185,7 @@ namespace TrunkRings.UnitTests
                 "🌸🌸🌸",
                 "✅",
             };
-            var set = testCases.Select(z => new DomainMessage(){Message =  z}).ToList();
+            var set = testCases.Select(x => new DomainMessage {Message = x}).ToList();
             var sut = set.FilterObviouslySuperfluous();
 
             sut.Should().BeEquivalentTo(new List<MessageDataSet>());
