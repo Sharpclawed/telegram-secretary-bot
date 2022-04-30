@@ -8,7 +8,7 @@ using TrunkRings.Settings;
 
 namespace TrunkRings.Commands
 {
-    class DistributeMessageCommand : IBotCommand
+    class DistributeMessageCommand : IBotCommand<List<DistributeMessageResult>>
     {
         private readonly IMessageService messageService;
         private readonly ITgBotClientEx tgClient;
@@ -27,7 +27,7 @@ namespace TrunkRings.Commands
             this.withMarkdown = withMarkdown;
         }
 
-        public async Task ProcessAsync()
+        public async Task<List<DistributeMessageResult>> ProcessAsync()
         {
             var result = await SendTextMessagesAsync();
 
@@ -45,18 +45,20 @@ namespace TrunkRings.Commands
                 await tgClient.SendTextMessageAsync(ChatIds.LogDistributing, caption);
                 await tgClient.SendTextMessagesAsExcelReportAsync(ChatIds.LogDistributing, result);
             }
+
+            return result;
         }
 
-        private async Task<List<DistributingResult>> SendTextMessagesAsync()
+        private async Task<List<DistributeMessageResult>> SendTextMessagesAsync()
         {
-            var result = new List<DistributingResult>();
+            var result = new List<DistributeMessageResult>();
             //todo avoid throttling
             foreach (var chatId in chatIds)
             {
                 try
                 {
                     await tgClient.SendTextMessageAsync(chatId, text, withMarkdown ? ParseMode.Markdown : ParseMode.Default, true);
-                    result.Add(new DistributingResult
+                    result.Add(new DistributeMessageResult
                     {
                         ChatId = chatId,
                         Verdict = "Success"
@@ -64,7 +66,7 @@ namespace TrunkRings.Commands
                 }
                 catch (Exception e)
                 {
-                    result.Add(new DistributingResult
+                    result.Add(new DistributeMessageResult
                     {
                         ChatId = chatId,
                         Verdict = "Failed",
@@ -75,13 +77,13 @@ namespace TrunkRings.Commands
 
             return result;
         }
+    }
 
-        public class DistributingResult
-        {
-            public string ChatName { get; set; }
-            public long ChatId { get; set; }
-            public string Verdict { get; set; }
-            public string ErrorMessage { get; set; }
-        }
-    } 
+    public class DistributeMessageResult
+    {
+        public string ChatName { get; set; }
+        public long ChatId { get; set; }
+        public string Verdict { get; set; }
+        public string ErrorMessage { get; set; }
+    }
 }

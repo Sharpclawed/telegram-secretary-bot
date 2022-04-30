@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using TrunkRings.Commands;
 using TrunkRings.Settings;
 using TrunkRings.WebAPI.Models;
 
@@ -17,7 +20,7 @@ namespace TrunkRings.WebAPI.Services
             this.logger = logger;
         }
 
-        public async Task EchoAsync(DistributeMessages distributeMessages, string callerIp)
+        public async Task<List<DistributeMessageResult>> EchoAsync(DistributeMessages distributeMessages, string callerIp)
         {
             try
             {
@@ -25,13 +28,15 @@ namespace TrunkRings.WebAPI.Services
                 logger.LogInformation("Recieved message distribution: {1}", distributeMessages.Text);
                 logger.LogInformation("\tfor chats: {1}", string.Join(',', distributeMessages.ChatIds));
                 logger.LogInformation("\tfrom: {1}", callerIp);
-                await bot.BotCommander.DistributeMessageAsync(distributeMessages.ChatIds, distributeMessages.Text);
+                return await bot.BotCommander.DistributeMessageAsync(distributeMessages.ChatIds, distributeMessages.Text);
             }
             catch (Exception exception)
             {
                 logger.LogError(exception.ToString());
                 await bot.BotCommander.SendMessageAsync(ChatIds.Debug, exception.ToString());
             }
+
+            return new List<DistributeMessageResult>();
         }
     }
 }

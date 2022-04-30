@@ -28,9 +28,9 @@ namespace TrunkRings
             await new SendMessageCommand(tgClient, chatId, text).ProcessAsync();
         }
 
-        public async Task DistributeMessageAsync(IEnumerable<long> chatIds, string text, string caption = null)
+        public async Task<List<DistributeMessageResult>> DistributeMessageAsync(IEnumerable<long> chatIds, string text, string caption = null)
         {
-            await new DistributeMessageCommand(messageService, tgClient, chatIds, text, caption).ProcessAsync();
+            return await new DistributeMessageCommand(messageService, tgClient, chatIds, text, caption).ProcessAsync();
         }
 
         public async Task ViewInactiveChatsAsync(ChatId chatId, DateTime sinceDate, DateTime untilDate)
