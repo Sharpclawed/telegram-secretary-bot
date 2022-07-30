@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -79,12 +80,12 @@ namespace TrunkRings
 
         public async Task ConfigWebhookAsync(string url, InputFileStream cert = null, CancellationToken cancellationToken = default)
         {
-            await tgClient.SetWebhookAsync(url, cert, cancellationToken: cancellationToken, allowedUpdates: new List<UpdateType> {UpdateType.Message});
+            await tgClient.SetWebhookAsync(url, cert, cancellationToken: cancellationToken, allowedUpdates: Array.Empty<UpdateType>());
         }
 
         public async Task DeleteWebhookAsync(CancellationToken cancellationToken = default)
         {
-            await tgClient.DeleteWebhookAsync(cancellationToken);
+            await tgClient.DeleteWebhookAsync(false, cancellationToken);
         }
 
         public void StartReceiving()

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TrunkRings.DAL;
 using TrunkRings.DAL.Models;
 using Microsoft.EntityFrameworkCore;
@@ -10,9 +11,9 @@ namespace TrunkRings.Domain.Services
 {
     class MessageService : IMessageService
     {
-        public void Save(DomainMessage message)
+        public async Task SaveAsync(DomainMessage message)
         {
-            using var context = new SecretaryContext();
+            await using var context = new SecretaryContext();
             var messageDataSet = new MessageDataSet
             {
                 MessageId = message.MessageId,
@@ -26,7 +27,7 @@ namespace TrunkRings.Domain.Services
                 Message = message.Message
             };
             context.MessageDataSets.Add(messageDataSet); //todo sql injection protection
-            context.SaveChanges();
+            await context.SaveChangesAsync();
         }
 
         public IEnumerable<DomainMessage> GetHistory(DateTime begin, DateTime end, string exactChatName, long? exactUserId)
@@ -186,7 +187,7 @@ namespace TrunkRings.Domain.Services
 
     public interface IMessageService
     {
-        void Save(DomainMessage message);
+        Task SaveAsync(DomainMessage message);
         IEnumerable<DomainMessage> GetHistory(DateTime begin, DateTime end, string exactChatName, long? exactUserId);
         IOrderedEnumerable<DomainMessage> GetLastDirMsgFromInactiveChats(DateTime sinceDate, DateTime untilDate, TimeSpan checkingPeriod);
         IEnumerable<DomainMessage> GetUnansweredDirMsgs(DateTime sinceDate, DateTime untilDate);

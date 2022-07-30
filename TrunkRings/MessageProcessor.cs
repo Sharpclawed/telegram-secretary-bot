@@ -34,7 +34,7 @@ namespace TrunkRings
         {
             try
             {
-                SaveToDatabase(message);
+                await SaveToDatabase(message);
 
                 switch (message.Type)
                 {
@@ -100,7 +100,7 @@ namespace TrunkRings
             await command.ProcessAsync();
         }
 
-        private void SaveToDatabase(Message message)
+        private async Task SaveToDatabase(Message message)
         {
             //todo automapper
             var recievedDataSet = new DomainMessage
@@ -123,7 +123,7 @@ namespace TrunkRings
                 }
             };
 
-            messageService.Save(recievedDataSet);
+            await messageService.SaveAsync(recievedDataSet);
         }
     }
 }

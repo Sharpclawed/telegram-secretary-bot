@@ -35,7 +35,7 @@ namespace TrunkRings
         public async Task SendTextMessagesAsSingleTextAsync(ChatId chatId, IEnumerable<string> msgs, string caption, ParseMode parseMode = ParseMode.Default, bool removeLinkPreview = false)
         {
             var result = string.Join("\r\n", msgs);
-            await SendTextMessageAsync(chatId, $"{caption}\r\n{result}", parseMode, removeLinkPreview);
+            await SendTextMessageAsync(chatId, $"{caption}\r\n{result}", parseMode, null, removeLinkPreview);
         }
         
         public async Task SendTextMessagesAsExcelReportAsync<T>(ChatId chatId, List<T> msgs, string caption = null)
