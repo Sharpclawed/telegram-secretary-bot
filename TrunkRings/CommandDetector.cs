@@ -28,7 +28,7 @@ namespace TrunkRings
 
         public IBotCommand Parse(Message message)
         {
-            var messageText = message.Text.ToLower();
+            var messageText = message.Text;
             var chatId = message.Chat.Id;
 
             var patterns = new List<string>
@@ -49,6 +49,7 @@ namespace TrunkRings
                 @"^[/](historyall)[:]\s*\b(\d{2}[.]\d{2}[.]\d{4})[ ](\d+)$",
                 @"^[/](help)$",
                 @"^[/](ping)$",
+                @"^[/](getchatid)[:]\s*(.*)$",
             };
 
             var resultPattern = new Regex(string.Join("|", patterns));
@@ -108,6 +109,9 @@ namespace TrunkRings
                     return new SendHelpTipCommand(tgClient, message.Chat.Id);
                 case "ping":
                     return new SendBotStatusCommand(messageService, tgClient, message.Chat.Id);
+                case "getchatid":
+                    var chatName = match.Groups[patternPosition + 1].Value;
+                    return new GetChatIdCommand(messageService, tgClient, chatId, chatName);
             }
 
             return new SendMessageCommand(tgClient, chatId, "Неизвестная команда");

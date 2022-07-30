@@ -2,7 +2,6 @@
 using FluentAssertions;
 using NUnit.Framework;
 using Telegram.Bot.Types;
-using TrunkRings;
 using TrunkRings.Commands;
 
 namespace TrunkRings.UnitTests
@@ -136,6 +135,14 @@ namespace TrunkRings.UnitTests
         {
             var sut = commandDetector.Parse(TextToMessage("WrongCommand"));
             sut.Should().BeOfType(typeof(SendMessageCommand));
+        }
+
+        [Test]
+        public void GetChatIdTest()
+        {
+            var sut = commandDetector.Parse(TextToMessage("/getchatid: Chat1"));
+            sut.Should().BeOfType(typeof(GetChatIdCommand));
+            ((GetChatIdCommand)sut).ChatName.Should().Be("Chat1");
         }
 
         private Message TextToMessage(string text)

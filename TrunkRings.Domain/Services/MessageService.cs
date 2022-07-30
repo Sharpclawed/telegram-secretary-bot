@@ -162,6 +162,16 @@ namespace TrunkRings.Domain.Services
                 };
         }
 
+        public long? FindChatId(string chatName)
+        {
+            using var context = new SecretaryContext();
+            var lastMsg = context.MessageDataSets.AsNoTracking()
+                .Where(msg => msg.ChatName == chatName)
+                .OrderByDescending(msg => msg.Date)
+                .FirstOrDefault();
+            return lastMsg?.ChatId;
+        }
+
         public Dictionary<long, string> GetChatNames(long[] chatIds)
         {
             using var context = new SecretaryContext();
@@ -192,6 +202,7 @@ namespace TrunkRings.Domain.Services
         IOrderedEnumerable<DomainMessage> GetLastDirMsgFromInactiveChats(DateTime sinceDate, DateTime untilDate, TimeSpan checkingPeriod);
         IEnumerable<DomainMessage> GetUnansweredDirMsgs(DateTime sinceDate, DateTime untilDate);
         DomainMessage GetLastChatMessage();
+        long? FindChatId(string chatName);
         Dictionary<long, string> GetChatNames(long[] cnatIds);
     }
 }
