@@ -24,8 +24,7 @@ namespace TrunkRings.WebAPI.Services
         {
 #if DEBUG
             logger.LogInformation("Setting polling");
-            secretaryBot.ConfigPolling();
-            secretaryBot.StartReceiving();
+            secretaryBot.ConfigPolling(cancellationToken);
 #else
             var url = configuration.GetValue<string>("TgBotSettings:Webhook:Url");
             var pathToCert = configuration.GetValue<string>("TgBotSettings:Webhook:PathToCert");

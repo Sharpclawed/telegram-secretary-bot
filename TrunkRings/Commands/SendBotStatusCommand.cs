@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using TrunkRings.Domain.Services;
+using Telegram.Bot;
 using Telegram.Bot.Types;
 
 namespace TrunkRings.Commands

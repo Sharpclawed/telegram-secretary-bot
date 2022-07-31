@@ -16,12 +16,9 @@
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="EPPlus">
-      <Version>4.5.3.3</Version>
-    </PackageReference>
-    <PackageReference Include="Telegram.Bot">
-      <Version>16.0.2</Version>
-    </PackageReference>
+    <PackageReference Include="EPPlus" Version="4.5.3.3" />
+    <PackageReference Include="Telegram.Bot" Version="18.0.0" />
+    <PackageReference Include="Telegram.Bot.Extensions.Polling" Version="1.0.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TrunkRings.Domain\TrunkRings.Domain.csproj" />

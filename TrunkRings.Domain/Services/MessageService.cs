@@ -62,6 +62,7 @@ namespace TrunkRings.Domain.Services
             var onetimeChatDataSets = context.OnetimeChatDataSets.AsNoTracking();
             var timeBorder = untilDate.Add(checkingPeriod.Negate());
 
+#pragma warning disable CS8073 // The result of the expression is always the same since a value of this type is never equal to 'null'
             var lastMessagesFromDirectors = (
                     from msgExt in (
                         from msg in messageDataSets.Where(m =>
@@ -77,6 +78,7 @@ namespace TrunkRings.Domain.Services
                               && onetimeChat == null //не чаты для разовых консультаций
                         select msg
                     ).ToList()
+#pragma warning restore CS8073 // The result of the expression is always the same since a value of this type is never equal to 'null'
                     group msgExt by msgExt.ChatId
                     into groups
                     select groups.OrderByDescending(p => p.Date).FirstOrDefault()
@@ -106,6 +108,7 @@ namespace TrunkRings.Domain.Services
             var bkDataSets = context.BookkeeperDataSets.AsNoTracking();
             var messageDataSets = context.MessageDataSets.AsNoTracking();
 
+#pragma warning disable CS8073 // The result of the expression is always the same since a value of this type is never equal to 'null'
             var lastMessagesFromDirectors = (
                     from msgExt in (
                         from msg in messageDataSets.Where(m => m.Date > sinceDate)
@@ -119,6 +122,7 @@ namespace TrunkRings.Domain.Services
                               && (!isByDir || !msg.Message.StartsWith("MessageType: "))
                         select new { msg, isByDir }
                     ).ToArray()
+#pragma warning restore CS8073 // The result of the expression is always the same since a value of this type is never equal to 'null'
                     group msgExt by msgExt.msg.ChatId
                     into groups
                     select groups.OrderByDescending(p => p.msg.Date).FirstOrDefault()

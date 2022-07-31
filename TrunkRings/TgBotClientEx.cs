@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Telegram.Bot;
@@ -17,10 +16,6 @@ namespace TrunkRings
         {
         }
 
-        public TgBotClientEx(string token, IWebProxy webProxy) : base(token, webProxy)
-        {
-        }
-
         public async Task SendTextMessagesAsListAsync(ChatId chatId, IList<string> msgs, СorrespondenceType сorrespondenceType)
         {
             var totalMessagesLimit = сorrespondenceType == СorrespondenceType.Personal 
@@ -29,13 +24,13 @@ namespace TrunkRings
             var preparedSet = msgs.Take(totalMessagesLimit);
 
             foreach (var msg in preparedSet)
-                await SendTextMessageAsync(chatId, msg);
+                await this.SendTextMessageAsync(chatId, msg);
         }
 
-        public async Task SendTextMessagesAsSingleTextAsync(ChatId chatId, IEnumerable<string> msgs, string caption, ParseMode parseMode = ParseMode.Default, bool removeLinkPreview = false)
+        public async Task SendTextMessagesAsSingleTextAsync(ChatId chatId, IEnumerable<string> msgs, string caption, ParseMode parseMode = ParseMode.Html, bool removeLinkPreview = false)
         {
             var result = string.Join("\r\n", msgs);
-            await SendTextMessageAsync(chatId, $"{caption}\r\n{result}", parseMode, null, removeLinkPreview);
+            await this.SendTextMessageAsync(chatId, $"{caption}\r\n{result}", parseMode, null, removeLinkPreview);
         }
         
         public async Task SendTextMessagesAsExcelReportAsync<T>(ChatId chatId, List<T> msgs, string caption = null)
@@ -48,7 +43,7 @@ namespace TrunkRings
         {
             await using var fileStream = ReportCreator.Create(rowsWithSheets);
             var fileToSend = new InputOnlineFile(fileStream, (caption ?? "report") + ".xlsx");
-            await SendDocumentAsync(chatId, fileToSend, caption);
+            await this.SendDocumentAsync(chatId, fileToSend, caption);
         }
     }
 
@@ -61,7 +56,7 @@ namespace TrunkRings
     public interface ITgBotClientEx : ITelegramBotClient
     {
         Task SendTextMessagesAsListAsync(ChatId chatId, IList<string> msgs, СorrespondenceType сorrespondenceType);
-        Task SendTextMessagesAsSingleTextAsync(ChatId chatId, IEnumerable<string> msgs, string caption, ParseMode parseMode = ParseMode.Default, bool removeLinkPreview = false);
+        Task SendTextMessagesAsSingleTextAsync(ChatId chatId, IEnumerable<string> msgs, string caption, ParseMode parseMode = ParseMode.Html, bool removeLinkPreview = false);
         Task SendTextMessagesAsExcelReportAsync<T>(ChatId chatId, List<T> msgs, string caption = null);
         Task SendTextMessagesAsExcelReportAsync<T>(ChatId chatId, ILookup<string, T> rowsWithSheets, string caption = null);
     }

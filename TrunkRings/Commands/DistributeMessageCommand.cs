@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TrunkRings.Domain.Services;
+using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
 using TrunkRings.Settings;
 
@@ -38,7 +39,7 @@ namespace TrunkRings.Commands
             if (result.Count <= TgBotSettings.ReadableCountOfMessages)
             {
                 var rows = result.Select(r => $"{r.ChatName} ({r.ChatId}) result: {r.Verdict} {r.ErrorMessage}");
-                await tgClient.SendTextMessagesAsSingleTextAsync(ChatIds.LogDistributing, rows, caption, ParseMode.Default, true);
+                await tgClient.SendTextMessagesAsSingleTextAsync(ChatIds.LogDistributing, rows, caption, ParseMode.Html, true);
             }
             else
             {
@@ -57,7 +58,7 @@ namespace TrunkRings.Commands
             {
                 try
                 {
-                    await tgClient.SendTextMessageAsync(chatId, text, withMarkdown ? ParseMode.Markdown : ParseMode.Default, null, true);
+                    await tgClient.SendTextMessageAsync(chatId, text, withMarkdown ? ParseMode.Markdown : ParseMode.Html, null, true);
                     result.Add(new DistributeMessageResult
                     {
                         ChatId = chatId,

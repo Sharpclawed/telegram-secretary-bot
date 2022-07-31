@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using TrunkRings.Domain.Models;
 using TrunkRings.Domain.Services;
 using Microsoft.Extensions.Logging;
+using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using TrunkRings.Commands;

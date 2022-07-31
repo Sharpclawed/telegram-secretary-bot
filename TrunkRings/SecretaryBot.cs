@@ -1,9 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Telegram.Bot;
+using Telegram.Bot.Extensions.Polling;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.InputFiles;
 using TrunkRings.Domain;
@@ -20,10 +21,9 @@ namespace TrunkRings
         BotCommander BotCommander { get; }
         MessageProcessor MessageProcessor { get; }
         string Name { get; }
-        void ConfigPolling();
+        void ConfigPolling(CancellationToken cancellationToken = default);
         Task ConfigWebhookAsync(string url, InputFileStream cert = null, CancellationToken cancellationToken = default);
         Task DeleteWebhookAsync(CancellationToken cancellationToken = default);
-        void StartReceiving();
         void StartReporters();
     }
 
@@ -67,15 +67,15 @@ namespace TrunkRings
         public MessageProcessor MessageProcessor => messageProcessor;
         public string Name => name;
 
-        public void ConfigPolling()
+        public void ConfigPolling(CancellationToken cancellationToken = default)
         {
-            tgClient.OnMessage += async (_, messageEventArgs) => await messageProcessor.ProcessMessageAsync(messageEventArgs.Message);
-            tgClient.OnMessageEdited += async (_, messageEventArgs) => await messageProcessor.ProcessMessageAsync(messageEventArgs.Message);
-            tgClient.OnReceiveError += async (_, receiveErrorEventArgs) =>
-                await botCommander.SendMessageAsync(ChatIds.Debug, receiveErrorEventArgs.ApiRequestException.Message);
-            tgClient.OnReceiveGeneralError += async (_, e) =>
-                await botCommander.SendMessageAsync(ChatIds.Debug, e.Exception.Message + " \r\n" + e.Exception.InnerException);
-            tgClient.OnCallbackQuery += async (_, e) => await botCommander.SendMessageAsync(ChatIds.Debug, e.CallbackQuery.Message.Text);
+            var ollingUpdateHandlers = new PollingUpdateHandlers(botCommander, messageProcessor);
+            var receiverOptions = new ReceiverOptions()
+            {
+                AllowedUpdates = Array.Empty<UpdateType>(),
+                ThrowPendingUpdates = true,
+            };
+            tgClient.StartReceiving(ollingUpdateHandlers.HandleUpdateAsync, ollingUpdateHandlers.ErrorHandlerAsync, receiverOptions, cancellationToken);
         }
 
         public async Task ConfigWebhookAsync(string url, InputFileStream cert = null, CancellationToken cancellationToken = default)
@@ -86,11 +86,6 @@ namespace TrunkRings
         public async Task DeleteWebhookAsync(CancellationToken cancellationToken = default)
         {
             await tgClient.DeleteWebhookAsync(false, cancellationToken);
-        }
-
-        public void StartReceiving()
-        {
-            tgClient.StartReceiving();
         }
 
         public void StartReporters()
