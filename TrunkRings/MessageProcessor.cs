@@ -46,7 +46,11 @@ namespace TrunkRings
                         await ProcessChatMembersAdded(message);
                         break;
                     case MessageType.GroupCreated:
+                    case MessageType.SupergroupCreated:
                         await ProcessGroupCreated(message);
+                        break;
+                    case MessageType.MigratedToSupergroup:
+                        await ProcessGroupToSupergroup(message);
                         break;
                 }
             }
@@ -71,7 +75,14 @@ namespace TrunkRings
         private async Task ProcessGroupCreated(Message message)
         {
             var chatToReport = ChatIds.LogDistributing;
-            var command = new InformAboutNewChat(tgClient, chatToReport, message.Chat);
+            var command = new InformChatCreatedCommand(tgClient, chatToReport, message.Chat);
+            await command.ProcessAsync();
+        }
+
+        private async Task ProcessGroupToSupergroup(Message message)
+        {
+            var chatToReport = ChatIds.LogDistributing;
+            var command = new InformChatToSupergroupCommand(tgClient, chatToReport, message.Chat, message.MigrateToChatId ?? 0L);
             await command.ProcessAsync();
         }
 

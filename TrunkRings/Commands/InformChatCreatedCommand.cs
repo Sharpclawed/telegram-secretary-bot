@@ -4,13 +4,13 @@ using Telegram.Bot.Types;
 
 namespace TrunkRings.Commands
 {
-    class InformAboutNewChat : IBotCommand
+    class InformChatCreatedCommand : IBotCommand
     {
         private readonly ITgBotClientEx tgClient;
         private readonly ChatId chatToReport;
         private readonly Chat fromChat;
 
-        public InformAboutNewChat(ITgBotClientEx tgClient, ChatId chatToReport, Chat fromChat)
+        public InformChatCreatedCommand(ITgBotClientEx tgClient, ChatId chatToReport, Chat fromChat)
         {
             this.tgClient = tgClient;
             this.chatToReport = chatToReport;
