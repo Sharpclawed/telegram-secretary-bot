@@ -33,6 +33,9 @@ namespace TrunkRings.Domain.Services
         public IEnumerable<DomainMessage> GetHistory(DateTime begin, DateTime end, string exactChatName, long? exactUserId)
         {
             using var context = new SecretaryContext();
+            begin = DateTime.SpecifyKind(begin, DateTimeKind.Utc);
+            end = DateTime.SpecifyKind(end, DateTimeKind.Utc);
+
             return context.MessageDataSets.AsNoTracking()
                 .GetActualDates(begin, end)
                 .GetActualChats(exactChatName)
@@ -61,6 +64,8 @@ namespace TrunkRings.Domain.Services
             var messageDataSets = context.MessageDataSets.AsNoTracking();
             var onetimeChatDataSets = context.OnetimeChatDataSets.AsNoTracking();
             var timeBorder = untilDate.Add(checkingPeriod.Negate());
+            sinceDate = DateTime.SpecifyKind(sinceDate, DateTimeKind.Utc);
+            untilDate = DateTime.SpecifyKind(untilDate, DateTimeKind.Utc);
 
 #pragma warning disable CS8073 // The result of the expression is always the same since a value of this type is never equal to 'null'
             var lastMessagesFromDirectors = (
@@ -107,6 +112,8 @@ namespace TrunkRings.Domain.Services
             var adminDataSets = context.AdminDataSets.AsNoTracking();
             var bkDataSets = context.BookkeeperDataSets.AsNoTracking();
             var messageDataSets = context.MessageDataSets.AsNoTracking();
+            sinceDate = DateTime.SpecifyKind(sinceDate, DateTimeKind.Utc);
+            untilDate = DateTime.SpecifyKind(untilDate, DateTimeKind.Utc);
 
 #pragma warning disable CS8073 // The result of the expression is always the same since a value of this type is never equal to 'null'
             var lastMessagesFromDirectors = (
