@@ -36,7 +36,7 @@ namespace TrunkRings.WebAPI.Services
                 };
                 await secretaryBot.InitAsync(secretaryBotConfig);
                 logger.LogInformation("Starting reporters");
-                secretaryBot.StartReporters();
+                await secretaryBot.StartReportersAsync(cancellationToken);
             }
             catch (Exception ex)
             {
