@@ -35,16 +35,16 @@ namespace TrunkRings.Reporters
 
                 if (signalTime.Hour == 4 && signalTime.Minute < 5 && signalTime.DayOfWeek == DayOfWeek.Monday)
                 {
-                    var sinceDate = DateTime.UtcNow.AddHours(-61).AddMinutes(-125);
-                    var untilDate = DateTime.UtcNow.AddMinutes(-120);
+                    var sinceDate = signalTime.AddHours(-61).AddMinutes(-125);
+                    var untilDate = signalTime.AddMinutes(-120);
                     await botCommander.ViewWaitersAsync(ChatIds.Unanswered, sinceDate, untilDate);
                 }
                 else if (signalTime.Hour is >= 4 and < 15 && signalTime.DayOfWeek != DayOfWeek.Saturday && signalTime.DayOfWeek != DayOfWeek.Sunday)
                 {
                     var sinceDate = signalTime.Hour == 4 && signalTime.Minute < 5
-                        ? DateTime.UtcNow.AddHours(-13).AddMinutes(-125)
-                        : DateTime.UtcNow.AddMinutes(-125);
-                    var untilDate = DateTime.UtcNow.AddMinutes(-120);
+                        ? signalTime.AddHours(-13).AddMinutes(-125)
+                        : signalTime.AddMinutes(-125);
+                    var untilDate = signalTime.AddMinutes(-120);
                     await botCommander.ViewWaitersAsync(ChatIds.Unanswered, sinceDate, untilDate);
                 }
             }

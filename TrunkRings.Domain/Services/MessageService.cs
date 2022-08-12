@@ -112,8 +112,8 @@ namespace TrunkRings.Domain.Services
             var adminDataSets = context.AdminDataSets.AsNoTracking();
             var bkDataSets = context.BookkeeperDataSets.AsNoTracking();
             var messageDataSets = context.MessageDataSets.AsNoTracking();
-            sinceDate = DateTime.SpecifyKind(sinceDate, DateTimeKind.Utc);
-            untilDate = DateTime.SpecifyKind(untilDate, DateTimeKind.Utc);
+            sinceDate = DateTime.SpecifyKind(sinceDate, DateTimeKind.Utc); //on database side
+            untilDate = DateTime.SpecifyKind(untilDate.AddHours(3), DateTimeKind.Utc); ///in memory
 
 #pragma warning disable CS8073 // The result of the expression is always the same since a value of this type is never equal to 'null'
             var lastMessagesFromDirectors = (

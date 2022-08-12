@@ -34,8 +34,8 @@ namespace TrunkRings.Commands
         
         public async Task ProcessAsync()
         {
-            var sinceDateValue = SinceDate ?? DateTime.UtcNow.Date.AddMonths(-1);
-            var untilDateValue = UntilDate ?? DateTime.UtcNow.Date.AddMinutes(-30);
+            var sinceDateValue = SinceDate ?? DateTime.UtcNow.AddMonths(-1);
+            var untilDateValue = UntilDate ?? DateTime.UtcNow;
             var records = messageService.GetUnansweredDirMsgs(sinceDateValue, untilDateValue).FilterObviouslySuperfluous().ToList();
 
             if (records.Count <= TgBotSettings.ReadableCountOfMessages)
