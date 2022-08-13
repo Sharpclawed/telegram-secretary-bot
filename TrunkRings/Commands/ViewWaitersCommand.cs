@@ -47,7 +47,7 @@ namespace TrunkRings.Commands
             {
                 var recordsWithColumnsToReport = records.Select(msg => new
                 {
-                    Date = msg.Date.ToString("dd.MM.yy HH:mm:ss"),
+                    Date = Formatter.DateEkbTime(msg),
                     msg.ChatName,
                     msg.Message,
                     msg.UserFirstName,

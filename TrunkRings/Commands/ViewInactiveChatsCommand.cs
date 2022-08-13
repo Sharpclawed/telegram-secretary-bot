@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using TrunkRings.Domain.Services;
+using TrunkRings.DomainExtensions;
 using Telegram.Bot.Types;
 
 namespace TrunkRings.Commands
@@ -38,7 +39,7 @@ namespace TrunkRings.Commands
             var caption = "Отчет по неактивным чатам";
             var recordsWithColumnsToReport = records.Select(msg => new
             {
-                Date = msg.Date.ToString("dd.MM.yy HH:mm:ss"),
+                Date = Formatter.DateEkbTime(msg),
                 msg.ChatName,
                 msg.Message,
                 msg.UserFirstName,
