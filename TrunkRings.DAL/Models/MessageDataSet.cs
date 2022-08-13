@@ -9,8 +9,7 @@ namespace TrunkRings.DAL.Models
         public Guid MessageDataSetId { get; set; }
         public long MessageId { get; set; }
         public string Message { get; set; }
-        //todo to DateTimeOffset
-        public DateTime Date { get; set; }
+        public DateTimeOffset Date { get; set; }
         public string UserName { get; set; }
         public string UserFirstName { get; set; }
         public string UserLastName { get; set; }

@@ -7,7 +7,7 @@ namespace TrunkRings.DomainExtensions
     {
         public static Func<DomainMessage, string> Waiters { get; } = msg =>
         {
-            var timeWithoutAnswer = DateTime.UtcNow.Subtract(msg.Date.AddHours(-3));
+            var timeWithoutAnswer = DateTime.UtcNow.Subtract(msg.Date);
             return string.Format(
                 @"В чате {0} сообщение от {1} {2}, оставленное {3}, без ответа ({4}). Текст сообщения: ""{5}"""
                 , msg.ChatName, msg.UserLastName, msg.UserFirstName

@@ -49,7 +49,7 @@ namespace TrunkRings.Domain.Services
                     UserLastName = msg.UserLastName,
                     ChatId = msg.ChatId,
                     ChatName = msg.ChatName,
-                    Date = msg.Date,
+                    Date = msg.Date.UtcDateTime,
                     Message = msg.Message,
                     MessageId = msg.MessageId
                 })
@@ -97,7 +97,7 @@ namespace TrunkRings.Domain.Services
                     UserLastName = msg.UserLastName,
                     ChatId = msg.ChatId,
                     ChatName = msg.ChatName,
-                    Date = msg.Date,
+                    Date = msg.Date.UtcDateTime,
                     Message = msg.Message,
                     MessageId = msg.MessageId
                 })
@@ -112,8 +112,8 @@ namespace TrunkRings.Domain.Services
             var adminDataSets = context.AdminDataSets.AsNoTracking();
             var bkDataSets = context.BookkeeperDataSets.AsNoTracking();
             var messageDataSets = context.MessageDataSets.AsNoTracking();
-            sinceDate = DateTime.SpecifyKind(sinceDate, DateTimeKind.Utc); //on database side
-            untilDate = DateTime.SpecifyKind(untilDate.AddHours(3), DateTimeKind.Utc); ///in memory
+            sinceDate = DateTime.SpecifyKind(sinceDate, DateTimeKind.Utc);
+            untilDate = DateTime.SpecifyKind(untilDate, DateTimeKind.Utc);
 
 #pragma warning disable CS8073 // The result of the expression is always the same since a value of this type is never equal to 'null'
             var lastMessagesFromDirectors = (
@@ -144,7 +144,7 @@ namespace TrunkRings.Domain.Services
                     UserLastName = m.UserLastName,
                     ChatId = m.ChatId,
                     ChatName = m.ChatName,
-                    Date = m.Date,
+                    Date = m.Date.UtcDateTime,
                     Message = m.Message,
                     MessageId = m.MessageId
                 })
@@ -167,7 +167,7 @@ namespace TrunkRings.Domain.Services
                     UserLastName = lastMsg.UserLastName,
                     ChatId = lastMsg.ChatId,
                     ChatName = lastMsg.ChatName,
-                    Date = lastMsg.Date,
+                    Date = lastMsg.Date.UtcDateTime,
                     Message = lastMsg.Message,
                     MessageId = lastMsg.MessageId
                 };
