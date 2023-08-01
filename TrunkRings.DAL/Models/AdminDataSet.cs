@@ -11,9 +11,9 @@ namespace TrunkRings.DAL.Models
         public string UserName { get; set; }
         public long AddedUserId { get; set; }
         public string AddedUserName { get; set; }
-        public DateTime AddTime { get; set; }
+        public DateTimeOffset AddTime { get; set; }
         public long? DeletedUserId { get; set; }
         public string DeletedUserName { get; set; }
-        public DateTime? DeleteTime { get; set; }
+        public DateTimeOffset? DeleteTime { get; set; }
     }
 }

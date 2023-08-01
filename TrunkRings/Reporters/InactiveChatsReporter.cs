@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Sockets;
-using System.Timers;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using TrunkRings.Settings;
 
@@ -10,33 +11,24 @@ namespace TrunkRings.Reporters
     {
         private readonly BotCommander botCommander;
         private readonly ILogger logger;
-        private Timer timer;
+        private PeriodicTimer timer;
         private DateTime lastInactiveChatCheckUtc = DateTime.UtcNow.Date;
 
         public InactiveChatsReporter(BotCommander botCommander, ILogger logger)
         {
             this.botCommander = botCommander;
             this.logger = logger;
-            Init();
+            timer = new PeriodicTimer(TimeSpan.FromMinutes(30));
         }
 
-        private void Init()
+        public async Task StartAsync(CancellationToken cancellationToken)
         {
-            timer = new Timer
-            {
-                Interval = 1000 * 60 * 30 //30 minutes
-            };
-            timer.Elapsed += ViewInactiveChatsAsync;
-            timer.AutoReset = true;
-        }
-
-        public void Start()
-        {
-            timer.Start();
             logger.LogInformation("InactiveChatsReporter started");
+            while (await timer.WaitForNextTickAsync(cancellationToken))
+                await ViewInactiveChatsAsync();
         }
 
-        private async void ViewInactiveChatsAsync(object sender, ElapsedEventArgs e)
+        private async Task ViewInactiveChatsAsync()
         {
             try
             {

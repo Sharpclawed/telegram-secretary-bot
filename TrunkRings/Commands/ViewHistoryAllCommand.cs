@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using TrunkRings.Domain.Services;
+using TrunkRings.DomainExtensions;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
@@ -35,7 +36,7 @@ namespace TrunkRings.Commands
                 var recordsWithColumnsToReport = records
                     .ToLookup(msg => msg.ChatName, msg => new
                     {
-                        Date = msg.Date.ToString("dd.MM.yy HH:mm:ss"),
+                        Date = Formatter.DateEkbTime(msg),
                         msg.Message,
                         msg.UserFirstName,
                         msg.UserLastName,

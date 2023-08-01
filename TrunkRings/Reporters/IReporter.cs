@@ -1,7 +1,10 @@
-﻿namespace TrunkRings.Reporters
+﻿using System.Threading;
+using System.Threading.Tasks;
+
+namespace TrunkRings.Reporters
 {
     interface IReporter
     {
-        void Start();
+        Task StartAsync(CancellationToken cancellationToken);
     }
 }

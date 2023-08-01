@@ -11,7 +11,7 @@ namespace TrunkRings.DomainExtensions
             return string.Format(
                 @"В чате {0} сообщение от {1} {2}, оставленное {3}, без ответа ({4}). Текст сообщения: ""{5}"""
                 , msg.ChatName, msg.UserLastName, msg.UserFirstName
-                , msg.Date.AddHours(5).ToString("dd.MM.yyyy H:mm")
+                , DateEkbTime(msg)
                 , timeWithoutAnswer.Days + " дней " + timeWithoutAnswer.Hours + " часов " +
                   timeWithoutAnswer.Minutes + " минут"
                 , msg.Message);
@@ -45,5 +45,7 @@ namespace TrunkRings.DomainExtensions
         };
 
         public static Func<(Admin, Admin), string> AdminWithAddedBy { get; } = pair => pair.Item1.UserName + " добавлен " + pair.Item2.UserName;
+
+        public static Func<DomainMessage, string> DateEkbTime { get; } = msg => msg.Date.AddHours(5).ToString("dd.MM.yy HH:mm:ss");
     }
 }

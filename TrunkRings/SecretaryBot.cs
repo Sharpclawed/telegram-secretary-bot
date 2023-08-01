@@ -24,7 +24,7 @@ namespace TrunkRings
         void ConfigPolling(CancellationToken cancellationToken = default);
         Task ConfigWebhookAsync(string url, InputFileStream cert = null, CancellationToken cancellationToken = default);
         Task DeleteWebhookAsync(CancellationToken cancellationToken = default);
-        void StartReporters();
+        Task StartReportersAsync(CancellationToken cancellationToken);
     }
 
     public class SecretaryBot : ISecretaryBot
@@ -88,11 +88,11 @@ namespace TrunkRings
             await tgClient.DeleteWebhookAsync(false, cancellationToken);
         }
 
-        public void StartReporters()
+        public async Task StartReportersAsync(CancellationToken cancellationToken)
         {
-            botStateReporter.Start();
-            waitersViewReporter.Start();
-            inactiveChatsReporter.Start();
+            _ = botStateReporter.StartAsync(cancellationToken);
+            _ = waitersViewReporter.StartAsync(cancellationToken);
+            _ = inactiveChatsReporter.StartAsync(cancellationToken);
         }
 
         private void SetChatIds(ISecretaryBotConfig botConfig)
