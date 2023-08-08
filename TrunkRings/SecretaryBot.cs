@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Extensions.Polling;
 using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Types.InputFiles;
+using Telegram.Bot.Types;
 using TrunkRings.Domain;
 using TrunkRings.Reporters;
 using TrunkRings.Settings;

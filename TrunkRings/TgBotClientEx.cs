@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Types.InputFiles;
 using TrunkRings.Settings;
 
 namespace TrunkRings
@@ -30,7 +29,7 @@ namespace TrunkRings
         public async Task SendTextMessagesAsSingleTextAsync(ChatId chatId, IEnumerable<string> msgs, string caption, ParseMode parseMode = ParseMode.Html, bool removeLinkPreview = false)
         {
             var result = string.Join("\r\n", msgs);
-            await this.SendTextMessageAsync(chatId, $"{caption}\r\n{result}", parseMode, null, removeLinkPreview);
+            await this.SendTextMessageAsync(chatId, $"{caption}\r\n{result}", null, parseMode, null, removeLinkPreview);
         }
         
         public async Task SendTextMessagesAsExcelReportAsync<T>(ChatId chatId, List<T> msgs, string caption = null)
@@ -42,8 +41,8 @@ namespace TrunkRings
         public async Task SendTextMessagesAsExcelReportAsync<T>(ChatId chatId, ILookup<string, T> rowsWithSheets, string caption = null)
         {
             await using var fileStream = ReportCreator.Create(rowsWithSheets);
-            var fileToSend = new InputOnlineFile(fileStream, (caption ?? "report") + ".xlsx");
-            await this.SendDocumentAsync(chatId, fileToSend, caption);
+            var fileToSend = InputFile.FromStream(fileStream, fileName: (caption ?? "report") + ".xlsx");
+            await this.SendDocumentAsync(chatId, fileToSend, caption: caption);
         }
     }
 

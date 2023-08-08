@@ -22,7 +22,7 @@ namespace TrunkRings.Commands
 
         public async Task ProcessAsync()
         {
-            await tgClient.SendTextMessageAsync(chatId, text, withMarkdown ? ParseMode.Markdown : ParseMode.Html);
+            await tgClient.SendTextMessageAsync(chatId, text, null, withMarkdown ? ParseMode.Markdown : ParseMode.Html);
         }
     }
 }

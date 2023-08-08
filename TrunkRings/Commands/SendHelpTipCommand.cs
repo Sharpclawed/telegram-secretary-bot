@@ -44,7 +44,7 @@ namespace TrunkRings.Commands
                        .AppendLine("/getchatid \"chatname\" — _получить id чата по названию_")
                    ;
 
-            await tgClient.SendTextMessageAsync(chatId, helpTip.ToString(), ParseMode.Markdown);
+            await tgClient.SendTextMessageAsync(chatId, helpTip.ToString(), parseMode: ParseMode.Markdown);
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Telegram.Bot.Types;
 
 namespace TrunkRings.WebAPI.Services
 {
@@ -30,9 +31,10 @@ namespace TrunkRings.WebAPI.Services
             var pathToCert = configuration.GetValue<string>("TgBotSettings:Webhook:PathToCert");
             var token = configuration.GetValue<string>("TgBotSettings:Token");
             var webhookAddress = $"{url}bot/{token}";
-            await using FileStream cert = File.OpenRead(pathToCert);
+            await using FileStream cert = System.IO.File.OpenRead(pathToCert);
+            var c = new InputFileStream(cert);
             logger.LogInformation("Setting webhook");
-            await secretaryBot.ConfigWebhookAsync(webhookAddress, cert, cancellationToken);
+            await secretaryBot.ConfigWebhookAsync(webhookAddress, c, cancellationToken);
 #endif
         }
 

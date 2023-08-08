@@ -58,7 +58,7 @@ namespace TrunkRings.Commands
             {
                 try
                 {
-                    await tgClient.SendTextMessageAsync(chatId, text, withMarkdown ? ParseMode.Markdown : ParseMode.Html, null, true);
+                    await tgClient.SendTextMessageAsync(chatId, text, null, withMarkdown ? ParseMode.Markdown : ParseMode.Html, null, true);
                     result.Add(new DistributeMessageResult
                     {
                         ChatId = chatId,
