@@ -50,6 +50,7 @@ namespace TrunkRings
                 @"^[/](help)$",
                 @"^[/](ping)$",
                 @"^[/](getchatid)[:]\s*(.*)$",
+                @"^[/](leavechat)[:]\s*(.*)$",
             };
 
             var resultPattern = new Regex(string.Join("|", patterns));
@@ -112,6 +113,9 @@ namespace TrunkRings
                 case "getchatid":
                     var chatName = match.Groups[patternPosition + 1].Value;
                     return new GetChatIdCommand(messageService, tgClient, chatId, chatName);
+                case "leavechat":
+                    var chat = match.Groups[patternPosition + 1].Value;
+                    return new LeaveChatCommand(tgClient, long.Parse(chat));
             }
 
             return new SendMessageCommand(tgClient, chatId, "Неизвестная команда");
